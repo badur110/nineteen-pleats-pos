@@ -12,9 +12,43 @@ document.addEventListener('DOMContentLoaded', function () {
   const params = new URLSearchParams(window.location.search);
   if (params.get('page') === 'products') {
     document.body.classList.add('page-products');
+    injectProductPageStyles();
     enhanceProductsPage();
   }
 });
+
+function injectProductPageStyles() {
+  if (document.getElementById('product-page-style')) return;
+  const style = document.createElement('style');
+  style.id = 'product-page-style';
+  style.textContent = `
+    .page-products .wrap{max-width:1180px}
+    .page-products .two-col{grid-template-columns:minmax(300px,360px) minmax(0,1fr);align-items:start;gap:20px}
+    .page-products .card{border-radius:24px}
+    .page-products .card h2{font-size:1.15rem;margin-bottom:16px}
+    .page-products .stack label{font-size:.95rem}
+    .page-products .stack input{height:46px}
+    .page-products .stack .btn{height:46px;border-radius:14px}
+    .page-products .table-wrap{border:0;overflow:visible;background:transparent}
+    .page-products table{min-width:0;border-collapse:separate;border-spacing:0 10px;background:transparent}
+    .page-products thead{display:none}
+    .page-products tbody{display:grid;gap:10px}
+    .page-products tr{display:grid;grid-template-columns:minmax(180px,1fr) 135px 95px 115px minmax(250px,auto);gap:10px;align-items:center;background:#fff;border:1px solid #ead6bd;border-radius:18px;padding:12px;box-shadow:0 8px 20px rgba(43,27,16,.07)}
+    .page-products td{border:0;padding:0;min-width:0;overflow-wrap:anywhere}
+    .page-products td:nth-child(1){font-weight:900;font-size:1.02rem}
+    .page-products td:nth-child(2){color:#7a6657}
+    .page-products td:nth-child(3){font-weight:900;white-space:nowrap}
+    .page-products td:nth-child(4){display:inline-flex;width:max-content;align-items:center;border-radius:999px;background:#e9ffe4;color:#24733c;font-weight:900;padding:6px 10px;font-size:.92rem}
+    .page-products tr:has(td:nth-child(4):not(:empty)) td:nth-child(4){white-space:nowrap}
+    .page-products .product-actions-cell{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+    .page-products .inline-action-form{margin:0!important;display:inline-flex}
+    .page-products .btn.mini{min-height:34px;width:auto!important;padding:7px 10px;border-radius:10px;font-size:.88rem;line-height:1.1;white-space:nowrap}
+    .page-products .btn.edit{background:#2357a5;color:#fff!important;text-decoration:none}
+    @media(max-width:1050px){.page-products .two-col{grid-template-columns:1fr}.page-products tr{grid-template-columns:minmax(0,1fr) 120px 90px 105px;}.page-products .product-actions-cell{grid-column:1/-1;justify-content:flex-start}}
+    @media(max-width:640px){.page-products tr{display:block;padding:14px}.page-products td{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #f0dfc9}.page-products td:last-child{border-bottom:0}.page-products td:before{font-weight:900;color:#7a6657}.page-products td:nth-child(1):before{content:'პროდუქტი'}.page-products td:nth-child(2):before{content:'კატეგორია'}.page-products td:nth-child(3):before{content:'ფასი'}.page-products td:nth-child(4):before{content:'სტატუსი'}.page-products .product-actions-cell{justify-content:stretch}.page-products .product-actions-cell,.page-products .inline-action-form,.page-products .product-actions-cell .btn{width:100%!important}.page-products .btn.mini{min-height:40px}}
+  `;
+  document.head.appendChild(style);
+}
 
 function enhanceProductsPage() {
   document.querySelectorAll('td form input[name="action"][value="toggle_product"]').forEach(function (input) {
