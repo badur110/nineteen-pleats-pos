@@ -5,6 +5,11 @@ document.addEventListener('change', function (event) {
   }
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+  const loginHint = document.querySelector('.login-card .hint');
+  if (loginHint) loginHint.remove();
+});
+
 function escapeHtml(text) {
   return String(text).replace(/[&<>"]/g, function (char) {
     return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[char];
