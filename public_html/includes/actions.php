@@ -214,4 +214,24 @@ function handle_post_action(): void {
         flash($active ? 'პროდუქტი გააქტიურდა.' : 'პროდუქტი გაითიშა.');
         redirect_to('products');
     }
+
+    if ($action === 'delete_product') {
+        require_admin();
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id <= 0) {
+            flash('პროდუქტი ვერ მოიძებნა.', 'warn');
+            redirect_to('products');
+        }
+        $stmt = db()->prepare('SELECT COUNT(*) FROM order_items WHERE product_id=?');
+        $stmt->execute([$id]);
+        $used = (int)$stmt->fetchColumn();
+        if ($used > 0) {
+            db()->prepare('UPDATE products SET is_active=0 WHERE id=?')->execute([$id]);
+            flash('ეს პროდუქტი უკვე გამოყენებულია შეკვეთებში, ამიტომ ისტორიას არ ვშლით — პროდუქტი მხოლოდ გაითიშა.', 'warn');
+            redirect_to('products');
+        }
+        db()->prepare('DELETE FROM products WHERE id=?')->execute([$id]);
+        flash('პროდუქტი წაიშალა.');
+        redirect_to('products');
+    }
 }
