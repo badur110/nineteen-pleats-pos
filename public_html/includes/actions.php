@@ -1,0 +1,217 @@
+<?php
+function handle_post_action(): void {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        return;
+    }
+
+    $action = $_POST['action'] ?? '';
+
+    if ($action === 'login') {
+        $username = trim($_POST['username'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $stmt = db()->prepare('SELECT * FROM users WHERE username=? AND is_active=1 LIMIT 1');
+        $stmt->execute([$username]);
+        $user = $stmt->fetch();
+        if ($user && password_verify($password, $user['password_hash'])) {
+            $_SESSION['user'] = [
+                'id' => (int)$user['id'],
+                'name' => $user['name'],
+                'username' => $user['username'],
+                'role' => $user['role'],
+            ];
+            redirect_to('day');
+        }
+        flash('მომხმარებელი ან პაროლი არასწორია.', 'warn');
+        redirect_to('login');
+    }
+
+    require_login();
+
+    if ($action === 'open_day') {
+        if (active_day()) {
+            flash('სამუშაო დღე უკვე გახსნილია.');
+            redirect_to('day');
+        }
+        $openingCash = max(0, (float)($_POST['opening_cash'] ?? 0));
+        $note = trim($_POST['note'] ?? '');
+        $stmt = db()->prepare("INSERT INTO business_days (opened_by, opening_cash, note, status) VALUES (?, ?, ?, 'open')");
+        $stmt->execute([current_user()['id'], $openingCash, $note]);
+        flash('სამუშაო დღე გაიხსნა.');
+        redirect_to('day');
+    }
+
+    if ($action === 'close_day') {
+        $day = active_day();
+        if (!$day) {
+            flash('გასახსნელი სამუშაო დღე არ არის.', 'warn');
+            redirect_to('day');
+        }
+        if (open_orders_count((int)$day['id']) > 0) {
+            flash('დღის დახურვამდე ყველა მაგიდა უნდა დაიხუროს.', 'warn');
+            redirect_to('day');
+        }
+        $summary = day_summary((int)$day['id']);
+        $expectedCash = (float)$day['opening_cash'] + (float)$summary['cash_total'];
+        $closingCash = (float)($_POST['closing_cash'] ?? 0);
+        $diff = $closingCash - $expectedCash;
+        $note = trim($_POST['close_note'] ?? '');
+        $stmt = db()->prepare("UPDATE business_days SET status='closed', closed_by=?, closed_at=NOW(), closing_cash=?, expected_cash=?, cash_difference=?, close_note=? WHERE id=?");
+        $stmt->execute([current_user()['id'], $closingCash, $expectedCash, $diff, $note, $day['id']]);
+        flash('სამუშაო დღე დაიხურა.');
+        redirect_to('reports', ['day_id' => (int)$day['id']]);
+    }
+
+    if ($action === 'add_item') {
+        $day = active_day();
+        if (!$day) {
+            flash('ჯერ გახსენი სამუშაო დღე.', 'warn');
+            redirect_to('day');
+        }
+        $tableId = (int)($_POST['table_id'] ?? 0);
+        $productId = (int)($_POST['product_id'] ?? 0);
+        $quantity = max(0.01, (float)($_POST['quantity'] ?? 1));
+        $comment = trim($_POST['comment'] ?? '');
+        $table = fetch_table($tableId);
+        if (!$table) {
+            flash('მაგიდა ვერ მოიძებნა.', 'warn');
+            redirect_to('tables');
+        }
+        $stmt = db()->prepare('SELECT * FROM products WHERE id=? AND is_active=1 LIMIT 1');
+        $stmt->execute([$productId]);
+        $product = $stmt->fetch();
+        if (!$product) {
+            flash('პროდუქტი ვერ მოიძებნა ან გათიშულია.', 'warn');
+            redirect_to('table', ['id' => $tableId]);
+        }
+        $order = current_open_order((int)$day['id'], $tableId);
+        $orderId = $order ? (int)$order['id'] : create_order((int)$day['id'], $tableId);
+        $stmt = db()->prepare('INSERT INTO order_items (order_id, product_id, product_name, quantity, price, comment) VALUES (?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$orderId, $productId, $product['name'], $quantity, $product['price'], $comment]);
+        flash('პროდუქტი დაემატა.');
+        redirect_to('table', ['id' => $tableId]);
+    }
+
+    if ($action === 'send_order') {
+        $day = active_day();
+        if (!$day) {
+            flash('სამუშაო დღე დახურულია.', 'warn');
+            redirect_to('day');
+        }
+        $tableId = (int)($_POST['table_id'] ?? 0);
+        $order = current_open_order((int)$day['id'], $tableId);
+        if (!$order) {
+            flash('ამ მაგიდაზე შეკვეთა არ არის.', 'warn');
+            redirect_to('table', ['id' => $tableId]);
+        }
+        $stmt = db()->prepare('SELECT * FROM order_items WHERE order_id=? AND is_cancelled=0 AND sent_at IS NULL ORDER BY id ASC');
+        $stmt->execute([$order['id']]);
+        $items = $stmt->fetchAll();
+        if (!$items) {
+            flash('ახალი გასაგზავნი პროდუქტი არ არის.', 'warn');
+            redirect_to('table', ['id' => $tableId]);
+        }
+        $ids = array_map(fn($item) => (int)$item['id'], $items);
+        $sql = 'UPDATE order_items SET sent_at=NOW() WHERE id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
+        db()->prepare($sql)->execute($ids);
+        redirect_to('print_order', ['order_id' => (int)$order['id'], 'table_id' => $tableId, 'item_ids' => implode(',', $ids)]);
+    }
+
+    if ($action === 'cancel_item') {
+        $tableId = (int)($_POST['table_id'] ?? 0);
+        if (!is_admin() && ($_POST['cancel_password'] ?? '') !== cfg('cancel_password', 'cancel123')) {
+            flash('გაუქმების პაროლი არასწორია.', 'warn');
+            redirect_to('table', ['id' => $tableId]);
+        }
+        $itemId = (int)($_POST['item_id'] ?? 0);
+        $reason = trim($_POST['cancel_reason'] ?? '');
+        if ($reason === '') {
+            $reason = 'სხვა';
+        }
+        $stmt = db()->prepare('UPDATE order_items SET is_cancelled=1, cancelled_by=?, cancelled_at=NOW(), cancel_reason=? WHERE id=? AND is_cancelled=0');
+        $stmt->execute([current_user()['id'], $reason, $itemId]);
+        flash('პროდუქტი გაუქმდა.');
+        redirect_to('table', ['id' => $tableId]);
+    }
+
+    if ($action === 'close_order') {
+        $day = active_day();
+        if (!$day) {
+            flash('სამუშაო დღე დახურულია.', 'warn');
+            redirect_to('day');
+        }
+        $tableId = (int)($_POST['table_id'] ?? 0);
+        $order = current_open_order((int)$day['id'], $tableId);
+        if (!$order) {
+            flash('ამ მაგიდაზე ღია შეკვეთა არ არის.', 'warn');
+            redirect_to('tables');
+        }
+        $total = order_total((int)$order['id']);
+        if ($total <= 0) {
+            flash('ცარიელი შეკვეთის დახურვა შეუძლებელია.', 'warn');
+            redirect_to('table', ['id' => $tableId]);
+        }
+        $paymentType = $_POST['payment_type'] ?? 'cash';
+        if (!in_array($paymentType, ['cash', 'card', 'mixed'], true)) {
+            $paymentType = 'cash';
+        }
+        if ($paymentType === 'cash') {
+            $cash = $total;
+            $card = 0;
+        } elseif ($paymentType === 'card') {
+            $cash = 0;
+            $card = $total;
+        } else {
+            $cash = max(0, (float)($_POST['cash_amount'] ?? 0));
+            $card = max(0, (float)($_POST['card_amount'] ?? 0));
+            if (abs(($cash + $card) - $total) > 0.01) {
+                flash('შერეულ გადახდაში ნაღდი + ბარათი უნდა უდრიდეს ჯამს.', 'warn');
+                redirect_to('table', ['id' => $tableId]);
+            }
+        }
+        $stmt = db()->prepare("UPDATE orders SET status='closed', total=?, payment_type=?, cash_amount=?, card_amount=?, closed_at=NOW() WHERE id=?");
+        $stmt->execute([$total, $paymentType, $cash, $card, $order['id']]);
+        redirect_to('print_final', ['order_id' => (int)$order['id']]);
+    }
+
+    if ($action === 'save_product') {
+        require_admin();
+        $id = (int)($_POST['id'] ?? 0);
+        $name = trim($_POST['name'] ?? '');
+        $price = max(0, (float)($_POST['price'] ?? 0));
+        $categoryName = trim($_POST['category_name'] ?? 'სხვა');
+        $isActive = isset($_POST['is_active']) ? 1 : 0;
+        if ($name === '') {
+            flash('პროდუქტის სახელი აუცილებელია.', 'warn');
+            redirect_to('products');
+        }
+        if ($categoryName === '') {
+            $categoryName = 'სხვა';
+        }
+        $stmt = db()->prepare('SELECT id FROM categories WHERE name=? LIMIT 1');
+        $stmt->execute([$categoryName]);
+        $categoryId = $stmt->fetchColumn();
+        if (!$categoryId) {
+            db()->prepare('INSERT INTO categories (name, is_active) VALUES (?, 1)')->execute([$categoryName]);
+            $categoryId = db()->lastInsertId();
+        }
+        if ($id > 0) {
+            $stmt = db()->prepare('UPDATE products SET category_id=?, name=?, price=?, is_active=? WHERE id=?');
+            $stmt->execute([$categoryId, $name, $price, $isActive, $id]);
+            flash('პროდუქტი განახლდა.');
+        } else {
+            $stmt = db()->prepare('INSERT INTO products (category_id, name, price, is_active) VALUES (?, ?, ?, ?)');
+            $stmt->execute([$categoryId, $name, $price, $isActive]);
+            flash('პროდუქტი დაემატა.');
+        }
+        redirect_to('products');
+    }
+
+    if ($action === 'toggle_product') {
+        require_admin();
+        $id = (int)($_POST['id'] ?? 0);
+        $active = (int)($_POST['is_active'] ?? 0);
+        db()->prepare('UPDATE products SET is_active=? WHERE id=?')->execute([$active, $id]);
+        flash($active ? 'პროდუქტი გააქტიურდა.' : 'პროდუქტი გაითიშა.');
+        redirect_to('products');
+    }
+}
