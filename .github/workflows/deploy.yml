@@ -16,6 +16,29 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Create config.php from secrets
+        run: |
+          cat > public_html/config.php <<'PHP'
+          <?php
+          return [
+              'app_name' => 'ცხრამეტი ნაოჭი POS',
+              'restaurant_name' => 'ცხრამეტი ნაოჭი',
+              'restaurant_name_en' => 'Nineteen Pleats',
+              'restaurant_phone' => '598 01 83 83',
+              'restaurant_address' => '',
+              'thank_you_text' => 'გმადლობთ სტუმრობისთვის!',
+              'timezone' => 'Asia/Tbilisi',
+
+              'db_host' => 'localhost',
+              'db_name' => '${{ secrets.DB_NAME }}',
+              'db_user' => '${{ secrets.DB_USER }}',
+              'db_pass' => '${{ secrets.DB_PASSWORD }}',
+              'db_charset' => 'utf8mb4',
+
+              'cancel_password' => 'cancel123',
+          ];
+          PHP
+
       - name: Upload public_html to hosting
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -27,4 +50,3 @@ jobs:
           exclude: |
             **/.git*
             **/.git*/**
-            **/config.php
