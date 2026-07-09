@@ -1,18 +1,33 @@
 # Nineteen Pleats POS
 
-Simple PHP and MySQL web POS for a small restaurant.
+Simple PHP + MySQL web POS for a small restaurant. It is made for normal cPanel/shared hosting.
 
-## Main features
+## What is included
 
-- Login with admin and cashier roles
+- Admin and cashier login
 - Open and close business day
 - 10 tables
 - Product management
 - Table orders
-- Browser print for cashier and kitchen receipts
+- Browser printing for cashier and kitchen receipts
+- Kitchen receipt without prices
 - Cash, card, and mixed payments
 - Daily reports
+- Responsive design for small laptop screens
 
-## Hosting
+## Hosting setup
 
-Upload the contents of the `public_html` folder to your hosting `public_html` directory. Import `database/schema.sql` into MySQL. Copy `config.example.php` to `config.php` and set the database credentials.
+1. Upload everything inside `public_html` to your hosting `public_html` folder.
+2. Create a MySQL database and user in cPanel.
+3. Import `database/schema.sql` in phpMyAdmin.
+4. Copy `public_html/config.example.php` as `public_html/config.php`.
+5. Put your MySQL database name, user, and password in `config.php`.
+6. Open your domain.
+
+## Default users after SQL import
+
+Admin: `admin` / `admin123`
+
+Cashier: `cashier` / `cashier123`
+
+Cancel password for cashier: `cancel123`
