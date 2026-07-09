@@ -1,6 +1,12 @@
 # Nineteen Pleats POS
 
-Simple PHP + MySQL web POS for a small restaurant. It is made for normal cPanel/shared hosting.
+Visual demo file: `demo.html`
+
+Use this demo only for checking layout and design. Real saving, login, MySQL, orders, and reports will work on PHP and MySQL hosting.
+
+## Main app
+
+Simple PHP and MySQL web POS for a small restaurant. It is made for normal cPanel/shared hosting.
 
 ## What is included
 
@@ -23,11 +29,3 @@ Simple PHP + MySQL web POS for a small restaurant. It is made for normal cPanel/
 4. Copy `public_html/config.example.php` as `public_html/config.php`.
 5. Put your MySQL database name, user, and password in `config.php`.
 6. Open your domain.
-
-## Default users after SQL import
-
-Admin: `admin` / `admin123`
-
-Cashier: `cashier` / `cashier123`
-
-Cancel password for cashier: `cancel123`
