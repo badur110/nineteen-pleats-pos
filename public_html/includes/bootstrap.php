@@ -1,0 +1,267 @@
+<?php
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+$configFile = __DIR__ . '/../config.php';
+if (!file_exists($configFile)) {
+    $configFile = __DIR__ . '/../config.example.php';
+}
+$config = require $configFile;
+date_default_timezone_set($config['timezone'] ?? 'Asia/Tbilisi');
+
+function cfg(string $key, $default = null) {
+    global $config;
+    return $config[$key] ?? $default;
+}
+
+function h($value): string {
+    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+}
+
+function money($value): string {
+    return number_format((float)$value, 2) . ' ₾';
+}
+
+function qty($value): string {
+    $number = (float)$value;
+    if (abs($number - round($number)) < 0.001) {
+        return (string)(int)round($number);
+    }
+    return rtrim(rtrim(number_format($number, 2), '0'), '.');
+}
+
+function url_for(string $page, array $params = []): string {
+    return '?' . http_build_query(array_merge(['page' => $page], $params));
+}
+
+function redirect_to(string $page, array $params = []): void {
+    header('Location: ' . url_for($page, $params));
+    exit;
+}
+
+function flash(string $message, string $type = 'flash'): void {
+    $_SESSION['flash'] = ['message' => $message, 'type' => $type];
+}
+
+function db(): PDO {
+    static $pdo = null;
+    if ($pdo instanceof PDO) {
+        return $pdo;
+    }
+
+    $dsn = 'mysql:host=' . cfg('db_host', 'localhost') . ';dbname=' . cfg('db_name') . ';charset=' . cfg('db_charset', 'utf8mb4');
+    $pdo = new PDO($dsn, cfg('db_user'), cfg('db_pass'), [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+    $pdo->exec('SET NAMES utf8mb4');
+    return $pdo;
+}
+
+function current_user(): ?array {
+    return $_SESSION['user'] ?? null;
+}
+
+function is_logged_in(): bool {
+    return current_user() !== null;
+}
+
+function is_admin(): bool {
+    return (current_user()['role'] ?? '') === 'admin';
+}
+
+function require_login(): void {
+    if (!is_logged_in()) {
+        redirect_to('login');
+    }
+}
+
+function require_admin(): void {
+    require_login();
+    if (!is_admin()) {
+        flash('ამ გვერდზე წვდომა მხოლოდ ადმინისტრატორს აქვს.', 'warn');
+        redirect_to('day');
+    }
+}
+
+function active_day(): ?array {
+    $stmt = db()->query("SELECT * FROM business_days WHERE status='open' ORDER BY id DESC LIMIT 1");
+    $day = $stmt->fetch();
+    return $day ?: null;
+}
+
+function fetch_day(int $dayId): ?array {
+    $stmt = db()->prepare('SELECT * FROM business_days WHERE id=?');
+    $stmt->execute([$dayId]);
+    $day = $stmt->fetch();
+    return $day ?: null;
+}
+
+function open_orders_count(int $dayId): int {
+    $stmt = db()->prepare("SELECT COUNT(*) FROM orders WHERE business_day_id=? AND status='open'");
+    $stmt->execute([$dayId]);
+    return (int)$stmt->fetchColumn();
+}
+
+function fetch_table(int $tableId): ?array {
+    $stmt = db()->prepare('SELECT * FROM restaurant_tables WHERE id=? AND is_active=1');
+    $stmt->execute([$tableId]);
+    $table = $stmt->fetch();
+    return $table ?: null;
+}
+
+function current_open_order(int $dayId, int $tableId): ?array {
+    $stmt = db()->prepare("SELECT * FROM orders WHERE business_day_id=? AND table_id=? AND status='open' ORDER BY id DESC LIMIT 1");
+    $stmt->execute([$dayId, $tableId]);
+    $order = $stmt->fetch();
+    return $order ?: null;
+}
+
+function create_order(int $dayId, int $tableId): int {
+    $uid = current_user()['id'] ?? null;
+    $stmt = db()->prepare("INSERT INTO orders (business_day_id, table_id, user_id, status) VALUES (?, ?, ?, 'open')");
+    $stmt->execute([$dayId, $tableId, $uid]);
+    return (int)db()->lastInsertId();
+}
+
+function fetch_order(int $orderId): ?array {
+    $stmt = db()->prepare('SELECT * FROM orders WHERE id=?');
+    $stmt->execute([$orderId]);
+    $order = $stmt->fetch();
+    return $order ?: null;
+}
+
+function order_items(int $orderId): array {
+    $stmt = db()->prepare('SELECT * FROM order_items WHERE order_id=? ORDER BY id ASC');
+    $stmt->execute([$orderId]);
+    return $stmt->fetchAll();
+}
+
+function order_total(int $orderId): float {
+    $stmt = db()->prepare('SELECT COALESCE(SUM(quantity * price),0) FROM order_items WHERE order_id=? AND is_cancelled=0');
+    $stmt->execute([$orderId]);
+    return (float)$stmt->fetchColumn();
+}
+
+function day_summary(int $dayId): array {
+    $summary = [
+        'orders_count' => 0,
+        'sales_total' => 0,
+        'cash_total' => 0,
+        'card_total' => 0,
+        'cancelled_count' => 0,
+    ];
+
+    $stmt = db()->prepare("SELECT COUNT(*) c, COALESCE(SUM(total),0) total, COALESCE(SUM(cash_amount),0) cash_total, COALESCE(SUM(card_amount),0) card_total FROM orders WHERE business_day_id=? AND status='closed'");
+    $stmt->execute([$dayId]);
+    $row = $stmt->fetch() ?: [];
+    $summary['orders_count'] = (int)($row['c'] ?? 0);
+    $summary['sales_total'] = (float)($row['total'] ?? 0);
+    $summary['cash_total'] = (float)($row['cash_total'] ?? 0);
+    $summary['card_total'] = (float)($row['card_total'] ?? 0);
+
+    $stmt = db()->prepare('SELECT COUNT(*) FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE o.business_day_id=? AND oi.is_cancelled=1');
+    $stmt->execute([$dayId]);
+    $summary['cancelled_count'] = (int)$stmt->fetchColumn();
+    return $summary;
+}
+
+function payment_label(?string $type): string {
+    return ['cash' => 'ნაღდი', 'card' => 'ბარათი', 'mixed' => 'შერეული'][$type] ?? '—';
+}
+
+function role_label(string $role): string {
+    return $role === 'admin' ? 'ადმინისტრატორი' : 'მოლარე';
+}
+
+function receipt_header(string $title, array $table): array {
+    $lines = [];
+    $lines[] = cfg('restaurant_name', 'ცხრამეტი ნაოჭი');
+    $lines[] = cfg('restaurant_name_en', 'Nineteen Pleats');
+    if (cfg('restaurant_address', '') !== '') {
+        $lines[] = cfg('restaurant_address');
+    }
+    if (cfg('restaurant_phone', '') !== '') {
+        $lines[] = 'ტელ: ' . cfg('restaurant_phone');
+    }
+    $lines[] = $title;
+    $lines[] = 'მაგიდა: ' . $table['name'];
+    $lines[] = 'დრო: ' . date('Y-m-d H:i');
+    $lines[] = str_repeat('-', 32);
+    return $lines;
+}
+
+function build_kitchen_receipt(array $table, array $items): string {
+    $lines = receipt_header('სამზარეულო', $table);
+    foreach ($items as $item) {
+        if ((int)$item['is_cancelled'] === 1) continue;
+        $lines[] = qty($item['quantity']) . ' x ' . $item['product_name'];
+        if (!empty($item['comment'])) {
+            $lines[] = 'კომენტარი: ' . $item['comment'];
+        }
+    }
+    $lines[] = str_repeat('-', 32);
+    return implode("\n", $lines);
+}
+
+function build_cashier_receipt(array $table, array $items): string {
+    $lines = receipt_header('სალარო / ბარი', $table);
+    foreach ($items as $item) {
+        if ((int)$item['is_cancelled'] === 1) continue;
+        $sum = (float)$item['quantity'] * (float)$item['price'];
+        $lines[] = qty($item['quantity']) . ' x ' . $item['product_name'];
+        $lines[] = number_format((float)$item['price'], 2) . ' x ' . qty($item['quantity']) . ' = ' . number_format($sum, 2) . ' GEL';
+        if (!empty($item['comment'])) {
+            $lines[] = 'კომენტარი: ' . $item['comment'];
+        }
+    }
+    $lines[] = str_repeat('-', 32);
+    return implode("\n", $lines);
+}
+
+function build_final_receipt(array $table, array $order, array $items): string {
+    $lines = receipt_header('საბოლოო ანგარიში', $table);
+    foreach ($items as $item) {
+        if ((int)$item['is_cancelled'] === 1) continue;
+        $sum = (float)$item['quantity'] * (float)$item['price'];
+        $lines[] = qty($item['quantity']) . ' x ' . $item['product_name'];
+        $lines[] = number_format((float)$item['price'], 2) . ' x ' . qty($item['quantity']) . ' = ' . number_format($sum, 2) . ' GEL';
+    }
+    $lines[] = str_repeat('-', 32);
+    $lines[] = 'ჯამი: ' . number_format((float)$order['total'], 2) . ' GEL';
+    $lines[] = 'გადახდა: ' . payment_label($order['payment_type']);
+    if ($order['payment_type'] === 'mixed') {
+        $lines[] = 'ნაღდი: ' . number_format((float)$order['cash_amount'], 2) . ' GEL';
+        $lines[] = 'ბარათი: ' . number_format((float)$order['card_amount'], 2) . ' GEL';
+    }
+    $lines[] = cfg('thank_you_text', 'გმადლობთ სტუმრობისთვის!');
+    return implode("\n", $lines);
+}
+
+function render_header(string $title): void {
+    $app = cfg('app_name', 'POS');
+    echo '<!doctype html><html lang="ka"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>' . h($title) . ' — ' . h($app) . '</title><link rel="stylesheet" href="assets/style.css"></head><body>';
+    echo '<header class="topbar"><a class="brand" href="' . h(url_for('day')) . '"><span class="mark">19</span><span><strong>' . h($app) . '</strong><small>' . (is_logged_in() ? h(role_label(current_user()['role'])) : 'ვებ-ვერსია') . '</small></span></a>';
+    if (is_logged_in()) {
+        echo '<nav class="nav"><a href="' . h(url_for('day')) . '">დღე</a><a href="' . h(url_for('tables')) . '">მაგიდები</a>';
+        if (is_admin()) {
+            echo '<a href="' . h(url_for('products')) . '">პროდუქტები</a><a href="' . h(url_for('reports')) . '">რეპორტები</a>';
+        }
+        echo '<a href="' . h(url_for('logout')) . '">გასვლა</a></nav>';
+    }
+    echo '</header><main class="wrap">';
+    if (!empty($_SESSION['flash'])) {
+        $flash = $_SESSION['flash'];
+        unset($_SESSION['flash']);
+        echo '<div class="' . h($flash['type'] ?? 'flash') . '">' . h($flash['message'] ?? '') . '</div>';
+    }
+}
+
+function render_footer(): void {
+    echo '</main><script src="assets/app.js"></script></body></html>';
+}
+
+function receipt_card(string $id, string $title, string $text): string {
+    return '<section class="receipt-card"><h2>' . h($title) . '</h2><pre id="' . h($id) . '">' . h($text) . '</pre><button class="btn primary" data-print="' . h($id) . '">Print / ბეჭდვა</button></section>';
+}
