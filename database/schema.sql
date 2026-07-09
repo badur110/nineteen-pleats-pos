@@ -104,8 +104,8 @@ CREATE TABLE IF NOT EXISTS order_items (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO users (name, username, password_hash, role, is_active) VALUES
-('ადმინისტრატორი', 'admin', '$2y$12$MEmk/9p/RHpY0CZBnW/YQu8gAFvkPTsX/TY3aMFwWm4t2pOy2PAdq', 'admin', 1),
-('მოლარე', 'cashier', '$2y$12$o.hFuhRsaAgO63gGfmdjRe/REuESkoQnUI6f3rzGNjpkanFORJQUi', 'cashier', 1)
+('ადმინისტრატორი', 'admin', '$2y$12$N.fnuigeQ.UzkNXzp.ykiucBxG3RG2W1uvIs5FXYT6qD1AaDG78v6', 'admin', 1),
+('მოლარე', 'cashier', '$2y$12$prOWizzsWHCWG7AV9sDWUuiaNS99lkl2L/2xqfsUp/FRieQtVovOC', 'cashier', 1)
 ON DUPLICATE KEY UPDATE name=VALUES(name), role=VALUES(role), is_active=VALUES(is_active);
 
 INSERT INTO restaurant_tables (name, sort_order) VALUES
