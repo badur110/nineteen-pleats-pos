@@ -25,20 +25,33 @@ document.addEventListener('DOMContentLoaded', function () {
   addHistoryNavLink();
   fixQuantityInputs();
 
+  const route = currentPage();
   const params = new URLSearchParams(window.location.search);
-  if (params.get('page') === 'products') {
+  if (route === 'products') {
     document.body.classList.add('page-products');
     injectProductPageStyles();
     enhanceProductsPage();
   }
-  if (params.get('page') === 'table') {
+  if (route === 'table') {
     document.body.classList.add('page-table');
-    enhanceTablePage(params.get('id'));
+    enhanceTablePage(params.get('id') || tableIdFromPath());
   }
 });
 
+function currentPage() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('page')) return params.get('page');
+  const first = window.location.pathname.replace(/^\/+|\/+$/g, '').split('/')[0];
+  return first || 'day';
+}
+
+function tableIdFromPath() {
+  const parts = window.location.pathname.replace(/^\/+|\/+$/g, '').split('/');
+  return parts[0] === 'table' ? (parts[1] || '') : '';
+}
+
 function garbaliaLogoImg(className) {
-  return '<img class="' + className + '" src="assets/garbalia-logo.svg" alt="GARBALIA">';
+  return '<img class="' + className + '" src="/assets/garbalia-logo.svg" alt="GARBALIA">';
 }
 
 function injectGarbaliaBrandStyles() {
@@ -83,14 +96,14 @@ function brandGarbaliaEverywhere() {
 function addHistoryNavLink() {
   const nav = document.querySelector('.nav');
   if (!nav) return;
-  if (!nav.querySelector('a[href*="page=products"]')) return;
-  if (nav.querySelector('a[href*="page=history"]')) return;
+  if (!nav.querySelector('a[href*="products"]')) return;
+  if (nav.querySelector('a[href*="history"]')) return;
 
   const historyLink = document.createElement('a');
-  historyLink.href = '?page=history';
+  historyLink.href = '/history';
   historyLink.textContent = 'ისტორია';
 
-  const reportsLink = nav.querySelector('a[href*="page=reports"]');
+  const reportsLink = nav.querySelector('a[href*="reports"]');
   if (reportsLink) nav.insertBefore(historyLink, reportsLink);
   else nav.appendChild(historyLink);
 }
