@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const loginHint = document.querySelector('.login-card .hint');
   if (loginHint) loginHint.remove();
 
+  injectFooterStyles();
+  addGarbaliaFooter();
   addHistoryNavLink();
   fixQuantityInputs();
 
@@ -34,6 +36,32 @@ document.addEventListener('DOMContentLoaded', function () {
     enhanceTablePage(params.get('id'));
   }
 });
+
+function injectFooterStyles() {
+  if (document.getElementById('garbalia-footer-style')) return;
+  const style = document.createElement('style');
+  style.id = 'garbalia-footer-style';
+  style.textContent = `
+    .garbalia-footer{width:min(1240px,100%);margin:12px auto 0;padding:0 clamp(16px,3vw,30px) 24px;color:rgba(37,22,13,.72)}
+    .garbalia-footer-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-top:1px solid rgba(197,161,113,.45);padding-top:16px}
+    .garbalia-footer-brand{display:flex;align-items:center;gap:10px;min-width:0;font-weight:950;letter-spacing:.04em;color:#2b1b10}
+    .garbalia-footer-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#2b1b10;color:#fff;font-weight:950;font-size:.86rem;box-shadow:0 8px 18px rgba(43,27,16,.16)}
+    .garbalia-footer-copy{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.92rem}
+    .garbalia-footer-copy strong{color:#2b1b10}.garbalia-footer-dot{opacity:.45}
+    .garbalia-whatsapp{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;border-radius:999px;padding:8px 13px;background:#1f8f4d;color:#fff!important;text-decoration:none;font-weight:900;box-shadow:0 8px 20px rgba(31,143,77,.18)}
+    .garbalia-whatsapp:hover{filter:brightness(.96);transform:translateY(-1px)}
+    @media(max-width:560px){.garbalia-footer-inner{justify-content:center;text-align:center}.garbalia-footer-brand,.garbalia-footer-copy{justify-content:center}.garbalia-whatsapp{width:100%}}
+  `;
+  document.head.appendChild(style);
+}
+
+function addGarbaliaFooter() {
+  if (document.querySelector('.garbalia-footer')) return;
+  const footer = document.createElement('footer');
+  footer.className = 'garbalia-footer';
+  footer.innerHTML = '<div class="garbalia-footer-inner"><div class="garbalia-footer-brand"><span class="garbalia-footer-mark">G</span><span>© GARBALIA POS</span></div><div class="garbalia-footer-copy"><span>Developed by <strong>Giorgi Katamadze</strong></span><span class="garbalia-footer-dot">•</span><a class="garbalia-whatsapp" href="https://wa.me/995577785078" target="_blank" rel="noopener">WhatsApp</a></div></div>';
+  document.body.appendChild(footer);
+}
 
 function addHistoryNavLink() {
   const nav = document.querySelector('.nav');
