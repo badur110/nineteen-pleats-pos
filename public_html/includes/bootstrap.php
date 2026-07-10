@@ -99,6 +99,46 @@ function require_admin(): void {
     }
 }
 
+function ensure_cash_movements_table(): void {
+    static $done = false;
+    if ($done) return;
+    db()->exec("CREATE TABLE IF NOT EXISTS cash_movements (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        business_day_id INT NOT NULL,
+        user_id INT NULL,
+        type ENUM('add','remove','expense') NOT NULL,
+        amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+        note VARCHAR(255) NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_cash_day (business_day_id),
+        CONSTRAINT fk_cash_movements_day FOREIGN KEY (business_day_id) REFERENCES business_days(id) ON DELETE CASCADE,
+        CONSTRAINT fk_cash_movements_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $done = true;
+}
+
+function cash_movement_label(string $type): string {
+    return ['add' => 'თანხის დამატება', 'remove' => 'თანხის ამოღება', 'expense' => 'ხარჯი'][$type] ?? 'მოძრაობა';
+}
+
+function cash_movement_sign(string $type): int {
+    return $type === 'add' ? 1 : -1;
+}
+
+function cash_movements_for_day(int $dayId): array {
+    ensure_cash_movements_table();
+    $stmt = db()->prepare('SELECT cm.*, u.name user_name FROM cash_movements cm LEFT JOIN users u ON u.id=cm.user_id WHERE cm.business_day_id=? ORDER BY cm.id DESC');
+    $stmt->execute([$dayId]);
+    return $stmt->fetchAll();
+}
+
+function cash_movements_net(int $dayId): float {
+    ensure_cash_movements_table();
+    $stmt = db()->prepare("SELECT COALESCE(SUM(CASE WHEN type='add' THEN amount ELSE -amount END),0) FROM cash_movements WHERE business_day_id=?");
+    $stmt->execute([$dayId]);
+    return (float)$stmt->fetchColumn();
+}
+
 function active_day(): ?array {
     $stmt = db()->query("SELECT * FROM business_days WHERE status='open' ORDER BY id DESC LIMIT 1");
     $day = $stmt->fetch();
@@ -115,6 +155,12 @@ function fetch_day(int $dayId): ?array {
 function open_orders_count(int $dayId): int {
     $stmt = db()->prepare("SELECT COUNT(*) FROM orders WHERE business_day_id=? AND status='open'");
     $stmt->execute([$dayId]);
+    return (int)$stmt->fetchColumn();
+}
+
+function unsent_items_count(int $orderId): int {
+    $stmt = db()->prepare('SELECT COUNT(*) FROM order_items WHERE order_id=? AND is_cancelled=0 AND sent_at IS NULL');
+    $stmt->execute([$orderId]);
     return (int)$stmt->fetchColumn();
 }
 
@@ -258,14 +304,13 @@ function garbalia_mark_svg(): string {
 }
 
 function render_header(string $title): void {
-    $app = 'GARBALIA POS';
     $sub = is_logged_in() ? role_label(current_user()['role']) : 'Restaurant Management System';
     echo '<!doctype html><html lang="ka"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>GARBALIA</title><link rel="icon" type="image/png" href="/Logo.png"><link rel="shortcut icon" type="image/png" href="/Logo.png"><link rel="apple-touch-icon" href="/Logo.png"><link rel="stylesheet" href="/assets/style.css"></head><body class="app-shell">';
     echo '<header class="topbar"><a class="brand garbalia-brand" href="' . h(url_for('day')) . '"><span class="garbalia-mark">' . garbalia_mark_svg() . '</span><span class="brand-text"><strong class="garbalia-word">GARBALIA POS</strong><small>' . h($sub) . '</small></span></a>';
     if (is_logged_in()) {
         echo '<nav class="nav"><a href="' . h(url_for('day')) . '">დღე</a><a href="' . h(url_for('tables')) . '">მაგიდები</a>';
         if (is_admin()) {
-            echo '<a href="' . h(url_for('products')) . '">პროდუქტები</a><a href="' . h(url_for('history')) . '">ისტორია</a><a href="' . h(url_for('reports')) . '">რეპორტები</a>';
+            echo '<a href="' . h(url_for('products')) . '">პროდუქტები</a><a href="' . h(url_for('history')) . '">ისტორია</a>';
         }
         echo '<a href="' . h(url_for('logout')) . '">გასვლა</a></nav>';
     }
@@ -278,7 +323,7 @@ function render_header(string $title): void {
 }
 
 function render_footer(): void {
-    echo '</main><footer class="app-footer"><div class="footer-inner"><div class="footer-brand"><span class="footer-mark">' . garbalia_mark_svg() . '</span><div><strong>© GARBALIA POS</strong><small>Restaurant management software</small></div></div><div class="footer-credit"><span>Developed by <b>Giorgi Katamadze</b></span><a class="whatsapp-link" href="https://wa.me/995577785078" target="_blank" rel="noopener">WhatsApp</a></div></div></footer><script src="/assets/app.js"></script><script src="/assets/close-confirm.js?v=1"></script></body></html>';
+    echo '</main><footer class="app-footer"><div class="footer-inner"><div class="footer-brand"><span class="footer-mark">' . garbalia_mark_svg() . '</span><div><strong>© GARBALIA POS</strong><small>Restaurant management software</small></div></div><div class="footer-credit"><span>Developed by <b>Giorgi Katamadze</b></span><a class="whatsapp-link" href="https://wa.me/995577785078" target="_blank" rel="noopener">WhatsApp</a></div></div></footer><script src="/assets/app.js?v=20"></script><script src="/assets/close-confirm.js?v=20"></script></body></html>';
 }
 
 function receipt_card(string $id, string $title, string $text): string {
