@@ -33,18 +33,19 @@ function injectProductPageStyles() {
     .page-products table,.page-products tbody{display:block;width:100%;min-width:0;background:transparent;border-collapse:separate;border-spacing:0}
     .page-products thead{display:none}
     .page-products tbody{display:grid;gap:10px}
-    .page-products tr{display:grid;width:100%;grid-template-columns:minmax(0,1.15fr) minmax(82px,.65fr) 82px 96px 174px;gap:10px;align-items:center;background:#fff;border:1px solid #ead6bd;border-radius:18px;padding:12px;box-shadow:0 8px 20px rgba(43,27,16,.07)}
+    .page-products tr{display:grid;width:100%;grid-template-columns:minmax(180px,1fr) 96px 78px 96px 205px;gap:12px;align-items:center;background:#fff;border:1px solid #ead6bd;border-radius:18px;padding:12px;box-shadow:0 8px 20px rgba(43,27,16,.07)}
     .page-products td{border:0;padding:0;min-width:0;overflow-wrap:anywhere}
-    .page-products td:nth-child(1){font-weight:900;font-size:1.02rem}
-    .page-products td:nth-child(2){color:#7a6657}
+    .page-products td:nth-child(1){font-weight:900;font-size:1.02rem;line-height:1.15}
+    .page-products td:nth-child(2){color:#7a6657;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .page-products td:nth-child(3){font-weight:900;white-space:nowrap;text-align:left}
-    .page-products td:nth-child(4){display:inline-flex;width:max-content;align-items:center;border-radius:999px;background:#e9ffe4;color:#24733c;font-weight:900;padding:6px 10px;font-size:.92rem;white-space:nowrap}
-    .page-products .product-actions-cell{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:nowrap}
+    .page-products td:nth-child(4){display:flex;justify-self:start;align-items:center;justify-content:center;min-width:86px;max-width:96px;border-radius:999px;background:#e9ffe4;color:#24733c;font-weight:900;padding:7px 10px;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .page-products .product-actions-cell{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:nowrap;min-width:0}
     .page-products .inline-action-form{margin:0!important;display:inline-flex}
-    .page-products .btn.mini{min-height:34px;width:auto!important;padding:7px 10px;border-radius:10px;font-size:.88rem;line-height:1.1;white-space:nowrap}
+    .page-products .btn.mini{min-height:36px;width:auto!important;padding:8px 11px;border-radius:11px;font-size:.86rem;line-height:1.1;white-space:nowrap}
     .page-products .btn.edit{background:#2357a5;color:#fff!important;text-decoration:none}
-    @media(max-width:1050px){.page-products .two-col{grid-template-columns:1fr}.page-products tr{grid-template-columns:minmax(0,1fr) 120px 90px 105px}.page-products .product-actions-cell{grid-column:1/-1;justify-content:flex-start}}
-    @media(max-width:640px){.page-products tr{display:block;padding:14px}.page-products td{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #f0dfc9}.page-products td:last-child{border-bottom:0}.page-products td:before{font-weight:900;color:#7a6657}.page-products td:nth-child(1):before{content:'პროდუქტი'}.page-products td:nth-child(2):before{content:'კატეგორია'}.page-products td:nth-child(3):before{content:'ფასი'}.page-products td:nth-child(4):before{content:'სტატუსი'}.page-products .product-actions-cell{justify-content:stretch;display:flex}.page-products .product-actions-cell,.page-products .inline-action-form,.page-products .product-actions-cell .btn{width:100%!important}.page-products .btn.mini{min-height:40px}}
+    @media(max-width:1120px){.page-products .two-col{grid-template-columns:1fr}.page-products tr{grid-template-columns:minmax(0,1fr) 110px 80px 96px 205px}}
+    @media(max-width:820px){.page-products tr{grid-template-columns:minmax(0,1fr) 90px 76px 96px}.page-products .product-actions-cell{grid-column:1/-1;justify-content:flex-start}}
+    @media(max-width:640px){.page-products tr{display:block;padding:14px}.page-products td{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #f0dfc9}.page-products td:last-child{border-bottom:0}.page-products td:before{font-weight:900;color:#7a6657}.page-products td:nth-child(1):before{content:'პროდუქტი'}.page-products td:nth-child(2):before{content:'კატეგორია'}.page-products td:nth-child(3):before{content:'ფასი'}.page-products td:nth-child(4):before{content:'სტატუსი'}.page-products td:nth-child(4){max-width:none;width:100%;justify-content:space-between;background:transparent;color:inherit;padding:7px 0}.page-products td:nth-child(4)::after{content:attr(data-status);border-radius:999px;background:#e9ffe4;color:#24733c;font-weight:900;padding:6px 10px}.page-products .product-actions-cell{justify-content:stretch;display:flex}.page-products .product-actions-cell,.page-products .inline-action-form,.page-products .product-actions-cell .btn{width:100%!important}.page-products .btn.mini{min-height:40px}}
   `;
   document.head.appendChild(style);
 }
@@ -58,6 +59,11 @@ function enhanceProductsPage() {
     const actionCell = toggleForm.closest('td');
     if (!actionCell) return;
     actionCell.classList.add('product-actions-cell');
+
+    const row = actionCell.closest('tr');
+    if (row && row.children[3]) {
+      row.children[3].setAttribute('data-status', row.children[3].textContent.trim());
+    }
 
     const editLink = actionCell.querySelector('a');
     if (editLink) editLink.classList.add('btn', 'mini', 'edit');
