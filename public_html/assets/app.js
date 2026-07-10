@@ -110,15 +110,17 @@ function enhanceTablePage(tableId) {
   const total = parseFloat(totalText.replace(/[^0-9.]/g, '')) || 0;
   if (total > 0.001) return;
 
+  const closeTitle = Array.from(orderCard.querySelectorAll('h2')).find(function (h) { return h.textContent.includes('მაგიდის დახურვა'); });
+  const closeForm = orderCard.querySelector('form.close-form');
+  if (closeTitle) closeTitle.remove();
+  if (closeForm) closeForm.remove();
+
   const form = document.createElement('form');
   form.id = 'zero-close-form';
   form.method = 'post';
   form.className = 'zero-close-form';
-  form.innerHTML = '<h3>ცარიელი მაგიდის დახურვა</h3><p class="muted">გამოიყენე მაშინ, როცა მაგიდა შეცდომით გაიხსნა ან ყველა პროდუქტი გაუქმდა და ჯამი 0.00 ₾ არის.</p><input type="hidden" name="action" value="cancel_order"><input type="hidden" name="table_id" value="' + escapeHtml(tableId) + '"><label>მიზეზი<select name="cancel_reason"><option>ცარიელი შეკვეთა / შეცდომით გახსნილი მაგიდა</option><option>ყველა პროდუქტი გაუქმდა</option><option>კლიენტი წავიდა შეკვეთამდე</option><option>სხვა</option></select></label><label>პაროლი მოლარისთვის<input type="password" name="cancel_password" placeholder="Admin-ს არ სჭირდება"></label><button class="btn danger" type="submit">ნულით დახურვა</button>';
-
-  const closeTitle = Array.from(orderCard.querySelectorAll('h2')).find(function (h) { return h.textContent.includes('მაგიდის დახურვა'); });
-  if (closeTitle) closeTitle.parentNode.insertBefore(form, closeTitle);
-  else orderCard.appendChild(form);
+  form.innerHTML = '<h3>ცარიელი მაგიდის დახურვა</h3><p class="muted">ჯამი არის 0.00 ₾ — მაგიდა დაიხურება გაყიდვის გარეშე.</p><input type="hidden" name="action" value="cancel_order"><input type="hidden" name="table_id" value="' + escapeHtml(tableId) + '"><button class="btn danger" type="submit">ნულით დახურვა</button>';
+  orderCard.appendChild(form);
 }
 
 function escapeHtml(text) {
@@ -137,16 +139,4 @@ document.addEventListener('submit', function (event) {
       event.preventDefault();
     }
   }
-});
-
-document.addEventListener('click', function (event) {
-  const button = event.target.closest('[data-print]');
-  if (!button) return;
-  const id = button.getAttribute('data-print');
-  const el = document.getElementById(id);
-  if (!el) return;
-  const content = el.innerText;
-  const win = window.open('', '_blank', 'width=420,height=720');
-  win.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Print</title><style>@page{size:80mm auto;margin:4mm}body{font-family:Arial,sans-serif;font-size:13px;line-height:1.35;color:#000;margin:0}pre{white-space:pre-wrap;margin:0;word-break:break-word}</style></head><body><pre>' + escapeHtml(content) + '</pre><script>window.onload=function(){window.print();}</script></body></html>');
-  win.document.close();
 });
