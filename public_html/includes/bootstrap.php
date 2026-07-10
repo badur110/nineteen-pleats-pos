@@ -303,6 +303,36 @@ function garbalia_mark_svg(): string {
     return '<svg class="garbalia-bird" viewBox="0 0 120 82" aria-hidden="true"><path d="M8 24 L50 9 L86 35 L45 37 Z"/><path d="M50 9 L58 64 L86 35"/><path d="M50 9 L50 37 L8 24"/><path d="M45 37 L58 64 L60 80 L72 48"/><path d="M86 35 L105 14 L116 20 L104 22"/><path d="M86 35 L105 14 L80 3 L50 9"/><path d="M8 24 L33 48 L45 37"/><path d="M33 48 L8 41 L8 24"/></svg>';
 }
 
+function handle_unsent_quantity_update(): void {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || ($_POST['action'] ?? '') !== 'update_item_quantity') {
+        return;
+    }
+    require_login();
+    $day = active_day();
+    if (!$day) {
+        flash('სამუშაო დღე დახურულია.', 'warn');
+        redirect_to('day');
+    }
+    $tableId = (int)($_POST['table_id'] ?? 0);
+    $itemId = (int)($_POST['item_id'] ?? 0);
+    $quantity = max(1, (int)($_POST['quantity'] ?? 1));
+    $stmt = db()->prepare('SELECT oi.*, o.id AS order_id, o.table_id, o.business_day_id, o.status AS order_status FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE oi.id=? AND o.table_id=? AND o.business_day_id=? AND o.status="open" AND oi.is_cancelled=0 LIMIT 1');
+    $stmt->execute([$itemId, $tableId, (int)$day['id']]);
+    $item = $stmt->fetch();
+    if (!$item) {
+        flash('პროდუქტი ვერ მოიძებნა.', 'warn');
+        redirect_to('table', ['id' => $tableId]);
+    }
+    if (!empty($item['sent_at'])) {
+        flash('გადაგზავნილი პროდუქტის რაოდენობა აღარ იცვლება.', 'warn');
+        redirect_to('table', ['id' => $tableId]);
+    }
+    db()->prepare('UPDATE order_items SET quantity=? WHERE id=? AND sent_at IS NULL AND is_cancelled=0')->execute([$quantity, $itemId]);
+    redirect_to('table', ['id' => $tableId]);
+}
+
+handle_unsent_quantity_update();
+
 function render_header(string $title): void {
     $sub = is_logged_in() ? role_label(current_user()['role']) : 'Restaurant Management System';
     echo '<!doctype html><html lang="ka"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>GARBALIA</title><link rel="icon" type="image/png" href="/Logo.png"><link rel="shortcut icon" type="image/png" href="/Logo.png"><link rel="apple-touch-icon" href="/Logo.png"><link rel="stylesheet" href="/assets/style.css"></head><body class="app-shell">';
@@ -323,7 +353,7 @@ function render_header(string $title): void {
 }
 
 function render_footer(): void {
-    echo '</main><footer class="app-footer"><div class="footer-inner"><div class="footer-brand"><span class="footer-mark">' . garbalia_mark_svg() . '</span><div><strong>© GARBALIA POS</strong><small>Restaurant management software</small></div></div><div class="footer-credit"><span>Developed by <b>Giorgi Katamadze</b></span><a class="whatsapp-link" href="https://wa.me/995577785078" target="_blank" rel="noopener">WhatsApp</a></div></div></footer><script src="/assets/app.js?v=20"></script><script src="/assets/close-confirm.js?v=20"></script></body></html>';
+    echo '</main><footer class="app-footer"><div class="footer-inner"><div class="footer-brand"><span class="footer-mark">' . garbalia_mark_svg() . '</span><div><strong>© GARBALIA POS</strong><small>Restaurant management software</small></div></div><div class="footer-credit"><span>Developed by <b>Giorgi Katamadze</b></span><a class="whatsapp-link" href="https://wa.me/995577785078" target="_blank" rel="noopener">WhatsApp</a></div></div></footer><script src="/assets/app.js?v=20"></script><script src="/assets/close-confirm.js?v=20"></script><script src="/assets/quantity-edit.js?v=1"></script></body></html>';
 }
 
 function receipt_card(string $id, string $title, string $text): string {
