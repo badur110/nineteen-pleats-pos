@@ -36,7 +36,6 @@ function url_for(string $page, array $params = []): string {
     if ($page === '') {
         $page = 'day';
     }
-
     if ($page === 'table' && isset($params['id'])) {
         $id = (int)$params['id'];
         unset($params['id']);
@@ -44,7 +43,6 @@ function url_for(string $page, array $params = []): string {
     } else {
         $path = '/' . $page;
     }
-
     $query = $params ? ('?' . http_build_query($params)) : '';
     return $path . $query;
 }
@@ -63,7 +61,6 @@ function db(): PDO {
     if ($pdo instanceof PDO) {
         return $pdo;
     }
-
     $dsn = 'mysql:host=' . cfg('db_host', 'localhost') . ';dbname=' . cfg('db_name') . ';charset=' . cfg('db_charset', 'utf8mb4');
     $pdo = new PDO($dsn, cfg('db_user'), cfg('db_pass'), [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -236,7 +233,6 @@ function day_summary(int $dayId): array {
         'card_total' => 0,
         'cancelled_count' => 0,
     ];
-
     $stmt = db()->prepare("SELECT COUNT(*) c, COALESCE(SUM(total),0) total, COALESCE(SUM(cash_amount),0) cash_total, COALESCE(SUM(card_amount),0) card_total FROM orders WHERE business_day_id=? AND status='closed'");
     $stmt->execute([$dayId]);
     $row = $stmt->fetch() ?: [];
@@ -244,7 +240,6 @@ function day_summary(int $dayId): array {
     $summary['sales_total'] = (float)($row['total'] ?? 0);
     $summary['cash_total'] = (float)($row['cash_total'] ?? 0);
     $summary['card_total'] = (float)($row['card_total'] ?? 0);
-
     $stmt = db()->prepare('SELECT COUNT(*) FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE o.business_day_id=? AND oi.is_cancelled=1');
     $stmt->execute([$dayId]);
     $summary['cancelled_count'] = (int)$stmt->fetchColumn();
@@ -349,12 +344,12 @@ function garbalia_mark_svg(): string {
 
 function render_header(string $title): void {
     $sub = is_logged_in() ? role_label(current_user()['role']) : 'Restaurant Management System';
-    echo '<!doctype html><html lang="ka"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>GARBALIA</title><link rel="icon" type="image/png" href="/Logo.png"><link rel="shortcut icon" type="image/png" href="/Logo.png"><link rel="apple-touch-icon" href="/Logo.png"><link rel="stylesheet" href="/assets/style.css?v=23"><link rel="stylesheet" href="/assets/mobile-polish.css?v=1"></head><body class="app-shell">';
+    echo '<!doctype html><html lang="ka"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>GARBALIA</title><link rel="icon" type="image/png" href="/Logo.png"><link rel="shortcut icon" type="image/png" href="/Logo.png"><link rel="apple-touch-icon" href="/Logo.png"><link rel="stylesheet" href="/assets/style.css?v=24"><link rel="stylesheet" href="/assets/mobile-polish.css?v=1"></head><body class="app-shell">';
     echo '<header class="topbar"><a class="brand garbalia-brand" href="' . h(url_for('day')) . '"><span class="garbalia-mark">' . garbalia_mark_svg() . '</span><span class="brand-text"><strong class="garbalia-word">GARBALIA POS</strong><small>' . h($sub) . '</small></span></a>';
     if (is_logged_in()) {
         echo '<nav class="nav"><a href="' . h(url_for('day')) . '">დღე</a><a href="' . h(url_for('tables')) . '">მაგიდები</a>';
         if (is_admin()) {
-            echo '<a href="' . h(url_for('products')) . '">პროდუქტები</a><a href="' . h(url_for('history')) . '">ისტორია</a>';
+            echo '<a href="' . h(url_for('products')) . '">პროდუქტები</a><a href="' . h(url_for('statistics')) . '">სტატისტიკა</a><a href="' . h(url_for('history')) . '">ისტორია</a>';
         }
         echo '<a href="' . h(url_for('logout')) . '">გასვლა</a></nav>';
     }
