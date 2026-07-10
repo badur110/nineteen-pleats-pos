@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
   injectGarbaliaWorkflowStyles();
   markOrderItemStates();
   enhanceDayCashMovementPanel();
+  enhanceHistoryPage();
 });
 
 function injectGarbaliaWorkflowStyles() {
@@ -26,6 +27,7 @@ function injectGarbaliaWorkflowStyles() {
     .garbalia-cash-actions-panel{margin:18px 0!important;padding:18px 20px!important;border-radius:24px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;background:linear-gradient(135deg,rgba(255,250,242,.97),rgba(241,226,206,.76))!important;box-shadow:0 18px 42px rgba(43,27,16,.10)!important}
     .garbalia-cash-panel-copy{display:flex;align-items:center;gap:14px;min-width:0}.garbalia-cash-panel-copy h2{margin:0;font-size:1.12rem;font-weight:950;color:#2b1b10}.garbalia-cash-panel-copy p{margin:4px 0 0;color:#7a6657;font-weight:800;line-height:1.35}.garbalia-cash-panel-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:16px;background:#2b1b10;color:#fff;font-size:1.2rem;font-weight:950;box-shadow:0 10px 22px rgba(43,27,16,.16)}.garbalia-cash-panel-actions{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.garbalia-cash-panel-actions .btn{min-height:46px;border-radius:15px!important;white-space:nowrap!important}.garbalia-day-close-card{margin-top:16px!important;margin-bottom:18px!important;max-width:640px!important}
     .garbalia-cash-modal[hidden]{display:none!important}.garbalia-cash-modal{position:fixed;inset:0;z-index:10020;display:grid;place-items:center;padding:20px;background:rgba(43,27,16,.46);backdrop-filter:blur(7px);animation:garbaliaFadeIn .16s ease-out}.garbalia-cash-dialog{position:relative;width:min(520px,100%);max-height:min(88vh,760px);overflow:auto;border:1px solid #ead6bd;border-radius:28px;background:linear-gradient(180deg,#fffaf2 0%,#f8ecdd 100%);box-shadow:0 28px 70px rgba(43,27,16,.30);padding:28px;color:#2b1b10;text-align:center;animation:garbaliaPopIn .18s ease-out}.garbalia-cash-history-dialog{width:min(760px,100%);text-align:left}.garbalia-cash-bg-logo{position:absolute;right:-18px;top:-16px;width:136px;height:88px;object-fit:contain;opacity:.07;filter:brightness(0);pointer-events:none}.garbalia-cash-mini{width:48px;height:34px;object-fit:contain;margin:0 auto 10px;display:block;mix-blend-mode:multiply}.garbalia-cash-dialog h2,.garbalia-cash-dialog h3{margin:0 0 8px;font-size:1.35rem;font-weight:950;letter-spacing:-.02em}.garbalia-cash-dialog p{margin:0 auto 18px;max-width:390px;color:#6d5140;font-weight:800;line-height:1.45}.garbalia-cash-close{position:absolute;right:12px;top:12px;width:34px;height:34px;border:0;border-radius:50%;background:rgba(43,27,16,.08);color:#2b1b10;font-size:20px;font-weight:900;cursor:pointer}.garbalia-cash-popup-form{display:grid!important;gap:13px!important;text-align:left}.garbalia-cash-popup-form label{margin:0!important}.garbalia-cash-popup-form input,.garbalia-cash-popup-form select{min-height:48px!important;border-radius:14px!important}.garbalia-cash-popup-form .btn{min-height:48px!important;border-radius:14px!important;width:100%!important}.garbalia-cash-history-dialog .table-wrap{margin-top:12px;max-height:52vh;overflow:auto}.garbalia-cash-history-dialog table{width:100%}
+    .history-clean-actions{gap:8px!important}.history-clean-actions .btn{white-space:nowrap!important}.history-detail.only-detail{max-width:980px;margin:0 auto 22px!important}.history-detail.only-detail .page-head{margin-bottom:14px!important}.history-detail.only-detail h3{margin-top:20px!important}.history-detail.only-detail .table-wrap{margin-top:10px!important}
     @media(max-width:820px){.page-table .cancel-form.cancel-form-compact{grid-template-columns:1fr!important}.current-order-card .order-item{padding:12px!important}.garbalia-cash-actions-panel{align-items:stretch!important;flex-direction:column!important}.garbalia-cash-panel-actions{display:grid;grid-template-columns:1fr;width:100%}.garbalia-cash-panel-actions .btn{width:100%!important}}
   `;
   document.head.appendChild(style);
@@ -112,6 +114,131 @@ document.addEventListener('keydown', function (event) {
   if (event.key !== 'Escape') return;
   document.querySelectorAll('.garbalia-cash-modal:not([hidden])').forEach(function (modal) { closeCashModal(modal); });
 });
+
+function isHistoryPage() {
+  const params = new URLSearchParams(window.location.search);
+  const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
+  return params.get('page') === 'history' || path === 'history';
+}
+
+function formatDateForUrl(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + d;
+}
+
+function historyUrl(from, to) {
+  const params = new URLSearchParams(window.location.search);
+  params.delete('page');
+  params.delete('order_id');
+  params.delete('payment');
+  params.delete('status');
+  params.delete('item_filter');
+  params.delete('product');
+  params.delete('export');
+  params.set('from', from);
+  params.set('to', to);
+  const query = params.toString();
+  return '/history' + (query ? '?' + query : '');
+}
+
+function removeHistoryFilterByLabel(text) {
+  document.querySelectorAll('.history-filters label').forEach(function (label) {
+    const ownText = Array.from(label.childNodes)
+      .filter(function (node) { return node.nodeType === Node.TEXT_NODE; })
+      .map(function (node) { return node.textContent.trim(); })
+      .join(' ');
+    if (ownText.includes(text) || label.textContent.trim().startsWith(text)) label.remove();
+  });
+}
+
+function simplifyHistoryListTable() {
+  const cards = Array.from(document.querySelectorAll('section.card'));
+  const listCard = cards.find(function (card) {
+    const h2 = card.querySelector('h2');
+    return h2 && h2.textContent.trim().includes('ანგარიშების სია');
+  });
+  if (!listCard) return;
+  const table = listCard.querySelector('table');
+  if (!table || table.dataset.garbaliaHistoryClean === '1') return;
+  table.dataset.garbaliaHistoryClean = '1';
+
+  const headRow = table.querySelector('thead tr');
+  if (headRow && headRow.children.length >= 9) {
+    const heads = Array.from(headRow.children);
+    headRow.innerHTML = '';
+    [heads[7], heads[0], heads[2], heads[3], heads[4], heads[5], heads[6], heads[8]].forEach(function (cell) { headRow.appendChild(cell); });
+  }
+
+  table.querySelectorAll('tbody tr').forEach(function (row) {
+    const cells = Array.from(row.children);
+    if (cells.length < 9) return;
+    row.innerHTML = '';
+    [cells[7], cells[0], cells[2], cells[3], cells[4], cells[5], cells[6], cells[8]].forEach(function (cell) { row.appendChild(cell); });
+  });
+}
+
+function enhanceHistoryPage() {
+  if (!isHistoryPage()) return;
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('order_id');
+
+  if (orderId) {
+    document.querySelectorAll('.history-filters, .stats').forEach(function (el) { el.remove(); });
+    const mainHead = document.querySelector('.wrap > .page-head');
+    if (mainHead) mainHead.remove();
+    Array.from(document.querySelectorAll('section.card')).forEach(function (card) {
+      const h2 = card.querySelector('h2');
+      if (h2 && h2.textContent.trim().includes('ანგარიშების სია')) card.remove();
+    });
+    const detail = document.querySelector('.history-detail');
+    if (detail) {
+      detail.classList.add('only-detail');
+      const back = detail.querySelector('.page-head .btn');
+      if (back) {
+        back.href = '/history';
+        back.textContent = 'ისტორიაში დაბრუნება';
+      }
+    }
+    return;
+  }
+
+  removeHistoryFilterByLabel('პროდუქტის ძებნა');
+  removeHistoryFilterByLabel('გადახდა');
+  removeHistoryFilterByLabel('სტატუსი');
+  removeHistoryFilterByLabel('პროდუქტები');
+
+  const actions = document.querySelector('.history-actions');
+  if (actions && !actions.dataset.garbaliaExtraFilters) {
+    actions.dataset.garbaliaExtraFilters = '1';
+    actions.classList.add('history-clean-actions');
+    const today = new Date();
+    const last7 = new Date(today);
+    last7.setDate(today.getDate() - 6);
+    const prevMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const prevMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+    const yearStart = new Date(today.getFullYear(), 0, 1);
+    const buttons = [
+      ['წინა თვეში', historyUrl(formatDateForUrl(prevMonthStart), formatDateForUrl(prevMonthEnd))],
+      ['ამ წელში', historyUrl(formatDateForUrl(yearStart), formatDateForUrl(today))],
+      ['ბოლო 7 დღეში', historyUrl(formatDateForUrl(last7), formatDateForUrl(today))]
+    ];
+    const excel = actions.querySelector('a[href*="export=excel"]');
+    buttons.forEach(function (item) {
+      const a = document.createElement('a');
+      a.className = 'btn';
+      a.href = item[1];
+      a.textContent = item[0];
+      if (excel) actions.insertBefore(a, excel); else actions.appendChild(a);
+    });
+  }
+
+  const pageHint = document.querySelector('.wrap > .page-head .muted');
+  if (pageHint) pageHint.textContent = 'აირჩიე პერიოდი, მაგიდა ან მომხმარებელი — შემდეგ გახსენი კონკრეტული ანგარიში.';
+
+  simplifyHistoryListTable();
+}
 
 function activeOrderItems() {
   return Array.from(document.querySelectorAll('.order-item:not(.cancelled)'));
