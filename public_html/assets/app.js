@@ -1,7 +1,7 @@
 let garbaliaAllowNavigation = false;
 
 function garbaliaLogoImg(className) {
-  return '<img class="' + className + '" src="/Logo.png?v=11" alt="GARBALIA">';
+  return '<img class="' + className + '" src="/Logo.png?v=12" alt="GARBALIA">';
 }
 
 document.addEventListener('change', function (event) {
@@ -176,19 +176,44 @@ function injectProductPageStyles() {
   const style = document.createElement('style');
   style.id = 'product-page-style';
   style.textContent = `
-    .page-products .wrap{max-width:1180px}.page-products .two-col{grid-template-columns:minmax(300px,360px) minmax(0,1fr);align-items:start;gap:20px}.page-products .card{border-radius:24px;overflow:hidden}.page-products .table-wrap{border:0;overflow:visible;background:transparent;width:100%}
-    .page-products table,.page-products tbody{display:block;width:100%;min-width:0;background:transparent;border-collapse:separate;border-spacing:0}.page-products thead{display:none}.page-products tbody{display:grid;gap:10px}
-    .page-products tr{display:grid;width:100%;grid-template-columns:minmax(150px,1fr) 88px 72px 78px 166px;gap:8px;align-items:center;background:#fff;border:1px solid #ead6bd;border-radius:18px;padding:12px;box-shadow:0 8px 20px rgba(43,27,16,.07);overflow:hidden}
-    .page-products td{border:0;padding:0;min-width:0;overflow:hidden;text-overflow:ellipsis}.page-products td:nth-child(1){font-weight:900;font-size:1rem;line-height:1.18;white-space:normal;overflow-wrap:anywhere}.page-products td:nth-child(2){color:#7a6657;font-size:.92rem;white-space:nowrap}.page-products td:nth-child(3){font-weight:900;white-space:nowrap;font-size:.95rem}
-    .page-products td:nth-child(4){display:flex;width:100%;align-items:center;justify-content:center;border-radius:999px;background:#e9ffe4;color:#24733c;font-weight:900;padding:6px 8px;font-size:.84rem;white-space:nowrap;overflow:hidden}.page-products .product-actions-cell{display:flex;gap:7px;align-items:center;justify-content:flex-end;flex-wrap:nowrap;overflow:visible}.page-products .inline-action-form{margin:0!important;display:inline-flex}.page-products .btn.mini{min-height:34px;width:auto!important;padding:7px 9px;border-radius:10px;font-size:.84rem;line-height:1.1;white-space:nowrap}.page-products .btn.edit{background:#2357a5;color:#fff!important;text-decoration:none}
-    @media(max-width:1120px){.page-products .two-col{grid-template-columns:1fr}.page-products tr{grid-template-columns:minmax(0,1fr) 100px 78px 86px 174px}}
-    @media(max-width:720px){.page-products tr{grid-template-columns:minmax(0,1fr) 90px 72px 82px}.page-products .product-actions-cell{grid-column:1/-1;justify-content:flex-start}.page-products .btn.mini{min-height:38px}}
-    @media(max-width:640px){.page-products tr{display:block;padding:14px}.page-products td{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #f0dfc9;overflow:visible}.page-products td:last-child{border-bottom:0}.page-products td:before{font-weight:900;color:#7a6657}.page-products td:nth-child(1):before{content:'პროდუქტი'}.page-products td:nth-child(2):before{content:'კატეგორია'}.page-products td:nth-child(3):before{content:'ფასი'}.page-products td:nth-child(4):before{content:'სტატუსი'}.page-products td:nth-child(4){justify-content:space-between;background:transparent;color:#24733c;padding:7px 0}.page-products .product-actions-cell{justify-content:stretch;display:flex}.page-products .product-actions-cell,.page-products .inline-action-form,.page-products .product-actions-cell .btn{width:100%!important}}
+    .page-products .wrap{max-width:1280px!important}.page-products .page-head{align-items:center!important;margin-bottom:16px!important}.page-products .two-col{display:block!important;width:100%!important}.page-products .two-col.products-full-layout{display:block!important}.page-products .card{border-radius:24px;overflow:visible}.page-products .product-list-card{width:100%!important;max-width:none!important}.page-products .table-wrap{border:0;overflow:visible;background:transparent;width:100%}
+    .product-top-panel{margin:0 0 18px;padding:18px 20px;border:1px solid #ead6bd;border-radius:24px;background:linear-gradient(135deg,rgba(255,250,242,.96),rgba(241,226,206,.78));box-shadow:0 18px 42px rgba(43,27,16,.10)}.product-top-row{display:flex;align-items:center;justify-content:space-between;gap:18px}.product-top-copy{display:flex;align-items:center;gap:13px;min-width:0}.product-top-icon{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;background:#2b1b10;color:#fff;font-size:28px;font-weight:950;box-shadow:0 10px 22px rgba(43,27,16,.17)}.product-top-copy h2{margin:0;font-size:1.18rem;font-weight:950;color:#2b1b10}.product-top-copy p{margin:3px 0 0;color:#7a6657;font-weight:800}.product-add-toggle{min-height:46px;padding:10px 18px!important;border-radius:15px!important;white-space:nowrap!important}.product-add-holder{margin-top:14px}.product-add-card{max-width:none!important;margin:0!important;background:rgba(255,255,255,.72)!important;border:1px solid rgba(43,27,16,.10)!important;box-shadow:none!important}.product-add-card[hidden]{display:none!important}.product-add-card h2{display:none!important}.product-add-card form{display:grid!important;grid-template-columns:1.4fr 160px 220px 130px 170px;gap:12px;align-items:end}.product-add-card label{margin:0!important}.product-add-card .check{align-self:center;display:flex!important;align-items:center!important;gap:8px!important;padding:12px 14px!important;border:1px solid #ead6bd;border-radius:14px;background:#fff}.product-add-card .btn{min-height:48px!important;border-radius:14px!important}
+    .page-products table,.page-products tbody{display:block;width:100%;min-width:0;background:transparent;border-collapse:separate;border-spacing:0}.page-products thead{display:none}.page-products tbody{display:grid;gap:10px}.page-products tr{display:grid;width:100%;grid-template-columns:minmax(240px,1.35fr) minmax(130px,.8fr) 105px 98px 210px;gap:12px;align-items:center;background:#fff;border:1px solid #ead6bd;border-radius:18px;padding:13px 14px;box-shadow:0 8px 20px rgba(43,27,16,.07);overflow:hidden}.page-products td{border:0;padding:0;min-width:0;overflow:hidden;text-overflow:ellipsis}.page-products td:nth-child(1){font-weight:900;font-size:1rem;line-height:1.18;white-space:normal;overflow-wrap:anywhere}.page-products td:nth-child(2){color:#7a6657;font-size:.92rem;white-space:nowrap}.page-products td:nth-child(3){font-weight:900;white-space:nowrap;font-size:.95rem}.page-products td:nth-child(4){display:flex;width:100%;align-items:center;justify-content:center;border-radius:999px;background:#e9ffe4;color:#24733c;font-weight:900;padding:6px 8px;font-size:.84rem;white-space:nowrap;overflow:hidden}.page-products .product-actions-cell{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:nowrap;overflow:visible}.page-products .inline-action-form{margin:0!important;display:inline-flex}.page-products .btn.mini{min-height:36px;width:auto!important;padding:8px 11px;border-radius:11px;font-size:.84rem;line-height:1.1;white-space:nowrap}.page-products .btn.edit{background:#2357a5;color:#fff!important;text-decoration:none}
+    @media(max-width:1120px){.product-add-card form{grid-template-columns:1fr 130px 170px}.product-add-card .check,.product-add-card .btn{grid-column:auto}.page-products tr{grid-template-columns:minmax(0,1fr) 120px 88px 92px 194px}}
+    @media(max-width:820px){.product-top-row{align-items:stretch;flex-direction:column}.product-add-toggle{width:100%!important}.product-add-card form{grid-template-columns:1fr 1fr}.product-add-card .btn{grid-column:1/-1}.page-products tr{grid-template-columns:minmax(0,1fr) 100px 78px 86px}.page-products .product-actions-cell{grid-column:1/-1;justify-content:flex-start}.page-products .btn.mini{min-height:38px}}
+    @media(max-width:640px){.product-top-panel{padding:15px}.product-top-copy{align-items:flex-start}.page-products tr{display:block;padding:14px}.page-products td{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #f0dfc9;overflow:visible}.page-products td:last-child{border-bottom:0}.page-products td:before{font-weight:900;color:#7a6657}.page-products td:nth-child(1):before{content:'პროდუქტი'}.page-products td:nth-child(2):before{content:'კატეგორია'}.page-products td:nth-child(3):before{content:'ფასი'}.page-products td:nth-child(4):before{content:'სტატუსი'}.page-products td:nth-child(4){justify-content:space-between;background:transparent;color:#24733c;padding:7px 0}.page-products .product-actions-cell{justify-content:stretch;display:flex}.page-products .product-actions-cell,.page-products .inline-action-form,.page-products .product-actions-cell .btn{width:100%!important}.product-add-card form{grid-template-columns:1fr!important}}
   `;
   document.head.appendChild(style);
 }
 
 function enhanceProductsPage() {
+  const section = document.querySelector('.page-products .two-col');
+  const pageHead = document.querySelector('.page-products .page-head');
+  if (section && pageHead && !document.querySelector('.product-top-panel')) {
+    const cards = Array.from(section.children).filter(function (el) { return el.classList && el.classList.contains('card'); });
+    const addCard = cards[0];
+    const listCard = cards[1];
+    if (addCard && listCard) {
+      section.classList.add('products-full-layout');
+      addCard.classList.add('product-add-card');
+      listCard.classList.add('product-list-card');
+      const editMode = (addCard.querySelector('h2') && addCard.querySelector('h2').textContent.includes('რედაქტირება')) || new URLSearchParams(window.location.search).has('edit');
+      const panel = document.createElement('section');
+      panel.className = 'product-top-panel';
+      panel.innerHTML = '<div class="product-top-row"><div class="product-top-copy"><span class="product-top-icon">+</span><div><h2>პროდუქციის მართვა</h2><p>დაამატე ახალი პროდუქტი მხოლოდ მაშინ, როცა დაგჭირდება — სია კი სრულად ჩანს.</p></div></div><button type="button" class="btn success product-add-toggle">' + (editMode ? 'რედაქტირების ფორმა' : 'ახალი პროდუქტის დამატება') + '</button></div><div class="product-add-holder"></div>';
+      pageHead.insertAdjacentElement('afterend', panel);
+      panel.querySelector('.product-add-holder').appendChild(addCard);
+      const toggle = panel.querySelector('.product-add-toggle');
+      const setOpen = function (open) {
+        addCard.hidden = !open;
+        toggle.textContent = open ? 'ფორმის დამალვა' : 'ახალი პროდუქტის დამატება';
+        panel.classList.toggle('is-open', open);
+      };
+      setOpen(editMode);
+      toggle.addEventListener('click', function () { setOpen(addCard.hidden); });
+    }
+  }
+
   document.querySelectorAll('td form input[name="action"][value="toggle_product"]').forEach(function (input) {
     const toggleForm = input.closest('form');
     if (!toggleForm || toggleForm.dataset.enhanced === '1') return;
@@ -287,7 +312,7 @@ function showGarbaliaConfirm(options) {
         return '<div' + cls + '><span>' + escapeHtml(row.label) + '</span><strong>' + escapeHtml(row.value) + '</strong></div>';
       }).join('') + '</div>'
     : '';
-  overlay.innerHTML = '<div class="garbalia-confirm-dialog" role="dialog" aria-modal="true"><button type="button" class="garbalia-confirm-close" aria-label="დახურვა">×</button><img class="garbalia-confirm-bg-logo" src="/Logo.png?v=11" alt=""><img class="garbalia-confirm-mini" src="/Logo.png?v=11" alt="GARBALIA"><h3>' + escapeHtml(options.title || 'დადასტურება') + '</h3><p>' + escapeHtml(options.message || '') + '</p>' + infoHtml + '<div class="garbalia-confirm-actions"><button type="button" class="btn light" data-garbalia-cancel>' + escapeHtml(options.cancelText || 'არა') + '</button><button type="button" class="btn ' + escapeHtml(options.confirmClass || 'danger') + '" data-garbalia-confirm>' + escapeHtml(options.confirmText || 'დიახ') + '</button></div></div>';
+  overlay.innerHTML = '<div class="garbalia-confirm-dialog" role="dialog" aria-modal="true"><button type="button" class="garbalia-confirm-close" aria-label="დახურვა">×</button><img class="garbalia-confirm-bg-logo" src="/Logo.png?v=12" alt=""><img class="garbalia-confirm-mini" src="/Logo.png?v=12" alt="GARBALIA"><h3>' + escapeHtml(options.title || 'დადასტურება') + '</h3><p>' + escapeHtml(options.message || '') + '</p>' + infoHtml + '<div class="garbalia-confirm-actions"><button type="button" class="btn light" data-garbalia-cancel>' + escapeHtml(options.cancelText || 'არა') + '</button><button type="button" class="btn ' + escapeHtml(options.confirmClass || 'danger') + '" data-garbalia-confirm>' + escapeHtml(options.confirmText || 'დიახ') + '</button></div></div>';
   document.body.appendChild(overlay);
   const close = function () { overlay.remove(); };
   const confirmButton = overlay.querySelector('[data-garbalia-confirm]');
