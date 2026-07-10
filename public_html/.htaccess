@@ -17,6 +17,9 @@ RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on'"
 </IfModule>
 
+# Serve stylesheet with extra GARBALIA runtime fixes.
+RewriteRule ^assets/style\.css$ assets/style-patched.php [L]
+
 # Hide index.php and old ?page= links from the browser URL.
 RewriteCond %{THE_REQUEST} \s/+index\.php[\s?] [NC]
 RewriteRule ^index\.php$ / [R=301,L]
