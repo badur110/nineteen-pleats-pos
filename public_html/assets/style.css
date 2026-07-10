@@ -130,3 +130,11 @@ table{width:100%;border-collapse:collapse;min-width:620px;background:#fff}th,td{
 .page-products .product-top-copy h2,
 .page-products .product-top-copy p{display:none!important}
 .page-products .product-top-copy>div::before{content:"რესტორანი 19 ნაოჭი პროდუქტები";display:block;font-size:clamp(1.18rem,2vw,1.55rem);line-height:1.12;font-weight:950;letter-spacing:-.02em;color:#2b1b10;white-space:normal}
+
+body .cancel-form input[name="cancel_password"],
+body .cancel-form.cancel-form-compact input[name="cancel_password"]{display:none!important}
+body .cancel-form.cancel-form-compact{grid-template-columns:minmax(190px,1fr) 116px!important}
+body .cancel-form.cancel-form-compact .btn{grid-column:auto!important;width:100%!important}
+body .cancel-form.cancel-form-compact .muted{display:none!important}
+@media(max-width:820px){body .cancel-form.cancel-form-compact{grid-template-columns:minmax(0,1fr) 116px!important}body .cancel-form.cancel-form-compact .btn{grid-column:auto!important}}
+@media(max-width:620px){body .cancel-form.cancel-form-compact{grid-template-columns:1fr!important}body .cancel-form.cancel-form-compact .btn{grid-column:auto!important}}
