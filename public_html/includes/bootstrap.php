@@ -32,7 +32,21 @@ function qty($value): string {
 }
 
 function url_for(string $page, array $params = []): string {
-    return '?' . http_build_query(array_merge(['page' => $page], $params));
+    $page = trim($page, '/');
+    if ($page === '') {
+        $page = 'day';
+    }
+
+    if ($page === 'table' && isset($params['id'])) {
+        $id = (int)$params['id'];
+        unset($params['id']);
+        $path = '/table/' . $id;
+    } else {
+        $path = '/' . $page;
+    }
+
+    $query = $params ? ('?' . http_build_query($params)) : '';
+    return $path . $query;
 }
 
 function redirect_to(string $page, array $params = []): void {
@@ -246,12 +260,12 @@ function garbalia_mark_svg(): string {
 function render_header(string $title): void {
     $app = 'GARBALIA POS';
     $sub = is_logged_in() ? role_label(current_user()['role']) : 'Restaurant Management System';
-    echo '<!doctype html><html lang="ka"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>' . h($title) . ' — ' . h($app) . '</title><link rel="stylesheet" href="assets/style.css"></head><body class="app-shell">';
+    echo '<!doctype html><html lang="ka"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>' . h($title) . ' — ' . h($app) . '</title><link rel="stylesheet" href="/assets/style.css"></head><body class="app-shell">';
     echo '<header class="topbar"><a class="brand garbalia-brand" href="' . h(url_for('day')) . '"><span class="garbalia-mark">' . garbalia_mark_svg() . '</span><span class="brand-text"><strong class="garbalia-word">GARBALIA POS</strong><small>' . h($sub) . '</small></span></a>';
     if (is_logged_in()) {
         echo '<nav class="nav"><a href="' . h(url_for('day')) . '">დღე</a><a href="' . h(url_for('tables')) . '">მაგიდები</a>';
         if (is_admin()) {
-            echo '<a href="' . h(url_for('products')) . '">პროდუქტები</a><a href="' . h(url_for('reports')) . '">რეპორტები</a>';
+            echo '<a href="' . h(url_for('products')) . '">პროდუქტები</a><a href="' . h(url_for('history')) . '">ისტორია</a><a href="' . h(url_for('reports')) . '">რეპორტები</a>';
         }
         echo '<a href="' . h(url_for('logout')) . '">გასვლა</a></nav>';
     }
@@ -264,7 +278,7 @@ function render_header(string $title): void {
 }
 
 function render_footer(): void {
-    echo '</main><footer class="app-footer"><div class="footer-inner"><div class="footer-brand"><span class="footer-mark">' . garbalia_mark_svg() . '</span><div><strong>© GARBALIA POS</strong><small>Restaurant management software</small></div></div><div class="footer-credit"><span>Developed by <b>Giorgi Katamadze</b></span><a class="whatsapp-link" href="https://wa.me/995577785078" target="_blank" rel="noopener">WhatsApp</a></div></div></footer><script src="assets/app.js"></script></body></html>';
+    echo '</main><footer class="app-footer"><div class="footer-inner"><div class="footer-brand"><span class="footer-mark">' . garbalia_mark_svg() . '</span><div><strong>© GARBALIA POS</strong><small>Restaurant management software</small></div></div><div class="footer-credit"><span>Developed by <b>Giorgi Katamadze</b></span><a class="whatsapp-link" href="https://wa.me/995577785078" target="_blank" rel="noopener">WhatsApp</a></div></div></footer><script src="/assets/app.js"></script></body></html>';
 }
 
 function receipt_card(string $id, string $title, string $text): string {
