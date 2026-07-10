@@ -1,3 +1,5 @@
+let garbaliaAllowNavigation = false;
+
 document.addEventListener('change', function (event) {
   if (event.target && event.target.id === 'payment_type') {
     const box = document.getElementById('mixed_fields');
@@ -32,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (route === 'table') {
     document.body.classList.add('page-table');
     enhanceTablePage(params.get('id') || tableIdFromPath());
+    initUnsentOrderGuard();
   }
 });
 
@@ -48,7 +51,7 @@ function tableIdFromPath() {
 }
 
 function garbaliaLogoImg(className) {
-  return '<img class="' + className + '" src="/Logo.png?v=6" alt="GARBALIA">';
+  return '<img class="' + className + '" src="/Logo.png?v=7" alt="GARBALIA">';
 }
 
 function injectGarbaliaBrandStyles() {
@@ -57,13 +60,9 @@ function injectGarbaliaBrandStyles() {
   style.id = 'garbalia-exact-brand-style';
   style.textContent = `
     .garbalia-mark,.footer-mark{display:flex!important;align-items:center!important;justify-content:center!important;background:transparent!important;color:#111!important;overflow:visible!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important}
-    .garbalia-mark{width:76px!important;height:44px!important;flex:0 0 76px!important}
-    .footer-mark{width:76px!important;height:44px!important;flex:0 0 76px!important}
-    .garbalia-header-logo,.footer-logo-img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important}
-    .garbalia-header-logo{filter:brightness(0) invert(1)!important;mix-blend-mode:screen!important}
-    .footer-logo-img{mix-blend-mode:multiply!important}
-    .garbalia-word{letter-spacing:.04em!important}
-    .brand.garbalia-brand{gap:13px!important;min-width:0!important}.brand-text{min-width:0!important}
+    .garbalia-mark{width:76px!important;height:44px!important;flex:0 0 76px!important}.footer-mark{width:76px!important;height:44px!important;flex:0 0 76px!important}
+    .garbalia-header-logo,.footer-logo-img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important}.garbalia-header-logo{filter:brightness(0) invert(1)!important;mix-blend-mode:screen!important}.footer-logo-img{mix-blend-mode:multiply!important}
+    .garbalia-word{letter-spacing:.04em!important}.brand.garbalia-brand{gap:13px!important;min-width:0!important}.brand-text{min-width:0!important}
     .login-card{position:relative;overflow:hidden;border-radius:28px!important;max-width:460px!important}.login-card:before{display:none!important;content:none!important}
     .login-brand-line{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:8px!important;margin:0 auto 18px!important;width:100%!important;text-align:center!important}
     .login-logo{flex:0 0 auto!important;width:70px!important;max-width:70px!important;height:62px!important;margin:0 auto!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;border:0!important;overflow:visible!important}
@@ -71,8 +70,11 @@ function injectGarbaliaBrandStyles() {
     .garbalia-login-badge{margin:0 auto!important;display:flex!important;flex-direction:column!important;gap:3px!important;align-items:center!important;justify-content:center!important;text-align:center!important;border:0!important;background:transparent!important;border-radius:0!important;padding:0!important;color:#2b1b10!important;box-shadow:none!important;min-width:0!important;font-family:Inter,Montserrat,Poppins,Arial,sans-serif!important}
     .garbalia-login-badge strong{font-size:1rem!important;letter-spacing:.14em!important;line-height:1.1!important;font-weight:950!important;text-align:center!important}.garbalia-login-badge small{font-size:.76rem!important;color:#6d5140!important;font-weight:800!important;line-height:1.25!important;text-align:center!important;letter-spacing:.01em!important}
     .footer-brand{gap:14px!important}.footer-brand strong{letter-spacing:.10em!important}
+    .unsent-overlay{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:rgba(43,27,16,.45);backdrop-filter:blur(7px)}
+    .unsent-dialog{position:relative;width:min(430px,100%);overflow:hidden;border:1px solid #ead6bd;border-radius:28px;background:linear-gradient(180deg,#fffaf2 0%,#f8ecdd 100%);box-shadow:0 28px 70px rgba(43,27,16,.28);padding:28px;color:#2b1b10;text-align:center}
+    .unsent-logo{position:absolute;right:-12px;top:-10px;width:126px;height:82px;object-fit:contain;opacity:.08;filter:brightness(0);pointer-events:none}.unsent-mini{width:46px;height:34px;object-fit:contain;margin:0 auto 10px;mix-blend-mode:multiply}.unsent-dialog h3{margin:0 0 8px;font-size:1.35rem;font-weight:950;letter-spacing:-.02em}.unsent-dialog p{margin:0 auto 20px;max-width:320px;color:#6d5140;font-weight:800}.unsent-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.unsent-actions .btn{width:100%;min-height:46px;border-radius:14px}.unsent-actions .btn.light{background:#f1e2ce!important;color:#2b1b10!important}.unsent-close{position:absolute;right:12px;top:12px;width:34px;height:34px;border:0;border-radius:50%;background:rgba(43,27,16,.08);color:#2b1b10;font-size:20px;font-weight:900;cursor:pointer}
     @media(max-width:820px){.garbalia-mark{width:66px!important;height:40px!important;flex-basis:66px!important}.garbalia-word{font-size:.95rem!important}.brand small{font-size:.72rem!important}}
-    @media(max-width:620px){.garbalia-mark,.footer-mark{width:60px!important;height:38px!important;flex-basis:60px!important}.login-logo{width:64px!important;max-width:64px!important}.login-logo-img{width:64px!important;height:56px!important}.garbalia-login-badge strong{font-size:.92rem!important}.garbalia-login-badge small{font-size:.70rem!important}}
+    @media(max-width:620px){.garbalia-mark,.footer-mark{width:60px!important;height:38px!important;flex-basis:60px!important}.login-logo{width:64px!important;max-width:64px!important}.login-logo-img{width:64px!important;height:56px!important}.garbalia-login-badge strong{font-size:.92rem!important}.garbalia-login-badge small{font-size:.70rem!important}.unsent-actions{grid-template-columns:1fr}}
   `;
   document.head.appendChild(style);
 }
@@ -167,6 +169,53 @@ function enhanceTablePage(tableId) {
   orderCard.appendChild(form);
 }
 
+function hasUnsentActiveItems() {
+  const items = Array.from(document.querySelectorAll('.order-item:not(.cancelled)'));
+  return items.some(function (item) { return !item.querySelector('.sent'); });
+}
+
+function initUnsentOrderGuard() {
+  if (document.body.dataset.unsentGuard === '1') return;
+  document.body.dataset.unsentGuard = '1';
+
+  document.addEventListener('click', function (event) {
+    const link = event.target.closest && event.target.closest('a[href]');
+    if (!link || garbaliaAllowNavigation || !hasUnsentActiveItems()) return;
+    if (link.target === '_blank' || link.hasAttribute('download')) return;
+    const href = link.getAttribute('href') || '';
+    if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+    const targetUrl = new URL(link.href, window.location.href);
+    if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search) return;
+    event.preventDefault();
+    showUnsentOrderModal(function () {
+      garbaliaAllowNavigation = true;
+      window.location.href = link.href;
+    });
+  }, true);
+
+  window.addEventListener('beforeunload', function (event) {
+    if (!garbaliaAllowNavigation && hasUnsentActiveItems()) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
+  });
+}
+
+function showUnsentOrderModal(onConfirm) {
+  const old = document.getElementById('garbalia-unsent-modal');
+  if (old) old.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'garbalia-unsent-modal';
+  overlay.className = 'unsent-overlay';
+  overlay.innerHTML = '<div class="unsent-dialog" role="dialog" aria-modal="true"><button type="button" class="unsent-close" aria-label="დახურვა">×</button><img class="unsent-logo" src="/Logo.png?v=7" alt=""><img class="unsent-mini" src="/Logo.png?v=7" alt="GARBALIA"><h3>შეკვეთა არ გადაგიგზავნია</h3><p>ნამდვილად გსურთ გამოსვლა?</p><div class="unsent-actions"><button type="button" class="btn light" data-unsent-cancel>არა</button><button type="button" class="btn danger" data-unsent-confirm>დიახ</button></div></div>';
+  document.body.appendChild(overlay);
+  const close = function () { overlay.remove(); };
+  overlay.querySelector('.unsent-close').addEventListener('click', close);
+  overlay.querySelector('[data-unsent-cancel]').addEventListener('click', close);
+  overlay.addEventListener('click', function (event) { if (event.target === overlay) close(); });
+  overlay.querySelector('[data-unsent-confirm]').addEventListener('click', function () { close(); onConfirm(); });
+}
+
 function escapeHtml(text) {
   return String(text).replace(/[&<>"]/g, function (char) { return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[char]; });
 }
@@ -175,7 +224,12 @@ document.addEventListener('submit', function (event) {
   const qtyInput = event.target.querySelector && event.target.querySelector('.qty-input');
   if (qtyInput) normalizeQtyInput(qtyInput);
   const action = event.target.querySelector && event.target.querySelector('input[name="action"]');
-  if (action && action.value === 'cancel_order' && !confirm('ნამდვილად გინდა ამ მაგიდის ნულით დახურვა? გაყიდვებში თანხა არ დაემატება.')) event.preventDefault();
+  if (action && action.value === 'cancel_order' && !confirm('ნამდვილად გინდა ამ მაგიდის ნულით დახურვა? გაყიდვებში თანხა არ დაემატება.')) {
+    event.preventDefault();
+    return;
+  }
+  garbaliaAllowNavigation = true;
+  window.setTimeout(function () { garbaliaAllowNavigation = false; }, 2500);
 });
 
 document.addEventListener('click', function (event) {
