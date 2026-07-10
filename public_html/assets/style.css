@@ -126,3 +126,7 @@ table{width:100%;border-collapse:collapse;min-width:620px;background:#fff}th,td{
 @media(max-width:380px){
   .tables-grid{grid-template-columns:1fr}
 }
+
+.page-products .product-top-copy h2,
+.page-products .product-top-copy p{display:none!important}
+.page-products .product-top-copy>div::before{content:"რესტორანი 19 ნაოჭი პროდუქტები";display:block;font-size:clamp(1.18rem,2vw,1.55rem);line-height:1.12;font-weight:950;letter-spacing:-.02em;color:#2b1b10;white-space:normal}
