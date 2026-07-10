@@ -1,0 +1,116 @@
+/* Mobile and tablet polish for GARBALIA POS */
+html, body { max-width: 100%; overflow-x: hidden; }
+* { -webkit-tap-highlight-color: rgba(43,27,16,.12); }
+
+@media (max-width: 980px) {
+  .topbar { position: sticky; top: 0; align-items: stretch !important; flex-direction: column !important; gap: 10px !important; padding: 10px 14px !important; }
+  .brand.garbalia-brand { width: 100% !important; justify-content: flex-start !important; }
+  .nav { width: 100% !important; display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 7px !important; }
+  .nav a { display: flex !important; align-items: center !important; justify-content: center !important; min-height: 38px !important; padding: 8px 7px !important; border-radius: 12px !important; background: rgba(255,255,255,.07) !important; font-size: .88rem !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+  .wrap { width: 100% !important; padding: 14px !important; }
+  .page-head { gap: 10px !important; margin-bottom: 14px !important; }
+  h1 { font-size: clamp(1.55rem, 8vw, 2.05rem) !important; }
+  h2 { font-size: 1.08rem !important; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 9px !important; }
+  .stats div { padding: 12px !important; border-radius: 15px !important; }
+  .stats strong { font-size: 1.12rem !important; }
+  .pos-grid, .two-col, .reports { grid-template-columns: 1fr !important; gap: 14px !important; }
+  .card, .login-card, .receipt-card { border-radius: 18px !important; padding: 15px !important; }
+  .total-box { width: auto !important; min-width: 135px !important; text-align: center !important; border-radius: 16px !important; padding: 10px 14px !important; }
+}
+
+@media (max-width: 720px) {
+  .tables-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 11px !important; }
+  .table-card { min-height: 112px !important; padding: 14px !important; border-radius: 18px !important; }
+  .table-card span { font-size: 1.08rem !important; white-space: normal !important; }
+  .table-card strong { font-size: .84rem !important; padding: 6px 8px !important; max-width: 100% !important; white-space: normal !important; }
+  .product-row { grid-template-columns: 1fr 74px !important; gap: 8px !important; padding: 11px 0 !important; }
+  .product-row input[name="comment"] { grid-column: 1 / -1 !important; }
+  .product-row .btn { grid-column: 1 / -1 !important; width: 100% !important; }
+  .close-form { grid-template-columns: 1fr !important; }
+  .mixed-fields { grid-template-columns: 1fr 1fr !important; }
+  .actions, .actions form, .actions .btn { width: 100% !important; }
+  .current-order-card .order-item { margin-bottom: 9px !important; border-radius: 16px !important; }
+  .current-order-card .order-item.sent-item,
+  .current-order-card .order-item.unsent-item { padding-top: 8px !important; padding-bottom: 8px !important; }
+  .history-filters .history-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .history-clean-actions { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 7px !important; }
+  .history-clean-actions .btn { width: 100% !important; min-height: 38px !important; padding: 8px 9px !important; font-size: .82rem !important; }
+}
+
+@media (max-width: 560px) {
+  body { font-size: 15px !important; }
+  .topbar { padding: 9px 10px !important; }
+  .garbalia-mark { width: 52px !important; height: 34px !important; flex-basis: 52px !important; }
+  .garbalia-word { font-size: .86rem !important; letter-spacing: .035em !important; }
+  .brand small { font-size: .68rem !important; }
+  .nav { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .nav a { font-size: .78rem !important; min-height: 36px !important; padding: 7px 5px !important; }
+  .wrap { padding: 12px 10px !important; }
+  .page-head { align-items: stretch !important; }
+  .page-head > * { max-width: 100% !important; }
+  .live-date-pill { width: 100% !important; min-width: 0 !important; }
+  .stats { grid-template-columns: 1fr 1fr !important; }
+  .stats span { font-size: .72rem !important; }
+  .stats strong { font-size: 1rem !important; }
+  .tables-grid { grid-template-columns: 1fr 1fr !important; }
+  .table-card { min-height: 96px !important; padding: 12px !important; }
+  .total-box { width: 100% !important; }
+  .mixed-fields { grid-template-columns: 1fr !important; }
+  input, select { min-height: 44px !important; padding: 10px 11px !important; }
+  .btn { min-height: 42px !important; border-radius: 12px !important; padding: 9px 11px !important; }
+  .app-footer { padding: 0 10px 16px !important; }
+  .footer-inner { align-items: flex-start !important; flex-direction: column !important; gap: 10px !important; padding: 13px 0 !important; }
+  .footer-brand, .footer-credit { width: 100% !important; justify-content: flex-start !important; }
+  .footer-logo-img { max-width: 55px !important; }
+  .whatsapp-link { min-height: 32px !important; padding: 6px 12px !important; }
+
+  .garbalia-confirm-overlay,
+  .unsent-overlay,
+  .garbalia-cash-modal,
+  .garbalia-close-modal { padding: 10px !important; align-items: center !important; overflow: hidden !important; }
+  .garbalia-confirm-dialog,
+  .unsent-dialog,
+  .garbalia-cash-dialog,
+  .garbalia-close-dialog { width: 100% !important; max-width: calc(100vw - 20px) !important; max-height: calc(100dvh - 20px) !important; overflow-y: auto !important; overflow-x: hidden !important; border-radius: 24px !important; padding: 22px 16px 16px !important; }
+  .garbalia-confirm-dialog h3,
+  .unsent-dialog h3,
+  .garbalia-cash-dialog h3,
+  .garbalia-close-dialog h3 { font-size: 1.18rem !important; }
+  .garbalia-confirm-dialog p,
+  .unsent-dialog p,
+  .garbalia-cash-dialog p,
+  .garbalia-close-dialog p { font-size: .88rem !important; margin-bottom: 14px !important; }
+  .garbalia-confirm-info,
+  .garbalia-close-summary { gap: 7px !important; }
+  .garbalia-confirm-info div,
+  .garbalia-close-summary div,
+  .garbalia-close-list div { min-width: 0 !important; overflow-x: hidden !important; }
+  .garbalia-confirm-info div { display: block !important; }
+  .garbalia-confirm-info strong { display: block !important; margin-top: 3px !important; white-space: normal !important; text-align: left !important; }
+  .garbalia-confirm-info .order-line strong { text-align: left !important; }
+  .garbalia-confirm-actions,
+  .unsent-actions,
+  .garbalia-close-actions { grid-template-columns: 1fr !important; gap: 8px !important; }
+  .garbalia-close-list { max-height: 38dvh !important; overflow-y: auto !important; overflow-x: hidden !important; }
+  .garbalia-cash-history-dialog .table-wrap,
+  .history-detail .table-wrap { overflow-x: hidden !important; }
+  .garbalia-cash-history-dialog table,
+  .history-detail table { min-width: 0 !important; width: 100% !important; table-layout: fixed !important; }
+  .garbalia-cash-history-dialog th,
+  .garbalia-cash-history-dialog td,
+  .history-detail th,
+  .history-detail td { word-break: break-word !important; overflow-wrap: anywhere !important; font-size: .82rem !important; padding: 8px 6px !important; }
+
+  .history-filters .history-grid { grid-template-columns: 1fr !important; }
+  .history-clean-actions { grid-template-columns: 1fr 1fr !important; }
+  .history-clean-actions .btn { font-size: .78rem !important; }
+  .product-top-row { align-items: stretch !important; flex-direction: column !important; }
+  .product-add-toggle { width: 100% !important; }
+}
+
+@media (max-width: 380px) {
+  .nav { grid-template-columns: 1fr 1fr !important; }
+  .tables-grid { grid-template-columns: 1fr !important; }
+  .stats { grid-template-columns: 1fr !important; }
+}
