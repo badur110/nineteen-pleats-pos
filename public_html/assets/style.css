@@ -61,15 +61,16 @@ label{display:grid;gap:7px;font-weight:800;text-align:left}
 .table-card.free{background:linear-gradient(135deg,#f2ffec 0%,#e9ffe4 100%);border-color:#68a957}
 .table-card.occupied{background:linear-gradient(135deg,#fff1ec 0%,#ffe6de 100%);border-color:#c34b3e}
 .total-box{background:var(--brown);color:#fff;border-radius:18px;padding:12px 18px;font-size:clamp(1.25rem,3vw,2rem);font-weight:950}
-.pos-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(340px,.88fr);gap:18px;align-items:start}
+.pos-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(360px,.88fr);gap:18px;align-items:start}
 .category-title{background:#ead9c4;border-radius:12px;padding:9px 12px;font-size:1rem}
 .product-row{display:grid;grid-template-columns:minmax(150px,1fr) 88px minmax(130px,1fr) 116px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);min-width:0}
 .product-name{min-width:0;overflow-wrap:anywhere}.product-name strong{display:block}.product-name small{display:block;color:var(--muted);margin-top:3px}.qty-input{text-align:center}
-.order-item{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding:12px 0;border-bottom:1px solid var(--line);min-width:0}
-.order-item strong,.order-item small,.order-item em{display:block;overflow-wrap:anywhere}.order-item small{color:var(--muted)}.order-item em{color:#5d4a3a}.order-item.cancelled{opacity:.65}.order-item.cancelled strong{text-decoration:line-through}.sent{color:var(--green)!important;font-weight:800}.danger-text{color:var(--red)!important;font-weight:800}
-.cancel-form{display:grid;grid-template-columns:120px minmax(130px,1fr) minmax(130px,1fr) 96px;gap:8px;align-items:center}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-.close-form{display:grid;grid-template-columns:220px minmax(250px,1fr) 240px;gap:12px;align-items:end}
+.order-item{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:14px;margin:0 0 12px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 8px 18px rgba(43,27,16,.06);min-width:0}
+.order-item>div:first-child{min-width:0;padding-bottom:2px}.order-item strong,.order-item small,.order-item em{display:block;overflow-wrap:anywhere}.order-item small{color:var(--muted)}.order-item em{color:#5d4a3a}.order-item.cancelled{opacity:.65}.order-item.cancelled strong{text-decoration:line-through}.sent{color:var(--green)!important;font-weight:800}.danger-text{color:var(--red)!important;font-weight:800}
+.cancel-form{display:grid;grid-template-columns:74px minmax(0,1fr) minmax(0,1fr) 112px;gap:8px;align-items:center;width:100%;min-width:0}
+.cancel-form .muted{display:inline-flex;align-items:center;justify-content:center;min-height:42px;border-radius:12px;background:#f1e2ce;color:#7a4b2a;font-weight:800}.cancel-form select,.cancel-form input,.cancel-form .btn{min-height:42px}.cancel-form .btn{padding-left:10px;padding-right:10px;white-space:nowrap}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.actions form{min-width:0}
+.close-form{display:grid;grid-template-columns:minmax(170px,220px) minmax(190px,1fr);gap:12px;align-items:end}.close-form .btn{min-height:46px}
 .mixed-fields{display:none;grid-template-columns:1fr 1fr;gap:8px}
 .two-col{display:grid;grid-template-columns:minmax(280px,380px) minmax(0,1fr);gap:18px;align-items:start}.reports{grid-template-columns:minmax(220px,310px) minmax(0,1fr)}
 .day-list{display:grid;gap:8px}.day-link{display:block;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff;min-width:0}.day-link.active{border-color:var(--blue);background:#eff5ff}.day-link strong,.day-link small{display:block;overflow-wrap:anywhere}.day-link small{color:var(--muted);margin-top:4px}
@@ -82,12 +83,14 @@ table{width:100%;border-collapse:collapse;min-width:620px;background:#fff}th,td{
 @media(max-width:1180px){
   .tables-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
   .table-card{min-height:136px}
+  .cancel-form{grid-template-columns:74px minmax(0,1fr) 112px}
+  .cancel-form input[name="cancel_reason_custom"]{grid-column:2/-1}
 }
 @media(max-width:980px){
   .pos-grid,.two-col,.reports{grid-template-columns:1fr}
   .product-row{grid-template-columns:minmax(0,1fr) 90px}
   .product-row input[name="comment"]{grid-column:1/-1}.product-row .btn{grid-column:1/-1}
-  .cancel-form,.close-form{grid-template-columns:1fr}.mixed-fields{grid-template-columns:1fr}
+  .cancel-form,.close-form{grid-template-columns:1fr}.mixed-fields{grid-template-columns:1fr}.cancel-form input[name="cancel_reason_custom"]{grid-column:auto}
   .topbar{align-items:flex-start;flex-direction:column}.nav{justify-content:flex-start}.brand strong{max-width:78vw}
   .tables-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 }
