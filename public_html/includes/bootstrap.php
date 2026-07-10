@@ -278,7 +278,7 @@ function render_header(string $title): void {
 }
 
 function render_footer(): void {
-    echo '</main><footer class="app-footer"><div class="footer-inner"><div class="footer-brand"><span class="footer-mark">' . garbalia_mark_svg() . '</span><div><strong>© GARBALIA POS</strong><small>Restaurant management software</small></div></div><div class="footer-credit"><span>Developed by <b>Giorgi Katamadze</b></span><a class="whatsapp-link" href="https://wa.me/995577785078" target="_blank" rel="noopener">WhatsApp</a></div></div></footer><script src="/assets/app.js"></script></body></html>';
+    echo '</main><footer class="app-footer"><div class="footer-inner"><div class="footer-brand"><span class="footer-mark">' . garbalia_mark_svg() . '</span><div><strong>© GARBALIA POS</strong><small>Restaurant management software</small></div></div><div class="footer-credit"><span>Developed by <b>Giorgi Katamadze</b></span><a class="whatsapp-link" href="https://wa.me/995577785078" target="_blank" rel="noopener">WhatsApp</a></div></div></footer><script src="/assets/app.js"></script><script src="/assets/close-confirm.js?v=1"></script></body></html>';
 }
 
 function receipt_card(string $id, string $title, string $text): string {
