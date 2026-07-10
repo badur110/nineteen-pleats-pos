@@ -28,6 +28,10 @@ document.addEventListener('DOMContentLoaded', function () {
     injectProductPageStyles();
     enhanceProductsPage();
   }
+  if (params.get('page') === 'table') {
+    document.body.classList.add('page-table');
+    enhanceTablePage(params.get('id'));
+  }
 });
 
 function fixQuantityInputs() {
@@ -96,6 +100,27 @@ function enhanceProductsPage() {
   });
 }
 
+function enhanceTablePage(tableId) {
+  const totalBox = document.querySelector('.total-box');
+  const orderCard = document.querySelector('.pos-grid > .card:nth-child(2)');
+  if (!tableId || !totalBox || !orderCard || document.getElementById('zero-close-form')) return;
+  if (!orderCard.querySelector('.order-item')) return;
+
+  const totalText = totalBox.textContent.replace(',', '.');
+  const total = parseFloat(totalText.replace(/[^0-9.]/g, '')) || 0;
+  if (total > 0.001) return;
+
+  const form = document.createElement('form');
+  form.id = 'zero-close-form';
+  form.method = 'post';
+  form.className = 'zero-close-form';
+  form.innerHTML = '<h3>ცარიელი მაგიდის დახურვა</h3><p class="muted">გამოიყენე მაშინ, როცა მაგიდა შეცდომით გაიხსნა ან ყველა პროდუქტი გაუქმდა და ჯამი 0.00 ₾ არის.</p><input type="hidden" name="action" value="cancel_order"><input type="hidden" name="table_id" value="' + escapeHtml(tableId) + '"><label>მიზეზი<select name="cancel_reason"><option>ცარიელი შეკვეთა / შეცდომით გახსნილი მაგიდა</option><option>ყველა პროდუქტი გაუქმდა</option><option>კლიენტი წავიდა შეკვეთამდე</option><option>სხვა</option></select></label><label>პაროლი მოლარისთვის<input type="password" name="cancel_password" placeholder="Admin-ს არ სჭირდება"></label><button class="btn danger" type="submit">ნულით დახურვა</button>';
+
+  const closeTitle = Array.from(orderCard.querySelectorAll('h2')).find(function (h) { return h.textContent.includes('მაგიდის დახურვა'); });
+  if (closeTitle) closeTitle.parentNode.insertBefore(form, closeTitle);
+  else orderCard.appendChild(form);
+}
+
 function escapeHtml(text) {
   return String(text).replace(/[&<>"]/g, function (char) {
     return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[char];
@@ -105,6 +130,13 @@ function escapeHtml(text) {
 document.addEventListener('submit', function (event) {
   const qtyInput = event.target.querySelector && event.target.querySelector('.qty-input');
   if (qtyInput) normalizeQtyInput(qtyInput);
+
+  const action = event.target.querySelector && event.target.querySelector('input[name="action"]');
+  if (action && action.value === 'cancel_order') {
+    if (!confirm('ნამდვილად გინდა ამ მაგიდის ნულით დახურვა? გაყიდვებში თანხა არ დაემატება.')) {
+      event.preventDefault();
+    }
+  }
 });
 
 document.addEventListener('click', function (event) {
