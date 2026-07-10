@@ -51,7 +51,7 @@ function tableIdFromPath() {
 }
 
 function garbaliaLogoImg(className) {
-  return '<img class="' + className + '" src="/assets/garbalia-logo.svg" alt="GARBALIA">';
+  return '<img class="' + className + '" src="/Logo.png?v=1" alt="GARBALIA">';
 }
 
 function injectGarbaliaBrandStyles() {
