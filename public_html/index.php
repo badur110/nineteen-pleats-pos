@@ -62,7 +62,7 @@ function page_table(): void {
     $order = current_open_order((int)$day['id'], $tableId);
     $items = $order ? order_items((int)$order['id']) : [];
     $total = $order ? order_total((int)$order['id']) : 0;
-    $products = db()->query('SELECT p.*, c.name category_name FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE p.is_active=1 ORDER BY c.sort_order, c.name, p.sort_order, p.name')->fetchAll();
+    $products = db()->query('SELECT p.*, c.name category_name FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE p.is_active=1 ORDER BY CASE WHEN c.name LIKE "%ხინკ%" THEN 0 WHEN c.name LIKE "%სასმ%" THEN 1 ELSE 2 END, c.sort_order, c.name, p.sort_order, p.name')->fetchAll();
     render_header($table['name']);
     echo '<div class="page-head"><h1>'.h($table['name']).'</h1><div class="total-box">'.money($total).'</div></div><section class="pos-grid"><div class="card"><h2>პროდუქტის დამატება</h2>';
     if (!$products) echo '<p class="muted">პროდუქტები ჯერ არ არის დამატებული.</p>';
@@ -132,7 +132,7 @@ function page_products(): void {
     require_admin();
     $edit = null;
     if (!empty($_GET['edit'])) { $stmt = db()->prepare('SELECT p.*, c.name category_name FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE p.id=?'); $stmt->execute([(int)$_GET['edit']]); $edit = $stmt->fetch(); }
-    $products = db()->query('SELECT p.*, c.name category_name FROM products p LEFT JOIN categories c ON c.id=p.category_id ORDER BY p.is_active DESC, c.sort_order, c.name, p.sort_order, p.name')->fetchAll();
+    $products = db()->query('SELECT p.*, c.name category_name FROM products p LEFT JOIN categories c ON c.id=p.category_id ORDER BY p.is_active DESC, CASE WHEN c.name LIKE "%ხინკ%" THEN 0 WHEN c.name LIKE "%სასმ%" THEN 1 ELSE 2 END, c.sort_order, c.name, p.sort_order, p.name')->fetchAll();
     render_header('პროდუქტები');
     echo '<div class="page-head"><h1>პროდუქტები</h1></div><section class="two-col"><div class="card"><h2>'.($edit?'რედაქტირება':'ახალი პროდუქტი').'</h2><form class="stack" method="post"><input type="hidden" name="action" value="save_product"><input type="hidden" name="id" value="'.h($edit['id'] ?? '').'"><label>სახელი<input name="name" required value="'.h($edit['name'] ?? '').'"></label><label>ფასი<input name="price" type="number" step="0.01" min="0" required value="'.h($edit['price'] ?? '').'"></label><label>კატეგორია<input name="category_name" value="'.h($edit['category_name'] ?? 'სხვა').'"></label><label class="check"><input type="checkbox" name="is_active" '.(!$edit || (int)$edit['is_active']===1?'checked':'').'> აქტიური</label><button class="btn success">შენახვა</button></form></div><div class="card"><h2>პროდუქტების სია</h2><div class="table-wrap"><table><thead><tr><th>პროდუქტი</th><th>კატეგორია</th><th>ფასი</th><th>სტატუსი</th><th>ქმედება</th></tr></thead><tbody>';
     foreach ($products as $p) {
