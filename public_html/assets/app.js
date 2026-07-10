@@ -1,7 +1,7 @@
 let garbaliaAllowNavigation = false;
 
 function garbaliaLogoImg(className) {
-  return '<img class="' + className + '" src="/Logo.png?v=10" alt="GARBALIA">';
+  return '<img class="' + className + '" src="/Logo.png?v=11" alt="GARBALIA">';
 }
 
 document.addEventListener('change', function (event) {
@@ -26,11 +26,16 @@ document.addEventListener('DOMContentLoaded', function () {
   injectGarbaliaBrandStyles();
   brandGarbaliaEverywhere();
   addHistoryNavLink();
+  removeReportsEverywhere();
   fixQuantityInputs();
   initLiveDatePill();
 
   const route = currentPage();
   const params = new URLSearchParams(window.location.search);
+  if (route === 'reports') {
+    window.location.replace('/history');
+    return;
+  }
   if (route === 'products') {
     document.body.classList.add('page-products');
     injectProductPageStyles();
@@ -76,15 +81,16 @@ function injectGarbaliaBrandStyles() {
     .live-date-pill:before{content:"";width:8px;height:8px;border-radius:999px;background:#24733c;box-shadow:0 0 0 5px rgba(36,115,60,.13)}.live-date-text{white-space:nowrap;font-size:.98rem;line-height:1}
     .cancel-form.cancel-form-compact{grid-template-columns:74px minmax(190px,1fr) 116px!important;align-items:center!important}.cancel-form.cancel-form-compact select{width:100%!important}.cancel-form.cancel-form-compact .btn{width:100%!important}.cancel-form.cancel-form-compact .muted{white-space:nowrap!important}
     .garbalia-confirm-overlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;background:rgba(43,27,16,.46);backdrop-filter:blur(7px);animation:garbaliaFadeIn .16s ease-out}
-    .garbalia-confirm-dialog{position:relative;width:min(440px,100%);overflow:hidden;border:1px solid #ead6bd;border-radius:28px;background:linear-gradient(180deg,#fffaf2 0%,#f8ecdd 100%);box-shadow:0 28px 70px rgba(43,27,16,.30);padding:28px;color:#2b1b10;text-align:center;animation:garbaliaPopIn .18s ease-out;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+    .garbalia-confirm-dialog{position:relative;width:min(470px,100%);overflow:hidden;border:1px solid #ead6bd;border-radius:28px;background:linear-gradient(180deg,#fffaf2 0%,#f8ecdd 100%);box-shadow:0 28px 70px rgba(43,27,16,.30);padding:28px;color:#2b1b10;text-align:center;animation:garbaliaPopIn .18s ease-out;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif}
     .garbalia-confirm-bg-logo{position:absolute;right:-18px;top:-16px;width:136px;height:88px;object-fit:contain;opacity:.07;filter:brightness(0);pointer-events:none}.garbalia-confirm-mini{width:48px;height:34px;object-fit:contain;margin:0 auto 10px;mix-blend-mode:multiply}
-    .garbalia-confirm-dialog h3{margin:0 0 8px;font-size:1.36rem;font-weight:950;letter-spacing:-.02em}.garbalia-confirm-dialog p{margin:0 auto 20px;max-width:340px;color:#6d5140;font-weight:800;line-height:1.45;white-space:pre-line}.garbalia-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.garbalia-confirm-actions .btn{width:100%;min-height:46px;border-radius:14px}.garbalia-confirm-actions .btn.light{background:#f1e2ce!important;color:#2b1b10!important}.garbalia-confirm-close{position:absolute;right:12px;top:12px;width:34px;height:34px;border:0;border-radius:50%;background:rgba(43,27,16,.08);color:#2b1b10;font-size:20px;font-weight:900;cursor:pointer}
+    .garbalia-confirm-dialog h3{margin:0 0 8px;font-size:1.36rem;font-weight:950;letter-spacing:-.02em}.garbalia-confirm-dialog p{margin:0 auto 20px;max-width:380px;color:#6d5140;font-weight:800;line-height:1.45;white-space:pre-line}.garbalia-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.garbalia-confirm-actions .btn{width:100%;min-height:46px;border-radius:14px}.garbalia-confirm-actions .btn.light{background:#f1e2ce!important;color:#2b1b10!important}.garbalia-confirm-close{position:absolute;right:12px;top:12px;width:34px;height:34px;border:0;border-radius:50%;background:rgba(43,27,16,.08);color:#2b1b10;font-size:20px;font-weight:900;cursor:pointer}
+    .garbalia-confirm-info{display:grid;gap:8px;margin:0 auto 18px;max-width:380px;text-align:left}.garbalia-confirm-info div{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.58);border:1px solid rgba(43,27,16,.09)}.garbalia-confirm-info span{color:#7a6657;font-weight:800}.garbalia-confirm-info strong{font-weight:950;color:#2b1b10;white-space:nowrap}.garbalia-confirm-info .diff-plus strong{color:#24733c}.garbalia-confirm-info .diff-minus strong{color:#b9332a}.garbalia-confirm-info .diff-zero strong{color:#2357a5}
     .unsent-overlay{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:rgba(43,27,16,.45);backdrop-filter:blur(7px)}
     .unsent-dialog{position:relative;width:min(430px,100%);overflow:hidden;border:1px solid #ead6bd;border-radius:28px;background:linear-gradient(180deg,#fffaf2 0%,#f8ecdd 100%);box-shadow:0 28px 70px rgba(43,27,16,.28);padding:28px;color:#2b1b10;text-align:center}
     .unsent-logo{position:absolute;right:-12px;top:-10px;width:126px;height:82px;object-fit:contain;opacity:.08;filter:brightness(0);pointer-events:none}.unsent-mini{width:46px;height:34px;object-fit:contain;margin:0 auto 10px;mix-blend-mode:multiply}.unsent-dialog h3{margin:0 0 8px;font-size:1.35rem;font-weight:950;letter-spacing:-.02em}.unsent-dialog p{margin:0 auto 20px;max-width:320px;color:#6d5140;font-weight:800}.unsent-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.unsent-actions .btn{width:100%;min-height:46px;border-radius:14px}.unsent-actions .btn.light{background:#f1e2ce!important;color:#2b1b10!important}.unsent-close{position:absolute;right:12px;top:12px;width:34px;height:34px;border:0;border-radius:50%;background:rgba(43,27,16,.08);color:#2b1b10;font-size:20px;font-weight:900;cursor:pointer}
     @keyframes garbaliaFadeIn{from{opacity:0}to{opacity:1}}@keyframes garbaliaPopIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
     @media(max-width:820px){.garbalia-mark{width:66px!important;height:40px!important;flex-basis:66px!important}.garbalia-word{font-size:.95rem!important}.brand small{font-size:.72rem!important}.cancel-form.cancel-form-compact{grid-template-columns:1fr 1fr!important}.cancel-form.cancel-form-compact .btn{grid-column:1/-1}}
-    @media(max-width:620px){.garbalia-mark,.footer-mark{width:60px!important;height:38px!important;flex-basis:60px!important}.login-logo{width:64px!important;max-width:64px!important}.login-logo-img{width:64px!important;height:56px!important}.garbalia-login-badge strong{font-size:.92rem!important}.garbalia-login-badge small{font-size:.70rem!important}.unsent-actions,.garbalia-confirm-actions{grid-template-columns:1fr}.live-date-pill{min-width:0!important;width:100%!important}.cancel-form.cancel-form-compact{grid-template-columns:1fr!important}}
+    @media(max-width:620px){.garbalia-mark,.footer-mark{width:60px!important;height:38px!important;flex-basis:60px!important}.login-logo{width:64px!important;max-width:64px!important}.login-logo-img{width:64px!important;height:56px!important}.garbalia-login-badge strong{font-size:.92rem!important}.garbalia-login-badge small{font-size:.70rem!important}.unsent-actions,.garbalia-confirm-actions{grid-template-columns:1fr}.live-date-pill{min-width:0!important;width:100%!important}.cancel-form.cancel-form-compact{grid-template-columns:1fr!important}.garbalia-confirm-info div{display:block}.garbalia-confirm-info strong{display:block;margin-top:3px}}
   `;
   document.head.appendChild(style);
 }
@@ -106,12 +112,18 @@ function brandGarbaliaEverywhere() {
 
 function addHistoryNavLink() {
   const nav = document.querySelector('.nav');
-  if (!nav || !nav.querySelector('a[href*="products"]') || nav.querySelector('a[href*="history"]')) return;
-  const historyLink = document.createElement('a');
-  historyLink.href = '/history';
-  historyLink.textContent = 'ისტორია';
-  const reportsLink = nav.querySelector('a[href*="reports"]');
-  if (reportsLink) nav.insertBefore(historyLink, reportsLink); else nav.appendChild(historyLink);
+  if (!nav) return;
+  if (nav.querySelector('a[href*="products"]') && !nav.querySelector('a[href*="history"]')) {
+    const historyLink = document.createElement('a');
+    historyLink.href = '/history';
+    historyLink.textContent = 'ისტორია';
+    const reportsLink = nav.querySelector('a[href*="reports"]');
+    if (reportsLink) nav.insertBefore(historyLink, reportsLink); else nav.appendChild(historyLink);
+  }
+}
+
+function removeReportsEverywhere() {
+  document.querySelectorAll('.nav a[href*="reports"], a[href="/reports"]').forEach(function (link) { link.remove(); });
 }
 
 function fixQuantityInputs() {
@@ -269,7 +281,13 @@ function showGarbaliaConfirm(options) {
   const overlay = document.createElement('div');
   overlay.id = options.id || 'garbalia-confirm-modal';
   overlay.className = 'garbalia-confirm-overlay';
-  overlay.innerHTML = '<div class="garbalia-confirm-dialog" role="dialog" aria-modal="true"><button type="button" class="garbalia-confirm-close" aria-label="დახურვა">×</button><img class="garbalia-confirm-bg-logo" src="/Logo.png?v=10" alt=""><img class="garbalia-confirm-mini" src="/Logo.png?v=10" alt="GARBALIA"><h3>' + escapeHtml(options.title || 'დადასტურება') + '</h3><p>' + escapeHtml(options.message || '') + '</p><div class="garbalia-confirm-actions"><button type="button" class="btn light" data-garbalia-cancel>' + escapeHtml(options.cancelText || 'არა') + '</button><button type="button" class="btn ' + escapeHtml(options.confirmClass || 'danger') + '" data-garbalia-confirm>' + escapeHtml(options.confirmText || 'დიახ') + '</button></div></div>';
+  const infoHtml = Array.isArray(options.info) && options.info.length
+    ? '<div class="garbalia-confirm-info">' + options.info.map(function (row) {
+        const cls = row.className ? ' class="' + escapeHtml(row.className) + '"' : '';
+        return '<div' + cls + '><span>' + escapeHtml(row.label) + '</span><strong>' + escapeHtml(row.value) + '</strong></div>';
+      }).join('') + '</div>'
+    : '';
+  overlay.innerHTML = '<div class="garbalia-confirm-dialog" role="dialog" aria-modal="true"><button type="button" class="garbalia-confirm-close" aria-label="დახურვა">×</button><img class="garbalia-confirm-bg-logo" src="/Logo.png?v=11" alt=""><img class="garbalia-confirm-mini" src="/Logo.png?v=11" alt="GARBALIA"><h3>' + escapeHtml(options.title || 'დადასტურება') + '</h3><p>' + escapeHtml(options.message || '') + '</p>' + infoHtml + '<div class="garbalia-confirm-actions"><button type="button" class="btn light" data-garbalia-cancel>' + escapeHtml(options.cancelText || 'არა') + '</button><button type="button" class="btn ' + escapeHtml(options.confirmClass || 'danger') + '" data-garbalia-confirm>' + escapeHtml(options.confirmText || 'დიახ') + '</button></div></div>';
   document.body.appendChild(overlay);
   const close = function () { overlay.remove(); };
   const confirmButton = overlay.querySelector('[data-garbalia-confirm]');
@@ -295,26 +313,114 @@ function escapeHtml(text) {
   });
 }
 
+function parseMoney(text) {
+  return parseFloat(String(text || '').replace(',', '.').replace(/[^0-9.\-]/g, '')) || 0;
+}
+
+function formatMoney(value) {
+  return (Number(value) || 0).toFixed(2) + ' ₾';
+}
+
+function findStatValue(labelText) {
+  const cards = Array.from(document.querySelectorAll('.stats div'));
+  const card = cards.find(function (div) {
+    const span = div.querySelector('span');
+    return span && span.textContent.trim().includes(labelText);
+  });
+  return card ? parseMoney(card.querySelector('strong') ? card.querySelector('strong').textContent : '') : 0;
+}
+
+function submitFormAfterConfirm(form) {
+  garbaliaAllowNavigation = true;
+  form.submit();
+}
+
 document.addEventListener('submit', function (event) {
   const qtyInput = event.target.querySelector && event.target.querySelector('.qty-input');
   if (qtyInput) normalizeQtyInput(qtyInput);
   const action = event.target.querySelector && event.target.querySelector('input[name="action"]');
-  if (action && action.value === 'cancel_order') {
+  if (!action) return;
+  const form = event.target;
+
+  if (action.value === 'cancel_item') {
     event.preventDefault();
-    const form = event.target;
+    const orderItem = form.closest('.order-item');
+    const itemName = orderItem && orderItem.querySelector('strong') ? orderItem.querySelector('strong').textContent.trim() : 'პროდუქტი';
+    const reasonSelect = form.querySelector('select[name="cancel_reason"]');
+    const reason = reasonSelect ? reasonSelect.options[reasonSelect.selectedIndex].text : 'მიზეზი არ არის მითითებული';
+    showGarbaliaConfirm({
+      title: 'პროდუქტის გაუქმება',
+      message: 'ნამდვილად გსურთ ამ პროდუქტის გაუქმება?',
+      info: [
+        {label: 'პროდუქტი', value: itemName},
+        {label: 'მიზეზი', value: reason}
+      ],
+      confirmText: 'დიახ, გაუქმდეს',
+      cancelText: 'არა',
+      confirmClass: 'danger',
+      onConfirm: function () { submitFormAfterConfirm(form); }
+    });
+    return;
+  }
+
+  if (action.value === 'open_day') {
+    event.preventDefault();
+    const amount = parseMoney(form.querySelector('input[name="opening_cash"]') ? form.querySelector('input[name="opening_cash"]').value : '0');
+    showGarbaliaConfirm({
+      title: 'დღის გახსნა',
+      message: 'იხსნება დღევანდელი დღის სალარო. გადაამოწმე საწყისი ნაღდი თანხა.',
+      info: [
+        {label: 'საწყისი ნაღდი', value: formatMoney(amount)},
+        {label: 'მოქმედება', value: 'დღის გახსნა'}
+      ],
+      confirmText: 'დიახ, გაიხსნას',
+      cancelText: 'არა',
+      confirmClass: 'success',
+      onConfirm: function () { submitFormAfterConfirm(form); }
+    });
+    return;
+  }
+
+  if (action.value === 'close_day') {
+    event.preventDefault();
+    const counted = parseMoney(form.querySelector('input[name="closing_cash"]') ? form.querySelector('input[name="closing_cash"]').value : '0');
+    const cashSales = findStatValue('ნაღდი');
+    const expected = findStatValue('მოსალოდნელი ნაღდი');
+    const opening = Math.max(0, expected - cashSales);
+    const diff = counted - expected;
+    const diffClass = Math.abs(diff) < 0.01 ? 'diff-zero' : (diff > 0 ? 'diff-plus' : 'diff-minus');
+    const diffText = Math.abs(diff) < 0.01 ? 'სხვაობა არ არის' : (diff > 0 ? 'ზედმეტობაა ' + formatMoney(Math.abs(diff)) : 'ნაკლებობაა ' + formatMoney(Math.abs(diff)));
+    showGarbaliaConfirm({
+      title: 'დღის დახურვა',
+      message: 'თქვენ ხურავთ სამუშაო დღეს. გადაამოწმეთ სალაროს მონაცემები.',
+      info: [
+        {label: 'საწყისი ნაშთი', value: formatMoney(opening)},
+        {label: 'ნაღდი ნავაჭრი', value: formatMoney(cashSales)},
+        {label: 'უნდა იყოს სალაროში', value: formatMoney(expected)},
+        {label: 'დათვლილი ნაღდი', value: formatMoney(counted)},
+        {label: 'სხვაობა', value: diffText, className: diffClass}
+      ],
+      confirmText: 'დიახ, სწორია',
+      cancelText: 'არა',
+      confirmClass: 'danger',
+      onConfirm: function () { submitFormAfterConfirm(form); }
+    });
+    return;
+  }
+
+  if (action.value === 'cancel_order') {
+    event.preventDefault();
     showGarbaliaConfirm({
       title: 'ნულით დახურვა',
       message: 'ნამდვილად გინდა ამ მაგიდის ნულით დახურვა?\nგაყიდვებში თანხა არ დაემატება.',
       confirmText: 'დიახ, დახურვა',
       cancelText: 'არა',
       confirmClass: 'danger',
-      onConfirm: function () {
-        garbaliaAllowNavigation = true;
-        form.submit();
-      }
+      onConfirm: function () { submitFormAfterConfirm(form); }
     });
     return;
   }
+
   garbaliaAllowNavigation = true;
   window.setTimeout(function () { garbaliaAllowNavigation = false; }, 2500);
 });
