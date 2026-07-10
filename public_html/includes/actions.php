@@ -69,7 +69,7 @@ function handle_post_action(): void {
         }
         $tableId = (int)($_POST['table_id'] ?? 0);
         $productId = (int)($_POST['product_id'] ?? 0);
-        $quantity = max(0.01, (float)($_POST['quantity'] ?? 1));
+        $quantity = max(1, (int)($_POST['quantity'] ?? 1));
         $comment = trim($_POST['comment'] ?? '');
         $table = fetch_table($tableId);
         if (!$table) {
@@ -123,7 +123,10 @@ function handle_post_action(): void {
             redirect_to('table', ['id' => $tableId]);
         }
         $itemId = (int)($_POST['item_id'] ?? 0);
-        $reason = trim($_POST['cancel_reason'] ?? '');
+        $reason = trim($_POST['cancel_reason_custom'] ?? '');
+        if ($reason === '') {
+            $reason = trim($_POST['cancel_reason'] ?? '');
+        }
         if ($reason === '') {
             $reason = 'სხვა';
         }
@@ -131,6 +134,33 @@ function handle_post_action(): void {
         $stmt->execute([current_user()['id'], $reason, $itemId]);
         flash('პროდუქტი გაუქმდა.');
         redirect_to('table', ['id' => $tableId]);
+    }
+
+    if ($action === 'cancel_order') {
+        $day = active_day();
+        if (!$day) {
+            flash('სამუშაო დღე დახურულია.', 'warn');
+            redirect_to('day');
+        }
+        $tableId = (int)($_POST['table_id'] ?? 0);
+        $order = current_open_order((int)$day['id'], $tableId);
+        if (!$order) {
+            flash('ამ მაგიდაზე ღია შეკვეთა არ არის.', 'warn');
+            redirect_to('tables');
+        }
+        if (!is_admin() && ($_POST['cancel_password'] ?? '') !== cfg('cancel_password', 'cancel123')) {
+            flash('გაუქმების პაროლი არასწორია.', 'warn');
+            redirect_to('table', ['id' => $tableId]);
+        }
+        $total = order_total((int)$order['id']);
+        if ($total > 0) {
+            flash('ნულით დახურვა შეიძლება მხოლოდ მაშინ, როცა ჯამი 0.00 ₾ არის.', 'warn');
+            redirect_to('table', ['id' => $tableId]);
+        }
+        $reason = trim($_POST['cancel_reason'] ?? 'ცარიელი შეკვეთა / შეცდომით გახსნილი მაგიდა');
+        db()->prepare("UPDATE orders SET status='cancelled', total=0, payment_type=NULL, cash_amount=0, card_amount=0, closed_at=NOW() WHERE id=? AND status='open'")->execute([$order['id']]);
+        flash('მაგიდა დაიხურა ნულით. მიზეზი: ' . $reason);
+        redirect_to('tables');
     }
 
     if ($action === 'close_order') {
@@ -147,7 +177,7 @@ function handle_post_action(): void {
         }
         $total = order_total((int)$order['id']);
         if ($total <= 0) {
-            flash('ცარიელი შეკვეთის დახურვა შეუძლებელია.', 'warn');
+            flash('ამ მაგიდას ჯამი 0.00 ₾ აქვს — გამოიყენე „ნულით დახურვა“.', 'warn');
             redirect_to('table', ['id' => $tableId]);
         }
         $paymentType = $_POST['payment_type'] ?? 'cash';
