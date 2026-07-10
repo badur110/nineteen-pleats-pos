@@ -99,6 +99,12 @@ function require_admin(): void {
     }
 }
 
+function table_has_column(string $table, string $column): bool {
+    $stmt = db()->prepare('SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?');
+    $stmt->execute([$table, $column]);
+    return (int)$stmt->fetchColumn() > 0;
+}
+
 function ensure_cash_movements_table(): void {
     static $done = false;
     if ($done) return;
@@ -114,6 +120,24 @@ function ensure_cash_movements_table(): void {
         CONSTRAINT fk_cash_movements_day FOREIGN KEY (business_day_id) REFERENCES business_days(id) ON DELETE CASCADE,
         CONSTRAINT fk_cash_movements_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $done = true;
+}
+
+function ensure_order_discount_columns(): void {
+    static $done = false;
+    if ($done) return;
+    if (!table_has_column('orders', 'subtotal_total')) {
+        db()->exec("ALTER TABLE orders ADD COLUMN subtotal_total DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER total");
+    }
+    if (!table_has_column('orders', 'discount_type')) {
+        db()->exec("ALTER TABLE orders ADD COLUMN discount_type ENUM('none','percent','amount') NOT NULL DEFAULT 'none' AFTER subtotal_total");
+    }
+    if (!table_has_column('orders', 'discount_value')) {
+        db()->exec("ALTER TABLE orders ADD COLUMN discount_value DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER discount_type");
+    }
+    if (!table_has_column('orders', 'discount_amount')) {
+        db()->exec("ALTER TABLE orders ADD COLUMN discount_amount DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER discount_value");
+    }
     $done = true;
 }
 
@@ -231,6 +255,12 @@ function payment_label(?string $type): string {
     return ['cash' => 'ნაღდი', 'card' => 'ბარათი', 'mixed' => 'შერეული'][$type] ?? '—';
 }
 
+function discount_label(?string $type, $value): string {
+    if ($type === 'percent') return qty($value) . '%';
+    if ($type === 'amount') return money($value);
+    return '—';
+}
+
 function role_label(string $role): string {
     return $role === 'admin' ? 'ადმინისტრატორი' : 'მოლარე';
 }
@@ -288,7 +318,21 @@ function build_final_receipt(array $table, array $order, array $items): string {
         $lines[] = qty($item['quantity']) . ' x ' . $item['product_name'];
         $lines[] = number_format((float)$item['price'], 2) . ' x ' . qty($item['quantity']) . ' = ' . number_format($sum, 2) . ' GEL';
     }
+    $subtotal = (float)($order['subtotal_total'] ?? 0);
+    if ($subtotal <= 0) {
+        foreach ($items as $item) {
+            if ((int)$item['is_cancelled'] === 1) continue;
+            $subtotal += (float)$item['quantity'] * (float)$item['price'];
+        }
+    }
+    $discountAmount = (float)($order['discount_amount'] ?? 0);
+    $discountType = $order['discount_type'] ?? 'none';
+    $discountValue = (float)($order['discount_value'] ?? 0);
     $lines[] = str_repeat('-', 32);
+    if ($discountAmount > 0) {
+        $lines[] = 'ქვეჯამი: ' . number_format($subtotal, 2) . ' GEL';
+        $lines[] = 'ფასდაკლება (' . discount_label($discountType, $discountValue) . '): -' . number_format($discountAmount, 2) . ' GEL';
+    }
     $lines[] = 'ჯამი: ' . number_format((float)$order['total'], 2) . ' GEL';
     $lines[] = 'გადახდა: ' . payment_label($order['payment_type']);
     if ($order['payment_type'] === 'mixed') {
@@ -302,36 +346,6 @@ function build_final_receipt(array $table, array $order, array $items): string {
 function garbalia_mark_svg(): string {
     return '<svg class="garbalia-bird" viewBox="0 0 120 82" aria-hidden="true"><path d="M8 24 L50 9 L86 35 L45 37 Z"/><path d="M50 9 L58 64 L86 35"/><path d="M50 9 L50 37 L8 24"/><path d="M45 37 L58 64 L60 80 L72 48"/><path d="M86 35 L105 14 L116 20 L104 22"/><path d="M86 35 L105 14 L80 3 L50 9"/><path d="M8 24 L33 48 L45 37"/><path d="M33 48 L8 41 L8 24"/></svg>';
 }
-
-function handle_unsent_quantity_update(): void {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || ($_POST['action'] ?? '') !== 'update_item_quantity') {
-        return;
-    }
-    require_login();
-    $day = active_day();
-    if (!$day) {
-        flash('სამუშაო დღე დახურულია.', 'warn');
-        redirect_to('day');
-    }
-    $tableId = (int)($_POST['table_id'] ?? 0);
-    $itemId = (int)($_POST['item_id'] ?? 0);
-    $quantity = max(1, (int)($_POST['quantity'] ?? 1));
-    $stmt = db()->prepare('SELECT oi.*, o.id AS order_id, o.table_id, o.business_day_id, o.status AS order_status FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE oi.id=? AND o.table_id=? AND o.business_day_id=? AND o.status="open" AND oi.is_cancelled=0 LIMIT 1');
-    $stmt->execute([$itemId, $tableId, (int)$day['id']]);
-    $item = $stmt->fetch();
-    if (!$item) {
-        flash('პროდუქტი ვერ მოიძებნა.', 'warn');
-        redirect_to('table', ['id' => $tableId]);
-    }
-    if (!empty($item['sent_at'])) {
-        flash('გადაგზავნილი პროდუქტის რაოდენობა აღარ იცვლება.', 'warn');
-        redirect_to('table', ['id' => $tableId]);
-    }
-    db()->prepare('UPDATE order_items SET quantity=? WHERE id=? AND sent_at IS NULL AND is_cancelled=0')->execute([$quantity, $itemId]);
-    redirect_to('table', ['id' => $tableId]);
-}
-
-handle_unsent_quantity_update();
 
 function render_header(string $title): void {
     $sub = is_logged_in() ? role_label(current_user()['role']) : 'Restaurant Management System';
@@ -353,7 +367,7 @@ function render_header(string $title): void {
 }
 
 function render_footer(): void {
-    echo '</main><footer class="app-footer"><div class="footer-inner"><div class="footer-brand"><span class="footer-mark">' . garbalia_mark_svg() . '</span><div><strong>© GARBALIA POS</strong><small>Restaurant management software</small></div></div><div class="footer-credit"><span>Developed by <b>Giorgi Katamadze</b></span><a class="whatsapp-link" href="https://wa.me/995577785078" target="_blank" rel="noopener">WhatsApp</a></div></div></footer><script src="/assets/app.js?v=20"></script><script src="/assets/close-confirm.js?v=20"></script><script src="/assets/quantity-edit.js?v=1"></script></body></html>';
+    echo '</main><footer class="app-footer"><div class="footer-inner"><div class="footer-brand"><span class="footer-mark">' . garbalia_mark_svg() . '</span><div><strong>© GARBALIA POS</strong><small>Restaurant management software</small></div></div><div class="footer-credit"><span>Developed by <b>Giorgi Katamadze</b></span><a class="whatsapp-link" href="https://wa.me/995577785078" target="_blank" rel="noopener">WhatsApp</a></div></div></footer><script src="/assets/app.js?v=22"></script><script src="/assets/close-confirm.js?v=22"></script></body></html>';
 }
 
 function receipt_card(string $id, string $title, string $text): string {
