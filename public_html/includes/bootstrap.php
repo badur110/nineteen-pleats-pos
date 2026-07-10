@@ -239,10 +239,15 @@ function build_final_receipt(array $table, array $order, array $items): string {
     return implode("\n", $lines);
 }
 
+function garbalia_mark_svg(): string {
+    return '<svg class="garbalia-bird" viewBox="0 0 120 82" aria-hidden="true"><path d="M8 24 L50 9 L86 35 L45 37 Z"/><path d="M50 9 L58 64 L86 35"/><path d="M50 9 L50 37 L8 24"/><path d="M45 37 L58 64 L60 80 L72 48"/><path d="M86 35 L105 14 L116 20 L104 22"/><path d="M86 35 L105 14 L80 3 L50 9"/><path d="M8 24 L33 48 L45 37"/><path d="M33 48 L8 41 L8 24"/></svg>';
+}
+
 function render_header(string $title): void {
-    $app = cfg('app_name', 'POS');
-    echo '<!doctype html><html lang="ka"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>' . h($title) . ' — ' . h($app) . '</title><link rel="stylesheet" href="assets/style.css"></head><body>';
-    echo '<header class="topbar"><a class="brand" href="' . h(url_for('day')) . '"><span class="mark">19</span><span><strong>' . h($app) . '</strong><small>' . (is_logged_in() ? h(role_label(current_user()['role'])) : 'ვებ-ვერსია') . '</small></span></a>';
+    $app = 'GARBALIA POS';
+    $sub = is_logged_in() ? role_label(current_user()['role']) : 'Restaurant Management System';
+    echo '<!doctype html><html lang="ka"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>' . h($title) . ' — ' . h($app) . '</title><link rel="stylesheet" href="assets/style.css"></head><body class="app-shell">';
+    echo '<header class="topbar"><a class="brand garbalia-brand" href="' . h(url_for('day')) . '"><span class="garbalia-mark">' . garbalia_mark_svg() . '</span><span class="brand-text"><strong class="garbalia-word">GARBALIA POS</strong><small>' . h($sub) . '</small></span></a>';
     if (is_logged_in()) {
         echo '<nav class="nav"><a href="' . h(url_for('day')) . '">დღე</a><a href="' . h(url_for('tables')) . '">მაგიდები</a>';
         if (is_admin()) {
@@ -259,7 +264,7 @@ function render_header(string $title): void {
 }
 
 function render_footer(): void {
-    echo '</main><script src="assets/app.js"></script></body></html>';
+    echo '</main><footer class="app-footer"><div class="footer-inner"><div class="footer-brand"><span class="footer-mark">' . garbalia_mark_svg() . '</span><div><strong>© GARBALIA POS</strong><small>Restaurant management software</small></div></div><div class="footer-credit"><span>Developed by <b>Giorgi Katamadze</b></span><a class="whatsapp-link" href="https://wa.me/995577785078" target="_blank" rel="noopener">WhatsApp</a></div></div></footer><script src="assets/app.js"></script></body></html>';
 }
 
 function receipt_card(string $id, string $title, string $text): string {
