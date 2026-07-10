@@ -1,7 +1,7 @@
 let garbaliaAllowNavigation = false;
 
 function garbaliaLogoImg(className) {
-  return '<img class="' + className + '" src="/Logo.png?v=9" alt="GARBALIA">';
+  return '<img class="' + className + '" src="/Logo.png?v=10" alt="GARBALIA">';
 }
 
 document.addEventListener('change', function (event) {
@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (route === 'table') {
     document.body.classList.add('page-table');
     enhanceTablePage(params.get('id') || tableIdFromPath());
+    enhanceOrderCancelForms();
     initUnsentOrderGuard();
   }
 });
@@ -73,6 +74,7 @@ function injectGarbaliaBrandStyles() {
     .footer-brand{gap:14px!important}.footer-brand strong{letter-spacing:.10em!important}
     .live-date-pill{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;min-height:44px!important;min-width:176px!important;padding:10px 16px!important;border-radius:999px!important;background:linear-gradient(180deg,rgba(255,250,242,.96),rgba(241,226,206,.92))!important;border:1px solid rgba(43,27,16,.12)!important;box-shadow:0 12px 26px rgba(43,27,16,.10)!important;color:#2b1b10!important;font-family:Inter,Montserrat,Poppins,system-ui,sans-serif!important;font-weight:950!important;letter-spacing:.01em!important}
     .live-date-pill:before{content:"";width:8px;height:8px;border-radius:999px;background:#24733c;box-shadow:0 0 0 5px rgba(36,115,60,.13)}.live-date-text{white-space:nowrap;font-size:.98rem;line-height:1}
+    .cancel-form.cancel-form-compact{grid-template-columns:74px minmax(190px,1fr) 116px!important;align-items:center!important}.cancel-form.cancel-form-compact select{width:100%!important}.cancel-form.cancel-form-compact .btn{width:100%!important}.cancel-form.cancel-form-compact .muted{white-space:nowrap!important}
     .garbalia-confirm-overlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;background:rgba(43,27,16,.46);backdrop-filter:blur(7px);animation:garbaliaFadeIn .16s ease-out}
     .garbalia-confirm-dialog{position:relative;width:min(440px,100%);overflow:hidden;border:1px solid #ead6bd;border-radius:28px;background:linear-gradient(180deg,#fffaf2 0%,#f8ecdd 100%);box-shadow:0 28px 70px rgba(43,27,16,.30);padding:28px;color:#2b1b10;text-align:center;animation:garbaliaPopIn .18s ease-out;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif}
     .garbalia-confirm-bg-logo{position:absolute;right:-18px;top:-16px;width:136px;height:88px;object-fit:contain;opacity:.07;filter:brightness(0);pointer-events:none}.garbalia-confirm-mini{width:48px;height:34px;object-fit:contain;margin:0 auto 10px;mix-blend-mode:multiply}
@@ -81,8 +83,8 @@ function injectGarbaliaBrandStyles() {
     .unsent-dialog{position:relative;width:min(430px,100%);overflow:hidden;border:1px solid #ead6bd;border-radius:28px;background:linear-gradient(180deg,#fffaf2 0%,#f8ecdd 100%);box-shadow:0 28px 70px rgba(43,27,16,.28);padding:28px;color:#2b1b10;text-align:center}
     .unsent-logo{position:absolute;right:-12px;top:-10px;width:126px;height:82px;object-fit:contain;opacity:.08;filter:brightness(0);pointer-events:none}.unsent-mini{width:46px;height:34px;object-fit:contain;margin:0 auto 10px;mix-blend-mode:multiply}.unsent-dialog h3{margin:0 0 8px;font-size:1.35rem;font-weight:950;letter-spacing:-.02em}.unsent-dialog p{margin:0 auto 20px;max-width:320px;color:#6d5140;font-weight:800}.unsent-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.unsent-actions .btn{width:100%;min-height:46px;border-radius:14px}.unsent-actions .btn.light{background:#f1e2ce!important;color:#2b1b10!important}.unsent-close{position:absolute;right:12px;top:12px;width:34px;height:34px;border:0;border-radius:50%;background:rgba(43,27,16,.08);color:#2b1b10;font-size:20px;font-weight:900;cursor:pointer}
     @keyframes garbaliaFadeIn{from{opacity:0}to{opacity:1}}@keyframes garbaliaPopIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-    @media(max-width:820px){.garbalia-mark{width:66px!important;height:40px!important;flex-basis:66px!important}.garbalia-word{font-size:.95rem!important}.brand small{font-size:.72rem!important}}
-    @media(max-width:620px){.garbalia-mark,.footer-mark{width:60px!important;height:38px!important;flex-basis:60px!important}.login-logo{width:64px!important;max-width:64px!important}.login-logo-img{width:64px!important;height:56px!important}.garbalia-login-badge strong{font-size:.92rem!important}.garbalia-login-badge small{font-size:.70rem!important}.unsent-actions,.garbalia-confirm-actions{grid-template-columns:1fr}.live-date-pill{min-width:0!important;width:100%!important}}
+    @media(max-width:820px){.garbalia-mark{width:66px!important;height:40px!important;flex-basis:66px!important}.garbalia-word{font-size:.95rem!important}.brand small{font-size:.72rem!important}.cancel-form.cancel-form-compact{grid-template-columns:1fr 1fr!important}.cancel-form.cancel-form-compact .btn{grid-column:1/-1}}
+    @media(max-width:620px){.garbalia-mark,.footer-mark{width:60px!important;height:38px!important;flex-basis:60px!important}.login-logo{width:64px!important;max-width:64px!important}.login-logo-img{width:64px!important;height:56px!important}.garbalia-login-badge strong{font-size:.92rem!important}.garbalia-login-badge small{font-size:.70rem!important}.unsent-actions,.garbalia-confirm-actions{grid-template-columns:1fr}.live-date-pill{min-width:0!important;width:100%!important}.cancel-form.cancel-form-compact{grid-template-columns:1fr!important}}
   `;
   document.head.appendChild(style);
 }
@@ -209,6 +211,14 @@ function enhanceTablePage(tableId) {
   orderCard.appendChild(form);
 }
 
+function enhanceOrderCancelForms() {
+  document.querySelectorAll('.cancel-form').forEach(function (form) {
+    const extra = form.querySelector('input[name="cancel_reason_custom"]');
+    if (extra) extra.remove();
+    form.classList.add('cancel-form-compact');
+  });
+}
+
 function hasUnsentActiveItems() {
   const items = Array.from(document.querySelectorAll('.order-item:not(.cancelled)'));
   return items.some(function (item) { return !item.querySelector('.sent'); });
@@ -259,7 +269,7 @@ function showGarbaliaConfirm(options) {
   const overlay = document.createElement('div');
   overlay.id = options.id || 'garbalia-confirm-modal';
   overlay.className = 'garbalia-confirm-overlay';
-  overlay.innerHTML = '<div class="garbalia-confirm-dialog" role="dialog" aria-modal="true"><button type="button" class="garbalia-confirm-close" aria-label="დახურვა">×</button><img class="garbalia-confirm-bg-logo" src="/Logo.png?v=9" alt=""><img class="garbalia-confirm-mini" src="/Logo.png?v=9" alt="GARBALIA"><h3>' + escapeHtml(options.title || 'დადასტურება') + '</h3><p>' + escapeHtml(options.message || '') + '</p><div class="garbalia-confirm-actions"><button type="button" class="btn light" data-garbalia-cancel>' + escapeHtml(options.cancelText || 'არა') + '</button><button type="button" class="btn ' + escapeHtml(options.confirmClass || 'danger') + '" data-garbalia-confirm>' + escapeHtml(options.confirmText || 'დიახ') + '</button></div></div>';
+  overlay.innerHTML = '<div class="garbalia-confirm-dialog" role="dialog" aria-modal="true"><button type="button" class="garbalia-confirm-close" aria-label="დახურვა">×</button><img class="garbalia-confirm-bg-logo" src="/Logo.png?v=10" alt=""><img class="garbalia-confirm-mini" src="/Logo.png?v=10" alt="GARBALIA"><h3>' + escapeHtml(options.title || 'დადასტურება') + '</h3><p>' + escapeHtml(options.message || '') + '</p><div class="garbalia-confirm-actions"><button type="button" class="btn light" data-garbalia-cancel>' + escapeHtml(options.cancelText || 'არა') + '</button><button type="button" class="btn ' + escapeHtml(options.confirmClass || 'danger') + '" data-garbalia-confirm>' + escapeHtml(options.confirmText || 'დიახ') + '</button></div></div>';
   document.body.appendChild(overlay);
   const close = function () { overlay.remove(); };
   const confirmButton = overlay.querySelector('[data-garbalia-confirm]');
