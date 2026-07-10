@@ -69,7 +69,7 @@ function page_table(): void {
     $cat = null;
     foreach ($products as $product) {
         if ($cat !== $product['category_name']) { $cat = $product['category_name']; echo '<h3 class="category-title">'.h($cat ?: 'სხვა').'</h3>'; }
-        echo '<form class="product-row" method="post"><input type="hidden" name="action" value="add_item"><input type="hidden" name="table_id" value="'.$tableId.'"><input type="hidden" name="product_id" value="'.(int)$product['id'].'"><div class="product-name"><strong>'.h($product['name']).'</strong><small>'.money($product['price']).'</small></div><input class="qty-input" name="quantity" type="number" min="0.01" step="0.01" value="1"><input name="comment" placeholder="კომენტარი"><button class="btn">დამატება</button></form>';
+        echo '<form class="product-row" method="post"><input type="hidden" name="action" value="add_item"><input type="hidden" name="table_id" value="'.$tableId.'"><input type="hidden" name="product_id" value="'.(int)$product['id'].'"><div class="product-name"><strong>'.h($product['name']).'</strong><small>'.money($product['price']).'</small></div><input class="qty-input" name="quantity" type="number" min="1" step="1" value="1"><input name="comment" placeholder="კომენტარი"><button class="btn">დამატება</button></form>';
     }
     echo '</div><div class="card"><h2>მიმდინარე შეკვეთა</h2>';
     if (!$items) echo '<p class="muted">შეკვეთა ჯერ ცარიელია.</p>';
@@ -166,6 +166,83 @@ function page_reports(): void {
     render_footer();
 }
 
+function page_history(): void {
+    require_admin();
+    $today = date('Y-m-d');
+    $monthStart = date('Y-m-01');
+    $from = $_GET['from'] ?? $monthStart;
+    $to = $_GET['to'] ?? $today;
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $from)) $from = $monthStart;
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $to)) $to = $today;
+    $tableId = (int)($_GET['table_id'] ?? 0);
+    $payment = $_GET['payment'] ?? 'all';
+    $status = $_GET['status'] ?? 'all';
+    $viewOrderId = (int)($_GET['order_id'] ?? 0);
+    $sel = fn($a, $b) => (string)$a === (string)$b ? 'selected' : '';
+    $tables = db()->query('SELECT * FROM restaurant_tables WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+
+    $where = ['o.status IN ("closed", "cancelled")', 'COALESCE(o.closed_at, o.created_at) BETWEEN ? AND ?'];
+    $params = [$from . ' 00:00:00', $to . ' 23:59:59'];
+    if ($tableId > 0) { $where[] = 'o.table_id=?'; $params[] = $tableId; }
+    if (in_array($payment, ['cash','card','mixed'], true)) { $where[] = 'o.payment_type=?'; $params[] = $payment; }
+    if ($payment === 'zero') { $where[] = 'o.status="cancelled"'; }
+    if (in_array($status, ['closed','cancelled'], true)) { $where[] = 'o.status=?'; $params[] = $status; }
+
+    $sql = 'SELECT o.*, t.name table_name, u.name user_name, d.id day_id FROM orders o JOIN restaurant_tables t ON t.id=o.table_id LEFT JOIN users u ON u.id=o.user_id LEFT JOIN business_days d ON d.id=o.business_day_id WHERE ' . implode(' AND ', $where) . ' ORDER BY COALESCE(o.closed_at,o.created_at) DESC, o.id DESC LIMIT 300';
+    $stmt = db()->prepare($sql);
+    $stmt->execute($params);
+    $orders = $stmt->fetchAll();
+
+    $salesTotal = 0; $cashTotal = 0; $cardTotal = 0; $closedCount = 0; $zeroCount = 0;
+    foreach ($orders as $o) {
+        if ($o['status'] === 'closed') {
+            $closedCount++;
+            $salesTotal += (float)$o['total'];
+            $cashTotal += (float)$o['cash_amount'];
+            $cardTotal += (float)$o['card_amount'];
+        } elseif ($o['status'] === 'cancelled') {
+            $zeroCount++;
+        }
+    }
+
+    render_header('ისტორია');
+    echo '<style>.history-filters{margin-bottom:18px}.history-grid{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:12px;align-items:end}.history-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.status-zero{display:inline-flex;border-radius:999px;background:#ffe5e2;color:#8b1d15;font-weight:900;padding:5px 9px}.status-paid{display:inline-flex;border-radius:999px;background:#e9ffe4;color:#24733c;font-weight:900;padding:5px 9px}.history-detail{margin-bottom:18px}.history-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.history-detail-grid div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px}.history-detail-grid span{display:block;color:var(--muted);font-size:.86rem}.history-detail-grid strong{display:block;margin-top:3px}@media(max-width:980px){.history-grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){.history-grid{grid-template-columns:1fr}}</style>';
+    echo '<div class="page-head"><div><h1>მაგიდების ისტორია</h1><p class="muted">მხოლოდ ადმინისტრატორისთვის — დახურული და ნულით დახურული მაგიდები.</p></div></div>';
+
+    echo '<section class="card history-filters"><form method="get"><input type="hidden" name="page" value="history"><div class="history-grid"><label>თარიღიდან<input type="date" name="from" value="'.h($from).'"></label><label>თარიღამდე<input type="date" name="to" value="'.h($to).'"></label><label>მაგიდა<select name="table_id"><option value="0">ყველა მაგიდა</option>';
+    foreach ($tables as $t) echo '<option value="'.(int)$t['id'].'" '.$sel($tableId, $t['id']).'>'.h($t['name']).'</option>';
+    echo '</select></label><label>გადახდა<select name="payment"><option value="all" '.$sel($payment,'all').'>ყველა</option><option value="cash" '.$sel($payment,'cash').'>ნაღდი</option><option value="card" '.$sel($payment,'card').'>ბარათი</option><option value="mixed" '.$sel($payment,'mixed').'>შერეული</option><option value="zero" '.$sel($payment,'zero').'>ნულით დახურული</option></select></label><label>სტატუსი<select name="status"><option value="all" '.$sel($status,'all').'>ყველა</option><option value="closed" '.$sel($status,'closed').'>დახურული</option><option value="cancelled" '.$sel($status,'cancelled').'>ნულით დახურული</option></select></label><button class="btn primary">ძებნა</button></div></form><div class="history-actions"><a class="btn" href="'.h(url_for('history',['from'=>$today,'to'=>$today])).'">დღეს</a><a class="btn" href="'.h(url_for('history',['from'=>date('Y-m-d', strtotime('-1 day')),'to'=>date('Y-m-d', strtotime('-1 day'))])).'">გუშინ</a><a class="btn" href="'.h(url_for('history',['from'=>$monthStart,'to'=>$today])).'">ამ თვეში</a></div></section>';
+
+    echo '<section class="stats"><div><span>სულ გაყიდვა</span><strong>'.money($salesTotal).'</strong></div><div><span>ნაღდი</span><strong>'.money($cashTotal).'</strong></div><div><span>ბარათი</span><strong>'.money($cardTotal).'</strong></div><div><span>დახურული ანგარიშები</span><strong>'.$closedCount.'</strong></div><div><span>ნულით დახურული</span><strong>'.$zeroCount.'</strong></div></section>';
+
+    if ($viewOrderId > 0) {
+        $stmt = db()->prepare('SELECT o.*, t.name table_name, u.name user_name FROM orders o JOIN restaurant_tables t ON t.id=o.table_id LEFT JOIN users u ON u.id=o.user_id WHERE o.id=? AND o.status IN ("closed","cancelled")');
+        $stmt->execute([$viewOrderId]);
+        $detail = $stmt->fetch();
+        if ($detail) {
+            $items = order_items((int)$detail['id']);
+            echo '<section class="card history-detail"><div class="page-head"><h2>ანგარიში #'.(int)$detail['id'].'</h2><a class="btn" href="'.h(url_for('history',['from'=>$from,'to'=>$to,'table_id'=>$tableId,'payment'=>$payment,'status'=>$status])).'">დახურვა</a></div><div class="history-detail-grid"><div><span>მაგიდა</span><strong>'.h($detail['table_name']).'</strong></div><div><span>სტატუსი</span><strong>'.h($detail['status']==='cancelled'?'ნულით დახურული':'დახურული').'</strong></div><div><span>მომხმარებელი</span><strong>'.h($detail['user_name'] ?: '—').'</strong></div><div><span>გადახდა</span><strong>'.h($detail['status']==='cancelled'?'—':payment_label($detail['payment_type'])).'</strong></div><div><span>ჯამი</span><strong>'.money($detail['total']).'</strong></div><div><span>დრო</span><strong>'.h($detail['closed_at'] ?: $detail['created_at']).'</strong></div></div><h3>პროდუქტები</h3><div class="table-wrap"><table><thead><tr><th>პროდუქტი</th><th>რაოდ.</th><th>ფასი</th><th>ჯამი</th><th>სტატუსი / მიზეზი</th></tr></thead><tbody>';
+            foreach ($items as $it) {
+                $lineTotal = (float)$it['quantity'] * (float)$it['price'];
+                $itemStatus = (int)$it['is_cancelled'] === 1 ? 'გაუქმებულია: '.($it['cancel_reason'] ?: '—') : 'გაყიდულია';
+                echo '<tr><td>'.h($it['product_name']).'</td><td>'.h(qty($it['quantity'])).'</td><td>'.money($it['price']).'</td><td>'.money($lineTotal).'</td><td>'.h($itemStatus).'</td></tr>';
+            }
+            echo '</tbody></table></div></section>';
+        }
+    }
+
+    echo '<section class="card"><h2>ანგარიშების სია</h2><div class="table-wrap"><table><thead><tr><th>ID</th><th>დღე</th><th>მაგიდა</th><th>მომხმარებელი</th><th>ჯამი</th><th>გადახდა</th><th>სტატუსი</th><th>დრო</th><th>ნახვა</th></tr></thead><tbody>';
+    if (!$orders) echo '<tr><td colspan="9">ამ ფილტრით ისტორია არ მოიძებნა.</td></tr>';
+    foreach ($orders as $o) {
+        $isZero = $o['status'] === 'cancelled';
+        $statusHtml = $isZero ? '<span class="status-zero">ნულით</span>' : '<span class="status-paid">დახურული</span>';
+        $payText = $isZero ? '—' : payment_label($o['payment_type']);
+        echo '<tr><td>#'.(int)$o['id'].'</td><td>#'.(int)$o['day_id'].'</td><td>'.h($o['table_name']).'</td><td>'.h($o['user_name'] ?: '—').'</td><td>'.money($o['total']).'</td><td>'.h($payText).'</td><td>'.$statusHtml.'</td><td>'.h($o['closed_at'] ?: $o['created_at']).'</td><td><a class="btn" href="'.h(url_for('history',['from'=>$from,'to'=>$to,'table_id'=>$tableId,'payment'=>$payment,'status'=>$status,'order_id'=>(int)$o['id']])).'">ნახვა</a></td></tr>';
+    }
+    echo '</tbody></table></div></section>';
+    render_footer();
+}
+
 try {
     if (!file_exists(__DIR__ . '/config.php')) { setup_page(); exit; }
     handle_post_action();
@@ -177,6 +254,7 @@ try {
         'tables' => page_tables(),
         'table' => page_table(),
         'products' => page_products(),
+        'history' => page_history(),
         'print_order' => page_print_order(),
         'print_final' => page_print_final(),
         'reports' => page_reports(),
