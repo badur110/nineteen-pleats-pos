@@ -148,18 +148,13 @@ function handle_post_action(): void {
             flash('ამ მაგიდაზე ღია შეკვეთა არ არის.', 'warn');
             redirect_to('tables');
         }
-        if (!is_admin() && ($_POST['cancel_password'] ?? '') !== cfg('cancel_password', 'cancel123')) {
-            flash('გაუქმების პაროლი არასწორია.', 'warn');
-            redirect_to('table', ['id' => $tableId]);
-        }
         $total = order_total((int)$order['id']);
         if ($total > 0) {
             flash('ნულით დახურვა შეიძლება მხოლოდ მაშინ, როცა ჯამი 0.00 ₾ არის.', 'warn');
             redirect_to('table', ['id' => $tableId]);
         }
-        $reason = trim($_POST['cancel_reason'] ?? 'ცარიელი შეკვეთა / შეცდომით გახსნილი მაგიდა');
         db()->prepare("UPDATE orders SET status='cancelled', total=0, payment_type=NULL, cash_amount=0, card_amount=0, closed_at=NOW() WHERE id=? AND status='open'")->execute([$order['id']]);
-        flash('მაგიდა დაიხურა ნულით. მიზეზი: ' . $reason);
+        flash('მაგიდა დაიხურა ნულით.');
         redirect_to('tables');
     }
 
