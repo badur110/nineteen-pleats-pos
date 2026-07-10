@@ -3,10 +3,7 @@ document.addEventListener('change', function (event) {
     const box = document.getElementById('mixed_fields');
     if (box) box.style.display = event.target.value === 'mixed' ? 'grid' : 'none';
   }
-
-  if (event.target && event.target.classList.contains('qty-input')) {
-    normalizeQtyInput(event.target);
-  }
+  if (event.target && event.target.classList.contains('qty-input')) normalizeQtyInput(event.target);
 });
 
 document.addEventListener('input', function (event) {
@@ -51,7 +48,7 @@ function tableIdFromPath() {
 }
 
 function garbaliaLogoImg(className) {
-  return '<img class="' + className + '" src="/Logo.png?v=4" alt="GARBALIA">';
+  return '<img class="' + className + '" src="/Logo.png?v=6" alt="GARBALIA">';
 }
 
 function injectGarbaliaBrandStyles() {
@@ -59,36 +56,30 @@ function injectGarbaliaBrandStyles() {
   const style = document.createElement('style');
   style.id = 'garbalia-exact-brand-style';
   style.textContent = `
-    .garbalia-mark,.footer-mark{display:flex!important;align-items:center!important;justify-content:center!important;background:#fff!important;color:#111!important;overflow:hidden!important;border-radius:18px!important;padding:6px!important;box-shadow:0 8px 18px rgba(0,0,0,.10)!important}
-    .garbalia-mark{width:150px!important;height:62px!important;flex:0 0 150px!important}
-    .footer-mark{width:118px!important;height:58px!important;flex:0 0 118px!important;border-radius:16px!important}
-    .garbalia-header-logo,.footer-logo-img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;background:transparent!important;border-radius:0!important;padding:0!important;box-shadow:none!important}
+    .garbalia-mark,.footer-mark{display:flex!important;align-items:center!important;justify-content:center!important;background:transparent!important;color:#111!important;overflow:visible!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important}
+    .garbalia-mark{width:76px!important;height:44px!important;flex:0 0 76px!important}
+    .footer-mark{width:76px!important;height:44px!important;flex:0 0 76px!important}
+    .garbalia-header-logo,.footer-logo-img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important}
+    .garbalia-header-logo{filter:brightness(0) invert(1)!important;mix-blend-mode:screen!important}
+    .footer-logo-img{mix-blend-mode:multiply!important}
     .garbalia-word{letter-spacing:.04em!important}
-    .brand.garbalia-brand{gap:14px!important;min-width:0!important}
-    .brand-text{min-width:0!important}
-    .login-card{position:relative;overflow:hidden;border-radius:28px!important;max-width:460px!important}
-    .login-card:before{display:none!important;content:none!important}
+    .brand.garbalia-brand{gap:13px!important;min-width:0!important}.brand-text{min-width:0!important}
+    .login-card{position:relative;overflow:hidden;border-radius:28px!important;max-width:460px!important}.login-card:before{display:none!important;content:none!important}
     .login-brand-line{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:8px!important;margin:0 auto 18px!important;width:100%!important;text-align:center!important}
-    .login-logo{flex:0 0 auto!important;width:70px!important;max-width:70px!important;margin:0 auto!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;border:0!important;overflow:visible!important}
+    .login-logo{flex:0 0 auto!important;width:70px!important;max-width:70px!important;height:62px!important;margin:0 auto!important;background:transparent!important;box-shadow:none!important;border-radius:0!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important;border:0!important;overflow:visible!important}
     .login-logo-img{display:block!important;width:70px!important;height:62px!important;object-fit:contain!important;border-radius:0!important;background:transparent!important;padding:0!important;box-shadow:none!important;border:0!important;mix-blend-mode:multiply!important}
     .garbalia-login-badge{margin:0 auto!important;display:flex!important;flex-direction:column!important;gap:3px!important;align-items:center!important;justify-content:center!important;text-align:center!important;border:0!important;background:transparent!important;border-radius:0!important;padding:0!important;color:#2b1b10!important;box-shadow:none!important;min-width:0!important;font-family:Inter,Montserrat,Poppins,Arial,sans-serif!important}
     .garbalia-login-badge strong{font-size:1rem!important;letter-spacing:.14em!important;line-height:1.1!important;font-weight:950!important;text-align:center!important}.garbalia-login-badge small{font-size:.76rem!important;color:#6d5140!important;font-weight:800!important;line-height:1.25!important;text-align:center!important;letter-spacing:.01em!important}
     .footer-brand{gap:14px!important}.footer-brand strong{letter-spacing:.10em!important}
-    @media(max-width:820px){.garbalia-mark{width:118px!important;height:54px!important;flex-basis:118px!important}.brand.garbalia-brand{gap:10px!important}.garbalia-word{font-size:.95rem!important}.brand small{font-size:.72rem!important}}
-    @media(max-width:620px){.garbalia-mark{width:104px!important;height:48px!important;flex-basis:104px!important}.footer-mark{width:104px!important;height:50px!important;flex-basis:104px!important}.login-card{max-width:430px!important}.login-logo{width:64px!important;max-width:64px!important}.login-logo-img{width:64px!important;height:56px!important}.garbalia-login-badge strong{font-size:.92rem!important}.garbalia-login-badge small{font-size:.70rem!important}}
+    @media(max-width:820px){.garbalia-mark{width:66px!important;height:40px!important;flex-basis:66px!important}.garbalia-word{font-size:.95rem!important}.brand small{font-size:.72rem!important}}
+    @media(max-width:620px){.garbalia-mark,.footer-mark{width:60px!important;height:38px!important;flex-basis:60px!important}.login-logo{width:64px!important;max-width:64px!important}.login-logo-img{width:64px!important;height:56px!important}.garbalia-login-badge strong{font-size:.92rem!important}.garbalia-login-badge small{font-size:.70rem!important}}
   `;
   document.head.appendChild(style);
 }
 
 function brandGarbaliaEverywhere() {
-  document.querySelectorAll('.garbalia-mark').forEach(function (mark) {
-    mark.innerHTML = garbaliaLogoImg('garbalia-header-logo');
-  });
-
-  document.querySelectorAll('.footer-mark').forEach(function (mark) {
-    mark.innerHTML = garbaliaLogoImg('footer-logo-img');
-  });
-
+  document.querySelectorAll('.garbalia-mark').forEach(function (mark) { mark.innerHTML = garbaliaLogoImg('garbalia-header-logo'); });
+  document.querySelectorAll('.footer-mark').forEach(function (mark) { mark.innerHTML = garbaliaLogoImg('footer-logo-img'); });
   const logo = document.querySelector('.login-logo');
   if (logo) {
     logo.innerHTML = garbaliaLogoImg('login-logo-img');
@@ -103,17 +94,12 @@ function brandGarbaliaEverywhere() {
 
 function addHistoryNavLink() {
   const nav = document.querySelector('.nav');
-  if (!nav) return;
-  if (!nav.querySelector('a[href*="products"]')) return;
-  if (nav.querySelector('a[href*="history"]')) return;
-
+  if (!nav || !nav.querySelector('a[href*="products"]') || nav.querySelector('a[href*="history"]')) return;
   const historyLink = document.createElement('a');
   historyLink.href = '/history';
   historyLink.textContent = 'ისტორია';
-
   const reportsLink = nav.querySelector('a[href*="reports"]');
-  if (reportsLink) nav.insertBefore(historyLink, reportsLink);
-  else nav.appendChild(historyLink);
+  if (reportsLink) nav.insertBefore(historyLink, reportsLink); else nav.appendChild(historyLink);
 }
 
 function fixQuantityInputs() {
@@ -124,7 +110,6 @@ function fixQuantityInputs() {
     normalizeQtyInput(input);
   });
 }
-
 function normalizeQtyInput(input) {
   const number = parseInt(String(input.value).replace(',', '.'), 10);
   input.value = Number.isFinite(number) && number >= 1 ? String(number) : '1';
@@ -135,30 +120,14 @@ function injectProductPageStyles() {
   const style = document.createElement('style');
   style.id = 'product-page-style';
   style.textContent = `
-    .page-products .wrap{max-width:1180px}
-    .page-products .two-col{grid-template-columns:minmax(300px,360px) minmax(0,1fr);align-items:start;gap:20px}
-    .page-products .card{border-radius:24px;overflow:hidden}
-    .page-products .card h2{font-size:1.15rem;margin-bottom:16px}
-    .page-products .stack label{font-size:.95rem}
-    .page-products .stack input{height:46px}
-    .page-products .stack .btn{height:46px;border-radius:14px}
-    .page-products .table-wrap{border:0;overflow:visible;background:transparent;width:100%}
-    .page-products table,.page-products tbody{display:block;width:100%;min-width:0;background:transparent;border-collapse:separate;border-spacing:0}
-    .page-products thead{display:none}
-    .page-products tbody{display:grid;gap:10px}
+    .page-products .wrap{max-width:1180px}.page-products .two-col{grid-template-columns:minmax(300px,360px) minmax(0,1fr);align-items:start;gap:20px}.page-products .card{border-radius:24px;overflow:hidden}.page-products .table-wrap{border:0;overflow:visible;background:transparent;width:100%}
+    .page-products table,.page-products tbody{display:block;width:100%;min-width:0;background:transparent;border-collapse:separate;border-spacing:0}.page-products thead{display:none}.page-products tbody{display:grid;gap:10px}
     .page-products tr{display:grid;width:100%;grid-template-columns:minmax(150px,1fr) 88px 72px 78px 166px;gap:8px;align-items:center;background:#fff;border:1px solid #ead6bd;border-radius:18px;padding:12px;box-shadow:0 8px 20px rgba(43,27,16,.07);overflow:hidden}
-    .page-products td{border:0;padding:0;min-width:0;overflow:hidden;text-overflow:ellipsis}
-    .page-products td:nth-child(1){font-weight:900;font-size:1rem;line-height:1.18;white-space:normal;overflow-wrap:anywhere}
-    .page-products td:nth-child(2){color:#7a6657;font-size:.92rem;white-space:nowrap}
-    .page-products td:nth-child(3){font-weight:900;white-space:nowrap;text-align:left;font-size:.95rem}
-    .page-products td:nth-child(4){display:flex;width:100%;max-width:100%;align-items:center;justify-content:center;border-radius:999px;background:#e9ffe4;color:#24733c;font-weight:900;padding:6px 8px;font-size:.84rem;white-space:nowrap;overflow:hidden;text-overflow:clip}
-    .page-products .product-actions-cell{display:flex;gap:7px;align-items:center;justify-content:flex-end;flex-wrap:nowrap;min-width:0;overflow:visible}
-    .page-products .inline-action-form{margin:0!important;display:inline-flex;min-width:0}
-    .page-products .btn.mini{min-height:34px;width:auto!important;padding:7px 9px;border-radius:10px;font-size:.84rem;line-height:1.1;white-space:nowrap}
-    .page-products .btn.edit{background:#2357a5;color:#fff!important;text-decoration:none}
-    @media(max-width:1120px){.page-products .two-col{grid-template-columns:1fr}.page-products tr{grid-template-columns:minmax(0,1fr) 100px 78px 86px 174px}.page-products .product-actions-cell{justify-content:flex-end}}
+    .page-products td{border:0;padding:0;min-width:0;overflow:hidden;text-overflow:ellipsis}.page-products td:nth-child(1){font-weight:900;font-size:1rem;line-height:1.18;white-space:normal;overflow-wrap:anywhere}.page-products td:nth-child(2){color:#7a6657;font-size:.92rem;white-space:nowrap}.page-products td:nth-child(3){font-weight:900;white-space:nowrap;font-size:.95rem}
+    .page-products td:nth-child(4){display:flex;width:100%;align-items:center;justify-content:center;border-radius:999px;background:#e9ffe4;color:#24733c;font-weight:900;padding:6px 8px;font-size:.84rem;white-space:nowrap;overflow:hidden}.page-products .product-actions-cell{display:flex;gap:7px;align-items:center;justify-content:flex-end;flex-wrap:nowrap;overflow:visible}.page-products .inline-action-form{margin:0!important;display:inline-flex}.page-products .btn.mini{min-height:34px;width:auto!important;padding:7px 9px;border-radius:10px;font-size:.84rem;line-height:1.1;white-space:nowrap}.page-products .btn.edit{background:#2357a5;color:#fff!important;text-decoration:none}
+    @media(max-width:1120px){.page-products .two-col{grid-template-columns:1fr}.page-products tr{grid-template-columns:minmax(0,1fr) 100px 78px 86px 174px}}
     @media(max-width:720px){.page-products tr{grid-template-columns:minmax(0,1fr) 90px 72px 82px}.page-products .product-actions-cell{grid-column:1/-1;justify-content:flex-start}.page-products .btn.mini{min-height:38px}}
-    @media(max-width:640px){.page-products tr{display:block;padding:14px}.page-products td{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #f0dfc9;overflow:visible}.page-products td:last-child{border-bottom:0}.page-products td:before{font-weight:900;color:#7a6657}.page-products td:nth-child(1):before{content:'პროდუქტი'}.page-products td:nth-child(2):before{content:'კატეგორია'}.page-products td:nth-child(3):before{content:'ფასი'}.page-products td:nth-child(4):before{content:'სტატუსი'}.page-products td:nth-child(4){justify-content:space-between;background:transparent;color:#24733c;padding:7px 0}.page-products .product-actions-cell{justify-content:stretch;display:flex}.page-products .product-actions-cell,.page-products .inline-action-form,.page-products .product-actions-cell .btn{width:100%!important}.page-products .btn.mini{min-height:40px}}
+    @media(max-width:640px){.page-products tr{display:block;padding:14px}.page-products td{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #f0dfc9;overflow:visible}.page-products td:last-child{border-bottom:0}.page-products td:before{font-weight:900;color:#7a6657}.page-products td:nth-child(1):before{content:'პროდუქტი'}.page-products td:nth-child(2):before{content:'კატეგორია'}.page-products td:nth-child(3):before{content:'ფასი'}.page-products td:nth-child(4):before{content:'სტატუსი'}.page-products td:nth-child(4){justify-content:space-between;background:transparent;color:#24733c;padding:7px 0}.page-products .product-actions-cell{justify-content:stretch;display:flex}.page-products .product-actions-cell,.page-products .inline-action-form,.page-products .product-actions-cell .btn{width:100%!important}}
   `;
   document.head.appendChild(style);
 }
@@ -168,14 +137,11 @@ function enhanceProductsPage() {
     const toggleForm = input.closest('form');
     if (!toggleForm || toggleForm.dataset.enhanced === '1') return;
     toggleForm.dataset.enhanced = '1';
-
     const actionCell = toggleForm.closest('td');
     if (!actionCell) return;
     actionCell.classList.add('product-actions-cell');
-
     const editLink = actionCell.querySelector('a');
     if (editLink) editLink.classList.add('btn', 'mini', 'edit');
-
     toggleForm.classList.add('inline-action-form');
     const toggleBtn = toggleForm.querySelector('button');
     if (toggleBtn) toggleBtn.classList.add('mini');
@@ -187,16 +153,12 @@ function enhanceTablePage(tableId) {
   const orderCard = document.querySelector('.pos-grid > .card:nth-child(2)');
   if (!tableId || !totalBox || !orderCard || document.getElementById('zero-close-form')) return;
   if (!orderCard.querySelector('.order-item')) return;
-
-  const totalText = totalBox.textContent.replace(',', '.');
-  const total = parseFloat(totalText.replace(/[^0-9.]/g, '')) || 0;
+  const total = parseFloat(totalBox.textContent.replace(',', '.').replace(/[^0-9.]/g, '')) || 0;
   if (total > 0.001) return;
-
   const closeTitle = Array.from(orderCard.querySelectorAll('h2')).find(function (h) { return h.textContent.includes('მაგიდის დახურვა'); });
   const closeForm = orderCard.querySelector('form.close-form');
   if (closeTitle) closeTitle.remove();
   if (closeForm) closeForm.remove();
-
   const form = document.createElement('form');
   form.id = 'zero-close-form';
   form.method = 'post';
@@ -206,31 +168,22 @@ function enhanceTablePage(tableId) {
 }
 
 function escapeHtml(text) {
-  return String(text).replace(/[&<>"]/g, function (char) {
-    return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[char];
-  });
+  return String(text).replace(/[&<>"]/g, function (char) { return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[char]; });
 }
 
 document.addEventListener('submit', function (event) {
   const qtyInput = event.target.querySelector && event.target.querySelector('.qty-input');
   if (qtyInput) normalizeQtyInput(qtyInput);
-
   const action = event.target.querySelector && event.target.querySelector('input[name="action"]');
-  if (action && action.value === 'cancel_order') {
-    if (!confirm('ნამდვილად გინდა ამ მაგიდის ნულით დახურვა? გაყიდვებში თანხა არ დაემატება.')) {
-      event.preventDefault();
-    }
-  }
+  if (action && action.value === 'cancel_order' && !confirm('ნამდვილად გინდა ამ მაგიდის ნულით დახურვა? გაყიდვებში თანხა არ დაემატება.')) event.preventDefault();
 });
 
 document.addEventListener('click', function (event) {
   const button = event.target.closest('[data-print]');
   if (!button) return;
-  const id = button.getAttribute('data-print');
-  const el = document.getElementById(id);
+  const el = document.getElementById(button.getAttribute('data-print'));
   if (!el) return;
-  const content = el.innerText;
   const win = window.open('', '_blank', 'width=420,height=720');
-  win.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Print</title><style>@page{size:80mm auto;margin:4mm}body{font-family:Arial,sans-serif;font-size:13px;line-height:1.35;color:#000;margin:0}pre{white-space:pre-wrap;margin:0;word-break:break-word}</style></head><body><pre>' + escapeHtml(content) + '</pre><script>window.onload=function(){window.print();}</script></body></html>');
+  win.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Print</title><style>@page{size:80mm auto;margin:4mm}body{font-family:Arial,sans-serif;font-size:13px;line-height:1.35;color:#000;margin:0}pre{white-space:pre-wrap;margin:0;word-break:break-word}</style></head><body><pre>' + escapeHtml(el.innerText) + '</pre><script>window.onload=function(){window.print();}</script></body></html>');
   win.document.close();
 });
