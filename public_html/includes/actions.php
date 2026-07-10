@@ -40,6 +40,30 @@ function handle_post_action(): void {
         redirect_to('day');
     }
 
+    if ($action === 'cash_movement') {
+        $day = active_day();
+        if (!$day) {
+            flash('სალაროს მოძრაობის ჩასაწერად ჯერ გახსენი სამუშაო დღე.', 'warn');
+            redirect_to('day');
+        }
+        ensure_cash_movements_table();
+        $type = $_POST['movement_type'] ?? '';
+        if (!in_array($type, ['add', 'remove', 'expense'], true)) {
+            flash('სალაროს მოძრაობის ტიპი არასწორია.', 'warn');
+            redirect_to('day');
+        }
+        $amount = max(0, (float)($_POST['amount'] ?? 0));
+        if ($amount <= 0) {
+            flash('თანხა უნდა იყოს 0-ზე მეტი.', 'warn');
+            redirect_to('day');
+        }
+        $note = trim($_POST['note'] ?? '');
+        $stmt = db()->prepare('INSERT INTO cash_movements (business_day_id, user_id, type, amount, note) VALUES (?, ?, ?, ?, ?)');
+        $stmt->execute([(int)$day['id'], current_user()['id'], $type, $amount, $note]);
+        flash('სალაროს მოძრაობა ჩაიწერა.');
+        redirect_to('day');
+    }
+
     if ($action === 'close_day') {
         $day = active_day();
         if (!$day) {
@@ -51,14 +75,15 @@ function handle_post_action(): void {
             redirect_to('day');
         }
         $summary = day_summary((int)$day['id']);
-        $expectedCash = (float)$day['opening_cash'] + (float)$summary['cash_total'];
+        $cashNet = cash_movements_net((int)$day['id']);
+        $expectedCash = (float)$day['opening_cash'] + (float)$summary['cash_total'] + $cashNet;
         $closingCash = (float)($_POST['closing_cash'] ?? 0);
         $diff = $closingCash - $expectedCash;
         $note = trim($_POST['close_note'] ?? '');
         $stmt = db()->prepare("UPDATE business_days SET status='closed', closed_by=?, closed_at=NOW(), closing_cash=?, expected_cash=?, cash_difference=?, close_note=? WHERE id=?");
         $stmt->execute([current_user()['id'], $closingCash, $expectedCash, $diff, $note, $day['id']]);
         flash('სამუშაო დღე დაიხურა.');
-        redirect_to('reports', ['day_id' => (int)$day['id']]);
+        redirect_to('history', ['from' => date('Y-m-d'), 'to' => date('Y-m-d')]);
     }
 
     if ($action === 'add_item') {
@@ -165,6 +190,10 @@ function handle_post_action(): void {
         if (!$order) {
             flash('ამ მაგიდაზე ღია შეკვეთა არ არის.', 'warn');
             redirect_to('tables');
+        }
+        if (unsent_items_count((int)$order['id']) > 0) {
+            flash('ამ მაგიდაზე არის გაუგზავნელი პროდუქცია — ჯერ გაგზავნე შეკვეთა და შემდეგ დახურე მაგიდა.', 'warn');
+            redirect_to('table', ['id' => $tableId]);
         }
         $total = order_total((int)$order['id']);
         if ($total <= 0) {
