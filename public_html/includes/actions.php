@@ -142,18 +142,31 @@ function handle_post_action(): void {
     }
 
     if ($action === 'cancel_item') {
+        $day = active_day();
+        if (!$day) {
+            flash('სამუშაო დღე დახურულია.', 'warn');
+            redirect_to('day');
+        }
         $tableId = (int)($_POST['table_id'] ?? 0);
         $itemId = (int)($_POST['item_id'] ?? 0);
-        $reason = trim($_POST['cancel_reason_custom'] ?? '');
-        if ($reason === '') {
-            $reason = trim($_POST['cancel_reason'] ?? '');
+        $stmt = db()->prepare('SELECT oi.*, o.id AS order_id, o.table_id, o.business_day_id, o.status AS order_status FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE oi.id=? AND o.table_id=? AND o.business_day_id=? AND o.status="open" LIMIT 1');
+        $stmt->execute([$itemId, $tableId, (int)$day['id']]);
+        $item = $stmt->fetch();
+        if (!$item) {
+            flash('პროდუქტი ვერ მოიძებნა.', 'warn');
+            redirect_to('table', ['id' => $tableId]);
         }
-        if ($reason === '') {
-            $reason = 'სხვა';
+        if (!empty($item['sent_at'])) {
+            flash('გადაგზავნილი პროდუქტი აღარ იშლება.', 'warn');
+            redirect_to('table', ['id' => $tableId]);
         }
-        $stmt = db()->prepare('UPDATE order_items SET is_cancelled=1, cancelled_by=?, cancelled_at=NOW(), cancel_reason=? WHERE id=? AND is_cancelled=0');
-        $stmt->execute([current_user()['id'], $reason, $itemId]);
-        flash('პროდუქტი გაუქმდა.');
+        db()->prepare('DELETE FROM order_items WHERE id=? AND sent_at IS NULL AND is_cancelled=0')->execute([$itemId]);
+        $stmt = db()->prepare('SELECT COUNT(*) FROM order_items WHERE order_id=? AND is_cancelled=0');
+        $stmt->execute([(int)$item['order_id']]);
+        if ((int)$stmt->fetchColumn() === 0) {
+            db()->prepare('DELETE FROM orders WHERE id=? AND status="open"')->execute([(int)$item['order_id']]);
+        }
+        flash('პროდუქტი სიიდან წაიშალა.');
         redirect_to('table', ['id' => $tableId]);
     }
 
