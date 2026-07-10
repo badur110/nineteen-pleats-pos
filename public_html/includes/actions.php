@@ -116,6 +116,31 @@ function handle_post_action(): void {
         redirect_to('table', ['id' => $tableId]);
     }
 
+    if ($action === 'update_item_quantity') {
+        $day = active_day();
+        if (!$day) {
+            flash('სამუშაო დღე დახურულია.', 'warn');
+            redirect_to('day');
+        }
+        $tableId = (int)($_POST['table_id'] ?? 0);
+        $itemId = (int)($_POST['item_id'] ?? 0);
+        $quantity = max(1, (int)($_POST['quantity'] ?? 1));
+        $stmt = db()->prepare('SELECT oi.*, o.id AS order_id FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE oi.id=? AND o.table_id=? AND o.business_day_id=? AND o.status="open" AND oi.is_cancelled=0 LIMIT 1');
+        $stmt->execute([$itemId, $tableId, (int)$day['id']]);
+        $item = $stmt->fetch();
+        if (!$item) {
+            flash('პროდუქტი ვერ მოიძებნა.', 'warn');
+            redirect_to('table', ['id' => $tableId]);
+        }
+        if (!empty($item['sent_at'])) {
+            flash('გადაგზავნილ პროდუქტზე რაოდენობა აღარ იცვლება.', 'warn');
+            redirect_to('table', ['id' => $tableId]);
+        }
+        db()->prepare('UPDATE order_items SET quantity=? WHERE id=? AND sent_at IS NULL AND is_cancelled=0')->execute([$quantity, $itemId]);
+        flash('რაოდენობა განახლდა.');
+        redirect_to('table', ['id' => $tableId]);
+    }
+
     if ($action === 'send_order') {
         $day = active_day();
         if (!$day) {
@@ -198,6 +223,7 @@ function handle_post_action(): void {
             flash('სამუშაო დღე დახურულია.', 'warn');
             redirect_to('day');
         }
+        ensure_order_discount_columns();
         $tableId = (int)($_POST['table_id'] ?? 0);
         $order = current_open_order((int)$day['id'], $tableId);
         if (!$order) {
@@ -208,11 +234,31 @@ function handle_post_action(): void {
             flash('ამ მაგიდაზე არის გაუგზავნელი პროდუქცია — ჯერ გაგზავნე შეკვეთა და შემდეგ დახურე მაგიდა.', 'warn');
             redirect_to('table', ['id' => $tableId]);
         }
-        $total = order_total((int)$order['id']);
-        if ($total <= 0) {
+        $subtotal = order_total((int)$order['id']);
+        if ($subtotal <= 0) {
             flash('ამ მაგიდას ჯამი 0.00 ₾ აქვს — გამოიყენე „ნულით დახურვა“.', 'warn');
             redirect_to('table', ['id' => $tableId]);
         }
+
+        $discountType = 'none';
+        $discountValue = 0.0;
+        $discountAmount = 0.0;
+        if (($_POST['discount_enabled'] ?? '') === '1') {
+            $requestedType = $_POST['discount_type'] ?? 'percent';
+            $requestedValue = max(0, (float)($_POST['discount_value'] ?? 0));
+            if ($requestedType === 'percent') {
+                $discountType = 'percent';
+                $discountValue = min(100, $requestedValue);
+                $discountAmount = round($subtotal * $discountValue / 100, 2);
+            } elseif ($requestedType === 'amount') {
+                $discountType = 'amount';
+                $discountValue = min($subtotal, $requestedValue);
+                $discountAmount = round($discountValue, 2);
+            }
+        }
+        $discountAmount = min($subtotal, max(0, $discountAmount));
+        $total = round(max(0, $subtotal - $discountAmount), 2);
+
         $paymentType = $_POST['payment_type'] ?? 'cash';
         if (!in_array($paymentType, ['cash', 'card', 'mixed'], true)) {
             $paymentType = 'cash';
@@ -227,12 +273,12 @@ function handle_post_action(): void {
             $cash = max(0, (float)($_POST['cash_amount'] ?? 0));
             $card = max(0, (float)($_POST['card_amount'] ?? 0));
             if (abs(($cash + $card) - $total) > 0.01) {
-                flash('შერეულ გადახდაში ნაღდი + ბარათი უნდა უდრიდეს ჯამს.', 'warn');
+                flash('შერეულ გადახდაში ნაღდი + ბარათი უნდა უდრიდეს საბოლოო ჯამს.', 'warn');
                 redirect_to('table', ['id' => $tableId]);
             }
         }
-        $stmt = db()->prepare("UPDATE orders SET status='closed', total=?, payment_type=?, cash_amount=?, card_amount=?, closed_at=NOW() WHERE id=?");
-        $stmt->execute([$total, $paymentType, $cash, $card, $order['id']]);
+        $stmt = db()->prepare("UPDATE orders SET status='closed', subtotal_total=?, total=?, discount_type=?, discount_value=?, discount_amount=?, payment_type=?, cash_amount=?, card_amount=?, closed_at=NOW() WHERE id=?");
+        $stmt->execute([$subtotal, $total, $discountType, $discountValue, $discountAmount, $paymentType, $cash, $card, $order['id']]);
         redirect_to('print_final', ['order_id' => (int)$order['id']]);
     }
 
