@@ -12,29 +12,37 @@
   --shadow:0 14px 34px rgba(43,27,16,.10);
 }
 *{box-sizing:border-box}
-html{font-size:16px}
-body{margin:0;background:linear-gradient(180deg,#f7efe4 0%,#f3eadc 100%);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;line-height:1.45}
+html{font-size:16px;min-height:100%}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f7efe4 0%,#f3eadc 100%);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;line-height:1.45;display:flex;flex-direction:column}
 a{color:var(--blue)}
 button,input,select{font:inherit}
 input,select{width:100%;min-width:0;border:1px solid #c9ad88;border-radius:12px;background:#fff;padding:11px 12px;color:var(--ink)}
 button:disabled{opacity:.45;cursor:not-allowed}
-.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:72px;padding:10px clamp(14px,3vw,32px);background:var(--brown);color:#fff;box-shadow:0 4px 18px rgba(0,0,0,.13)}
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:72px;padding:10px clamp(14px,3vw,32px);background:var(--brown);color:#fff;box-shadow:0 4px 18px rgba(0,0,0,.13);flex:0 0 auto}
 .brand{display:flex;align-items:center;gap:12px;min-width:0;color:#fff;text-decoration:none}
 .brand strong{display:block;max-width:52vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .brand small{display:block;opacity:.75;font-size:.78rem}
 .mark{display:grid;place-items:center;flex:0 0 auto;width:46px;height:46px;border-radius:50%;background:#fff;color:var(--brown);font-weight:900;border:2px solid #e8d8c2;box-shadow:0 6px 14px rgba(0,0,0,.18)}
+.garbalia-brand{gap:13px}
+.garbalia-mark{display:grid;place-items:center;flex:0 0 auto;width:54px;height:54px;border-radius:18px;background:#fff;color:#111;box-shadow:0 7px 18px rgba(0,0,0,.20);border:1px solid rgba(255,255,255,.55)}
+.garbalia-bird{width:42px;height:32px;fill:none;stroke:currentColor;stroke-width:4.2;stroke-linecap:round;stroke-linejoin:round}
+.garbalia-word{font-weight:950;letter-spacing:.13em;text-transform:uppercase;font-size:1.05rem;line-height:1;color:#fff}
+.brand-text small{margin-top:5px;letter-spacing:.03em}
 .nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .nav a{color:#fff;text-decoration:none;font-weight:800;border-radius:12px;padding:9px 11px;white-space:nowrap}
 .nav a:hover{background:rgba(255,255,255,.12)}
-.wrap{width:min(1240px,100%);margin:0 auto;padding:clamp(16px,3vw,30px)}
+.wrap{width:min(1240px,100%);margin:0 auto;padding:clamp(16px,3vw,30px);flex:1 0 auto}
 .page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
 h1{font-size:clamp(1.7rem,3vw,2.45rem);line-height:1.15;margin:0;font-weight:950;letter-spacing:-.02em}
 h2{font-size:1.2rem;margin:0 0 14px}
 h3{margin:18px 0 10px}
 .card,.login-card,.receipt-card{background:rgba(255,250,242,.96);border:1px solid var(--line);border-radius:20px;padding:clamp(16px,2.4vw,22px);box-shadow:var(--shadow);min-width:0}
 .narrow{max-width:620px;margin:0 auto}
-.login-card{max-width:420px;margin:8vh auto;text-align:center}
-.login-logo{display:grid;place-items:center;width:94px;height:94px;margin:0 auto 14px;border-radius:50%;background:var(--brown);color:#fff;font-weight:900;font-size:1.9rem}
+.login-card{max-width:430px;margin:8vh auto;text-align:center}
+.login-logo{display:grid;place-items:center;width:126px;height:auto;margin:0 auto 12px;border-radius:0;background:transparent;color:#111;font-weight:900;font-size:1.9rem;box-shadow:none}
+.login-logo .garbalia-bird{width:96px;height:66px;stroke-width:3.5}
+.login-logo-word{display:block;margin-top:6px;font-weight:950;letter-spacing:.18em;font-size:1.05rem;color:#111;line-height:1;text-transform:uppercase}
+.login-card h1{margin-top:10px}
 .stack{display:grid;gap:12px}
 label{display:grid;gap:7px;font-weight:800;text-align:left}
 .check{display:flex;align-items:center;gap:8px}.check input{width:auto}
@@ -80,6 +88,16 @@ table{width:100%;border-collapse:collapse;min-width:620px;background:#fff}th,td{
 .receipt-card pre{background:#fff;border:1px dashed #333;border-radius:14px;padding:14px;min-height:280px;white-space:pre-wrap;word-break:break-word;font-family:Consolas,'Courier New',monospace;font-size:.92rem;color:#000}
 .error h1{color:var(--red)}hr{border:0;border-top:1px solid var(--line);margin:20px 0}
 
+.app-footer{flex:0 0 auto;margin-top:auto;padding:0 clamp(14px,3vw,32px) 26px;background:linear-gradient(180deg,rgba(246,239,228,0),#f1e7d8 38%,#f1e7d8 100%)}
+.footer-inner{width:min(1240px,100%);margin:0 auto;border-top:1px solid rgba(43,27,16,.12);padding:18px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;color:#3a2417}
+.footer-brand,.footer-credit{display:flex;align-items:center;gap:10px;min-width:0}
+.footer-mark{display:grid;place-items:center;flex:0 0 auto;width:38px;height:38px;border-radius:50%;background:var(--brown);color:#fff;box-shadow:0 8px 16px rgba(43,27,16,.12)}
+.footer-mark .garbalia-bird{width:27px;height:21px;stroke-width:4.5}
+.footer-brand strong{display:block;font-weight:950;letter-spacing:.08em;color:#111;white-space:nowrap}
+.footer-brand small{display:block;color:var(--muted);font-size:.76rem;margin-top:2px}
+.footer-credit{justify-content:flex-end;flex-wrap:wrap;color:#6c4d37;font-size:.93rem}
+.footer-credit b{color:#111}.whatsapp-link{display:inline-flex;align-items:center;justify-content:center;min-height:34px;border-radius:999px;background:#1f8d45;color:#fff!important;text-decoration:none;font-weight:900;padding:7px 14px;box-shadow:0 8px 18px rgba(31,141,69,.18)}
+
 @media(max-width:1180px){
   .tables-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
   .table-card{min-height:136px}
@@ -93,6 +111,7 @@ table{width:100%;border-collapse:collapse;min-width:620px;background:#fff}th,td{
   .cancel-form,.close-form{grid-template-columns:1fr}.mixed-fields{grid-template-columns:1fr}.cancel-form input[name="cancel_reason_custom"]{grid-column:auto}
   .topbar{align-items:flex-start;flex-direction:column}.nav{justify-content:flex-start}.brand strong{max-width:78vw}
   .tables-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .footer-inner{align-items:flex-start;flex-direction:column}.footer-credit{justify-content:flex-start}
 }
 @media(max-width:680px){
   .tables-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -102,6 +121,7 @@ table{width:100%;border-collapse:collapse;min-width:620px;background:#fff}th,td{
 @media(max-width:560px){
   .wrap{padding:12px}.card,.login-card,.receipt-card{border-radius:16px;padding:14px}
   .nav a{padding:8px 9px;font-size:.92rem}.stats{grid-template-columns:1fr}.page-head{align-items:flex-start}.total-box{width:100%;text-align:center}.btn{width:100%}.actions .btn,.actions form{width:100%}
+  .garbalia-mark{width:48px;height:48px}.garbalia-bird{width:36px;height:28px}.garbalia-word{font-size:.95rem;letter-spacing:.09em}.login-logo .garbalia-bird{width:86px;height:60px}.whatsapp-link{width:auto!important}.footer-brand strong{white-space:normal}
 }
 @media(max-width:380px){
   .tables-grid{grid-template-columns:1fr}
