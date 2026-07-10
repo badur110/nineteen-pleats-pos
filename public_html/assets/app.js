@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const loginHint = document.querySelector('.login-card .hint');
   if (loginHint) loginHint.remove();
 
-  brandLoginLogo();
+  injectGarbaliaBrandStyles();
+  brandGarbaliaEverywhere();
   addHistoryNavLink();
   fixQuantityInputs();
 
@@ -36,14 +37,47 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-function garbaliaLogoHtml() {
-  return '<svg class="garbalia-bird" viewBox="0 0 120 82" aria-hidden="true"><path d="M8 24 L50 9 L86 35 L45 37 Z"/><path d="M50 9 L58 64 L86 35"/><path d="M50 9 L50 37 L8 24"/><path d="M45 37 L58 64 L60 80 L72 48"/><path d="M86 35 L105 14 L116 20 L104 22"/><path d="M86 35 L105 14 L80 3 L50 9"/><path d="M8 24 L33 48 L45 37"/><path d="M33 48 L8 41 L8 24"/></svg><span class="login-logo-word">GARBALIA</span>';
+function garbaliaLogoImg(className) {
+  return '<img class="' + className + '" src="assets/garbalia-logo.svg" alt="GARBALIA">';
 }
 
-function brandLoginLogo() {
+function injectGarbaliaBrandStyles() {
+  if (document.getElementById('garbalia-exact-brand-style')) return;
+  const style = document.createElement('style');
+  style.id = 'garbalia-exact-brand-style';
+  style.textContent = `
+    .garbalia-mark,.footer-mark{background:#fff!important;border-radius:14px!important;color:#111!important;overflow:hidden!important}
+    .garbalia-header-logo{display:block;width:122px;height:52px;object-fit:contain;border-radius:12px;background:#fff;padding:4px}
+    .footer-logo-img{display:block;width:118px;height:54px;object-fit:contain;border-radius:12px;background:#fff;padding:4px}
+    .garbalia-word{letter-spacing:.04em!important}
+    .login-card{position:relative;overflow:hidden;border-radius:28px!important}
+    .login-card:before{content:'GARBALIA POS';position:absolute;left:-38px;top:24px;transform:rotate(-90deg);font-size:.72rem;letter-spacing:.34em;font-weight:950;color:rgba(43,27,16,.18)}
+    .login-logo{width:100%!important;max-width:310px!important;margin:0 auto 8px!important;background:transparent!important;box-shadow:none!important;border-radius:0!important}
+    .login-logo-img{display:block;width:100%;height:auto;margin:0 auto;object-fit:contain;border-radius:18px;background:#fff;padding:8px;box-shadow:0 14px 30px rgba(43,27,16,.10)}
+    .garbalia-login-badge{margin:10px auto 18px;display:inline-flex;flex-direction:column;gap:2px;align-items:center;border:1px solid rgba(43,27,16,.12);background:rgba(255,255,255,.62);border-radius:999px;padding:9px 18px;color:#2b1b10;box-shadow:0 10px 22px rgba(43,27,16,.06)}
+    .garbalia-login-badge strong{font-size:.9rem;letter-spacing:.12em}.garbalia-login-badge small{font-size:.75rem;color:#7a6657;font-weight:800}
+    .footer-brand{gap:14px!important}.footer-brand strong{letter-spacing:.10em!important}
+    @media(max-width:620px){.garbalia-header-logo{width:104px;height:46px}.login-logo{max-width:270px!important}.login-card:before{display:none}.footer-logo-img{width:104px;height:48px}}
+  `;
+  document.head.appendChild(style);
+}
+
+function brandGarbaliaEverywhere() {
+  document.querySelectorAll('.garbalia-mark').forEach(function (mark) {
+    mark.innerHTML = garbaliaLogoImg('garbalia-header-logo');
+  });
+
+  document.querySelectorAll('.footer-mark').forEach(function (mark) {
+    mark.innerHTML = garbaliaLogoImg('footer-logo-img');
+  });
+
   const logo = document.querySelector('.login-logo');
-  if (!logo) return;
-  logo.innerHTML = garbaliaLogoHtml();
+  if (logo) {
+    logo.innerHTML = garbaliaLogoImg('login-logo-img');
+    if (!document.querySelector('.garbalia-login-badge')) {
+      logo.insertAdjacentHTML('afterend', '<div class="garbalia-login-badge"><strong>© GARBALIA POS</strong><small>Restaurant management software</small></div>');
+    }
+  }
 }
 
 function addHistoryNavLink() {
