@@ -118,10 +118,6 @@ function handle_post_action(): void {
 
     if ($action === 'cancel_item') {
         $tableId = (int)($_POST['table_id'] ?? 0);
-        if (!is_admin() && ($_POST['cancel_password'] ?? '') !== cfg('cancel_password', 'cancel123')) {
-            flash('გაუქმების პაროლი არასწორია.', 'warn');
-            redirect_to('table', ['id' => $tableId]);
-        }
         $itemId = (int)($_POST['item_id'] ?? 0);
         $reason = trim($_POST['cancel_reason_custom'] ?? '');
         if ($reason === '') {
