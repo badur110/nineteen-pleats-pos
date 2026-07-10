@@ -62,6 +62,19 @@ CREATE TABLE IF NOT EXISTS business_days (
   KEY idx_business_days_opened_at (opened_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS cash_movements (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  business_day_id INT NOT NULL,
+  user_id INT NULL,
+  type ENUM('add','remove','expense') NOT NULL,
+  amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  note VARCHAR(255) NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_cash_movements_day FOREIGN KEY (business_day_id) REFERENCES business_days(id) ON DELETE CASCADE,
+  CONSTRAINT fk_cash_movements_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+  KEY idx_cash_day (business_day_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS orders (
   id INT AUTO_INCREMENT PRIMARY KEY,
   business_day_id INT NOT NULL,
