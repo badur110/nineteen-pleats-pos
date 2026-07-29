@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/includes/bootstrap.php';
+require __DIR__ . '/includes/order-numbers.php';
 require_login();
 
 $orderId = (int)($_GET['order_id'] ?? 0);
@@ -26,24 +27,27 @@ if (!$table) {
     redirect_to($isReprint ? 'history' : 'tables');
 }
 
+$receiptNumber = receipt_number_for_order($order);
 $items = order_items($orderId);
+$finalReceipt = add_receipt_number_to_text(build_final_receipt($table, $order, $items), $receiptNumber);
 render_header($isReprint ? 'ქვითრის ხელახლა ბეჭდვა' : 'საბოლოო ანგარიში');
 ?>
 <style>
-.reprint-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.reprint-head h1{margin:0}.reprint-note{margin:7px 0 0;color:var(--muted);font-size:.88rem;font-weight:800}.reprint-badge{display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;background:#fff3cd;color:#795000;font-size:.78rem;font-weight:950}.reprint-page .receipt-card{max-width:560px;margin:0 auto}.reprint-actions{display:flex;gap:8px;flex-wrap:wrap}.reprint-actions .btn{white-space:nowrap}@media(max-width:560px){.reprint-actions{width:100%}.reprint-actions .btn{width:100%}}
+.reprint-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.reprint-head h1{margin:0}.reprint-note{margin:7px 0 0;color:var(--muted);font-size:.88rem;font-weight:800}.receipt-number-badge{display:inline-flex;margin-top:8px;align-items:center;padding:7px 11px;border-radius:999px;background:#2b1b10;color:#fff;font-size:.82rem;font-weight:950}.reprint-badge{display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;background:#fff3cd;color:#795000;font-size:.78rem;font-weight:950}.reprint-page .receipt-card{max-width:560px;margin:0 auto}.reprint-actions{display:flex;gap:8px;flex-wrap:wrap}.reprint-actions .btn{white-space:nowrap}@media(max-width:560px){.reprint-actions{width:100%}.reprint-actions .btn{width:100%}}
 </style>
 <section class="reprint-page">
   <div class="page-head reprint-head">
     <div>
       <h1><?= $isReprint ? 'ქვითრის ხელახლა ბეჭდვა' : 'საბოლოო ანგარიში' ?></h1>
-      <p class="reprint-note">ანგარიში #<?= (int)$order['id'] ?> · <?= h($table['name']) ?> · <?= h($order['closed_at'] ?: $order['created_at']) ?></p>
+      <p class="reprint-note"><?= h($table['name']) ?> · <?= h($order['closed_at'] ?: $order['created_at']) ?></p>
+      <span class="receipt-number-badge">ქვითრის ნომერი #<?= (int)$receiptNumber ?></span>
     </div>
     <div class="reprint-actions">
       <?php if ($isReprint): ?><span class="reprint-badge">ისტორიის ასლი</span><a class="btn" href="<?= h(url_for('history', ['order_id'=>(int)$order['id']])) ?>">ისტორიაში დაბრუნება</a><?php else: ?><a class="btn" href="<?= h(url_for('tables')) ?>">მაგიდებზე დაბრუნება</a><?php endif; ?>
     </div>
   </div>
   <section class="print-grid single">
-    <?= receipt_card('final_receipt', 'სალაროს საბოლოო ანგარიში', build_final_receipt($table, $order, $items)) ?>
+    <?= receipt_card('final_receipt', 'სალაროს საბოლოო ანგარიში', $finalReceipt) ?>
   </section>
 </section>
 <?php render_footer();
