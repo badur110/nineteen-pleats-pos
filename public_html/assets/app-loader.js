@@ -79,10 +79,20 @@
       if (!id || !map[id]) return;
       const row = link.closest('tr');
       if (!row) return;
-      const firstCell = row.querySelector('td');
-      if (firstCell) {
-        firstCell.textContent = '#' + map[id];
-        firstCell.title = 'ქვითრის ნომერი';
+
+      const table = row.closest('table');
+      const firstHeader = table ? table.querySelector('thead th') : null;
+      const firstHeaderText = firstHeader ? firstHeader.textContent.trim() : '';
+
+      if (/^(ID|#|ანგარიში|ქვითარი)/i.test(firstHeaderText)) {
+        const firstCell = row.querySelector('td');
+        if (firstCell) {
+          firstCell.textContent = '#' + map[id];
+          firstCell.title = 'ქვითრის ნომერი';
+        }
+      } else {
+        link.textContent = 'ნახვა #' + map[id];
+        link.title = 'ქვითრის ნომერი #' + map[id];
       }
     });
   }
