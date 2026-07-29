@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/includes/bootstrap.php';
+require __DIR__ . '/includes/order-numbers.php';
 
 require_login();
 
@@ -15,6 +16,7 @@ if (!$order || !$table || !$ids || (int)$order['table_id'] !== $tableId) {
     redirect_to('tables');
 }
 
+$receiptNumber = receipt_number_for_order($order);
 $placeholders = implode(',', array_fill(0, count($ids), '?'));
 $stmt = db()->prepare('SELECT * FROM order_items WHERE order_id=? AND id IN (' . $placeholders . ') ORDER BY id ASC');
 $stmt->execute(array_merge([$orderId], $ids));
@@ -25,19 +27,20 @@ if (!$items) {
     redirect_to('table', ['id' => $tableId]);
 }
 
-$barReceipt = build_cashier_receipt($table, $items);
-$kitchenReceipt = build_kitchen_receipt($table, $items);
+$barReceipt = add_receipt_number_to_text(build_cashier_receipt($table, $items), $receiptNumber);
+$kitchenReceipt = add_receipt_number_to_text(build_kitchen_receipt($table, $items), $receiptNumber);
 
 render_header('შეკვეთის ბეჭდვა');
 ?>
 <style>
-.dual-print-page{display:grid;gap:16px}.dual-print-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}.dual-print-head h1{margin:0}.dual-print-note{margin:7px 0 0;color:var(--muted);font-size:.9rem;font-weight:800;max-width:760px}.dual-print-card{max-width:760px;margin:0 auto;width:100%;padding:18px!important}.dual-print-preview{display:grid;gap:0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff}.dual-receipt-part{padding:18px}.dual-receipt-part h2{margin:0 0 12px;text-align:center;font-size:1.12rem;font-weight:950}.dual-receipt-part pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.88rem;line-height:1.45;color:#111}.dual-cut-line{display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f5e8d6;color:#6d5140;font-size:.82rem;font-weight:950;text-align:center}.dual-cut-line:before,.dual-cut-line:after{content:"";height:1px;flex:1;border-top:1px dashed #6d5140}.dual-print-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}.dual-print-actions .btn{min-height:46px}.dual-print-main{background:#2357a5!important;color:#fff!important}@media(max-width:600px){.dual-print-card{padding:13px!important}.dual-receipt-part{padding:14px}.dual-print-actions,.dual-print-actions .btn{width:100%}.dual-receipt-part pre{font-size:.82rem}}
+.dual-print-page{display:grid;gap:16px}.dual-print-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}.dual-print-head h1{margin:0}.dual-print-note{margin:7px 0 0;color:var(--muted);font-size:.9rem;font-weight:800;max-width:760px}.dual-print-number{display:inline-flex;margin-top:9px;padding:7px 11px;border-radius:999px;background:#2b1b10;color:#fff;font-size:.84rem;font-weight:950}.dual-print-card{max-width:760px;margin:0 auto;width:100%;padding:18px!important}.dual-print-preview{display:grid;gap:0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff}.dual-receipt-part{padding:18px}.dual-receipt-part h2{margin:0 0 12px;text-align:center;font-size:1.12rem;font-weight:950}.dual-receipt-part pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.88rem;line-height:1.45;color:#111}.dual-cut-line{height:14px;border-top:1px dashed #6d5140;border-bottom:1px dashed #6d5140;background:#f5e8d6}.dual-print-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}.dual-print-actions .btn{min-height:46px}.dual-print-main{background:#2357a5!important;color:#fff!important}@media(max-width:600px){.dual-print-card{padding:13px!important}.dual-receipt-part{padding:14px}.dual-print-actions,.dual-print-actions .btn{width:100%}.dual-receipt-part pre{font-size:.82rem}}
 </style>
 <section class="dual-print-page">
   <div class="dual-print-head">
     <div>
       <h1>შეკვეთის ბეჭდვა</h1>
-      <p class="dual-print-note">ერთი ღილაკით დაიბეჭდება ჯერ ბარის ქვითარი და შემდეგ სამზარეულოს ქვითარი. შუაში დამატებულია ცალკე გვერდი/ჭრის ადგილი.</p>
+      <p class="dual-print-note">ერთი ღილაკით დაიბეჭდება ჯერ ბარის ქვითარი და შემდეგ სამზარეულოს ქვითარი.</p>
+      <span class="dual-print-number">ქვითრის ნომერი #<?= (int)$receiptNumber ?></span>
     </div>
     <a class="btn" href="<?= h(url_for('table', ['id'=>$tableId])) ?>">მაგიდაზე დაბრუნება</a>
   </div>
@@ -48,7 +51,7 @@ render_header('შეკვეთის ბეჭდვა');
         <h2>ბარის ქვითარი</h2>
         <pre id="bar_receipt_text"><?= h($barReceipt) ?></pre>
       </article>
-      <div class="dual-cut-line">✂ აქ გაიჭრება</div>
+      <div class="dual-cut-line" aria-hidden="true"></div>
       <article class="dual-receipt-part" data-receipt-title="სამზარეულოს ქვითარი">
         <h2>სამზარეულოს ქვითარი</h2>
         <pre id="kitchen_receipt_text"><?= h($kitchenReceipt) ?></pre>
@@ -92,9 +95,9 @@ render_header('შეკვეთის ბეჭდვა');
       '.receipt-page:last-child{break-after:auto;page-break-after:auto}' +
       'h1{margin:0 0 4mm;text-align:center;font-size:18px;line-height:1.2;font-weight:900}' +
       'pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family:Arial,"Noto Sans Georgian",sans-serif;font-size:13px;line-height:1.35}' +
-      '.cut{margin-top:5mm;padding-top:2mm;border-top:1px dashed #000;text-align:center;font-size:11px;font-weight:700}' +
+      '.cut{height:3mm;margin-top:5mm;border-top:1px dashed #000}' +
       '</style></head><body>' +
-      '<section class="receipt-page"><h1>ბარის ქვითარი</h1><pre>' + barText + '</pre><div class="cut">✂ აქ გაიჭრება</div></section>' +
+      '<section class="receipt-page"><h1>ბარის ქვითარი</h1><pre>' + barText + '</pre><div class="cut"></div></section>' +
       '<section class="receipt-page"><h1>სამზარეულოს ქვითარი</h1><pre>' + kitchenText + '</pre></section>' +
       '<script>window.onload=function(){window.print();};window.onafterprint=function(){window.close();};<\/script>' +
       '</body></html>');
