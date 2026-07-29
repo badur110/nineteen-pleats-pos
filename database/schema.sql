@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS cash_movements (
 
 CREATE TABLE IF NOT EXISTS orders (
   id INT AUTO_INCREMENT PRIMARY KEY,
+  receipt_number INT UNSIGNED NULL,
   business_day_id INT NOT NULL,
   table_id INT NOT NULL,
   user_id INT NULL,
@@ -90,9 +91,15 @@ CREATE TABLE IF NOT EXISTS orders (
   CONSTRAINT fk_orders_day FOREIGN KEY (business_day_id) REFERENCES business_days(id),
   CONSTRAINT fk_orders_table FOREIGN KEY (table_id) REFERENCES restaurant_tables(id),
   CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+  UNIQUE KEY uniq_orders_receipt_number (receipt_number),
   KEY idx_orders_status (status),
   KEY idx_orders_day (business_day_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS order_number_sequence (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS order_items (
   id INT AUTO_INCREMENT PRIMARY KEY,
