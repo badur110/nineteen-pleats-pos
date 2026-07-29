@@ -114,3 +114,88 @@ html, body { max-width: 100%; overflow-x: hidden; }
   .tables-grid { grid-template-columns: 1fr !important; }
   .stats { grid-template-columns: 1fr !important; }
 }
+
+/* Wider and cleaner popup layout */
+.garbalia-confirm-dialog,
+.unsent-dialog {
+  width: min(610px, calc(100vw - 28px)) !important;
+  max-width: min(610px, calc(100vw - 28px)) !important;
+}
+.garbalia-cash-dialog,
+.garbalia-close-dialog {
+  width: min(640px, calc(100vw - 28px)) !important;
+  max-width: min(640px, calc(100vw - 28px)) !important;
+}
+.garbalia-confirm-info {
+  width: 100% !important;
+  max-width: none !important;
+}
+.garbalia-confirm-info div {
+  align-items: center !important;
+}
+.garbalia-confirm-info span {
+  flex: 0 0 29% !important;
+  min-width: 108px !important;
+}
+.garbalia-confirm-info strong {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  line-height: 1.28 !important;
+  white-space: normal !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+.garbalia-confirm-info .order-line strong {
+  font-size: .94rem !important;
+}
+
+@media (max-width: 560px) {
+  .garbalia-confirm-overlay,
+  .unsent-overlay,
+  .garbalia-cash-modal,
+  .garbalia-close-modal {
+    padding: 4px !important;
+  }
+  .garbalia-confirm-dialog,
+  .unsent-dialog,
+  .garbalia-cash-dialog,
+  .garbalia-close-dialog {
+    width: calc(100vw - 8px) !important;
+    max-width: calc(100vw - 8px) !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+  .garbalia-confirm-info div {
+    display: flex !important;
+    gap: 8px !important;
+  }
+  .garbalia-confirm-info span {
+    flex: 0 0 25% !important;
+    min-width: 82px !important;
+    font-size: .78rem !important;
+  }
+  .garbalia-confirm-info strong {
+    display: block !important;
+    margin-top: 0 !important;
+    text-align: right !important;
+    font-size: .90rem !important;
+  }
+  .garbalia-confirm-info .order-line strong {
+    text-align: right !important;
+    font-size: .88rem !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .garbalia-confirm-info div {
+    display: block !important;
+  }
+  .garbalia-confirm-info span {
+    min-width: 0 !important;
+  }
+  .garbalia-confirm-info strong,
+  .garbalia-confirm-info .order-line strong {
+    margin-top: 3px !important;
+    text-align: left !important;
+  }
+}
