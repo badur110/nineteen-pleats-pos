@@ -43,8 +43,9 @@ RewriteRule ^ - [L]
 RewriteRule ^statistics/?$ statistics.php [QSA,L]
 RewriteRule ^history/?$ history.php [QSA,L]
 RewriteRule ^print_final/?$ print_final.php [QSA,L]
+RewriteRule ^print_order/?$ print_order.php [QSA,L]
 RewriteRule ^table/([0-9]+)/?$ index.php?page=table&id=$1 [QSA,L]
-RewriteRule ^(login|day|tables|products|reports|logout|print_order)/?$ index.php?page=$1 [QSA,L]
+RewriteRule ^(login|day|tables|products|reports|logout)/?$ index.php?page=$1 [QSA,L]
 RewriteRule ^$ index.php?page=day [QSA,L]
 
 <Files "config.php">
