@@ -123,6 +123,9 @@ function add_receipt_number_to_text(string $text, int $receiptNumber): string {
     $line = 'ქვითრის ნომერი: #' . $receiptNumber;
     if (strpos($text, $line) !== false) return $text;
 
-    $updated = preg_replace('/^-{8,}\R/m', $line . "\n$0", $text, 1);
+    $updated = preg_replace_callback('/^-{8,}\R/m', function ($match) use ($line) {
+        return $line . "\n" . $match[0];
+    }, $text, 1);
+
     return is_string($updated) && $updated !== $text ? $updated : ($line . "\n" . $text);
 }
