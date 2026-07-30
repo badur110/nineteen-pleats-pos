@@ -88,15 +88,43 @@ render_header('პროდუქტები');
   body.app-shell.page-products .product-finance-cell strong{font-size:.77rem!important}
   body.app-shell.page-products .product-finance-cell small{font-size:.64rem!important;line-height:1.16!important}
 }
-
-@media(min-width:1250px){
-  body.app-shell.page-products .product-list-card tbody{grid-template-columns:repeat(3,minmax(0,1fr))!important}
-}
-
+@media(min-width:1250px){body.app-shell.page-products .product-list-card tbody{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 @media(max-width:1120px){.page-products .product-add-card form.cost-product-form{grid-template-columns:1fr 1fr 1fr!important}.page-products .product-add-card form.cost-product-form .check,.page-products .product-add-card form.cost-product-form .btn{grid-column:auto!important}}
 @media(max-width:899px){body.app-shell.page-products .product-list-card tbody{grid-template-columns:1fr!important}}
 @media(max-width:820px){.page-products .product-add-card form.cost-product-form{grid-template-columns:1fr 1fr!important}.page-products .product-add-card form.cost-product-form .btn{grid-column:1/-1!important}}
 @media(max-width:640px){.page-products .product-add-card form.cost-product-form{grid-template-columns:1fr!important}.product-finance-cell{display:flex!important;flex-direction:column!important;align-items:flex-end!important}.product-finance-cell:before{align-self:flex-start}}
+
+/* Premium product editor modal */
+.garbalia-product-modal[hidden]{display:none!important}
+.garbalia-product-modal{position:fixed;inset:0;z-index:11000;display:grid;place-items:center;padding:18px;background:rgba(43,27,16,.48);backdrop-filter:blur(8px);opacity:0;transition:opacity .16s ease}
+.garbalia-product-modal.is-open{opacity:1}
+.garbalia-product-dialog{position:relative;width:min(660px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow-y:auto;overflow-x:hidden;border:1px solid #e8d2b5;border-radius:28px;background:linear-gradient(180deg,#fffaf2 0%,#f7ead9 100%);box-shadow:0 30px 80px rgba(43,27,16,.34);padding:24px}
+.garbalia-product-dialog:before{content:"";position:absolute;right:-38px;top:-38px;width:190px;height:150px;background:url('/Logo.png?v=12') center/contain no-repeat;opacity:.055;filter:brightness(0);pointer-events:none}
+.garbalia-product-close{position:absolute;right:14px;top:14px;z-index:2;width:36px;height:36px;border:0;border-radius:50%;background:rgba(43,27,16,.09);color:#2b1b10;font-size:22px;font-weight:950;cursor:pointer}
+.garbalia-product-modal-head{display:flex;align-items:center;gap:13px;padding-right:42px;margin-bottom:18px}
+.garbalia-product-modal-logo{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;border-radius:15px;background:#2b1b10;box-shadow:0 10px 24px rgba(43,27,16,.18)}
+.garbalia-product-modal-logo img{width:34px;height:29px;object-fit:contain;filter:brightness(0) invert(1)}
+.garbalia-product-modal-head h3{margin:0;font-size:1.28rem;font-weight:950;letter-spacing:-.02em;color:#2b1b10}
+.garbalia-product-modal-head p{margin:4px 0 0;color:#7a6657;font-size:.86rem;font-weight:800}
+.garbalia-product-form-slot .product-add-card{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+.garbalia-product-form-slot .product-add-card>h2{display:none!important}
+body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px!important;align-items:end!important}
+body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form label{margin:0!important;padding:12px;border:1px solid rgba(43,27,16,.10);border-radius:15px;background:rgba(255,255,255,.72);font-size:.84rem!important}
+body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form label:nth-of-type(1),
+body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form label:nth-of-type(4){grid-column:1/-1!important}
+body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form .check{grid-column:1/2!important;min-height:50px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important}
+body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form .check input{width:auto!important}
+body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form>.btn{grid-column:2/3!important;min-height:50px!important;border-radius:14px!important;font-size:.92rem!important}
+body.garbalia-modal-open{overflow:hidden!important}
+@media(max-width:620px){
+  .garbalia-product-modal{padding:8px}
+  .garbalia-product-dialog{width:calc(100vw - 16px);max-height:calc(100dvh - 16px);padding:20px 15px 15px;border-radius:23px}
+  .garbalia-product-modal-head{align-items:flex-start}
+  body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form{grid-template-columns:1fr!important}
+  body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form label,
+  body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form .check,
+  body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form>.btn{grid-column:1!important}
+}
 </style>
 <div class="page-head"><h1>პროდუქტები</h1></div>
 <section class="two-col">
@@ -149,4 +177,75 @@ render_header('პროდუქტები');
     </div>
   </div>
 </section>
+<script>
+(function () {
+  function setupProductModal() {
+    const addCard = document.querySelector('.product-add-card') || document.querySelector('.two-col > .card:first-child');
+    const panel = document.querySelector('.product-top-panel');
+    if (!addCard || !panel || document.querySelector('.garbalia-product-modal')) return;
+
+    const editMode = new URLSearchParams(window.location.search).has('edit');
+    const oldToggle = panel.querySelector('.product-add-toggle');
+    if (!oldToggle) return;
+
+    const toggle = oldToggle.cloneNode(true);
+    oldToggle.replaceWith(toggle);
+    toggle.textContent = editMode ? 'პროდუქტის რედაქტირება' : 'ახალი პროდუქტის დამატება';
+
+    const holder = panel.querySelector('.product-add-holder');
+    if (holder) holder.style.display = 'none';
+
+    const modal = document.createElement('div');
+    modal.className = 'garbalia-product-modal';
+    modal.hidden = true;
+    modal.innerHTML = '<section class="garbalia-product-dialog" role="dialog" aria-modal="true" aria-labelledby="garbalia-product-title">' +
+      '<button type="button" class="garbalia-product-close" aria-label="დახურვა">×</button>' +
+      '<div class="garbalia-product-modal-head"><span class="garbalia-product-modal-logo"><img src="/Logo.png?v=12" alt=""></span><div><h3 id="garbalia-product-title">' +
+      (editMode ? 'პროდუქტის რედაქტირება' : 'ახალი პროდუქტის დამატება') +
+      '</h3><p>' + (editMode ? 'შეცვალე პროდუქტის მონაცემები და შეინახე.' : 'შეავსე პროდუქტის ძირითადი მონაცემები.') +
+      '</p></div></div><div class="garbalia-product-form-slot"></div></section>';
+
+    document.body.appendChild(modal);
+    modal.querySelector('.garbalia-product-form-slot').appendChild(addCard);
+    addCard.hidden = false;
+
+    function openModal() {
+      modal.hidden = false;
+      addCard.hidden = false;
+      document.body.classList.add('garbalia-modal-open');
+      window.requestAnimationFrame(function () {
+        modal.classList.add('is-open');
+        const firstInput = addCard.querySelector('input[name="name"]');
+        if (firstInput) firstInput.focus();
+      });
+    }
+
+    function closeModal() {
+      if (editMode) {
+        window.location.href = '/products';
+        return;
+      }
+      modal.classList.remove('is-open');
+      document.body.classList.remove('garbalia-modal-open');
+      window.setTimeout(function () { modal.hidden = true; }, 160);
+    }
+
+    toggle.addEventListener('click', function (event) {
+      event.preventDefault();
+      openModal();
+    });
+    modal.querySelector('.garbalia-product-close').addEventListener('click', closeModal);
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !modal.hidden) closeModal();
+    });
+
+    if (editMode) openModal();
+  }
+
+  window.addEventListener('load', setupProductModal);
+})();
+</script>
 <?php render_footer();
