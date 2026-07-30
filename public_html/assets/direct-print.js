@@ -64,6 +64,14 @@
       '</body></html>';
   }
 
+  function singleReceiptDocument(text, fontSize) {
+    return '<!doctype html><html lang="ka"><head><meta charset="utf-8"><title>ქვითარი</title><style>' +
+      '@page{size:80mm auto;margin:3mm}html,body{margin:0;padding:0;background:#fff;color:#000}' +
+      'body{width:74mm;font-family:Arial,"Noto Sans Georgian",sans-serif}' +
+      'pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family:Arial,"Noto Sans Georgian",sans-serif;font-size:' + fontSize + 'px;line-height:1.35}' +
+      '</style></head><body><pre>' + escapeHtml(text) + '</pre><script>window.onload=function(){setTimeout(function(){window.print();},80)};window.onafterprint=function(){window.close()};<\/script></body></html>';
+  }
+
   function unlockAndReload() {
     try { garbaliaAllowNavigation = true; } catch (error) {}
     window.setTimeout(function () { window.location.reload(); }, 450);
@@ -138,9 +146,31 @@
     }, true);
   }
 
+  function initConfiguredSinglePrint() {
+    document.addEventListener('click', function (event) {
+      const button = event.target.closest && event.target.closest('[data-print]');
+      if (!button) return;
+      const target = document.getElementById(button.getAttribute('data-print'));
+      if (!target) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const win = window.open('', '_blank', 'width=440,height=720');
+      if (!win) {
+        alert('ბრაუზერმა ბეჭდვის ფანჯარა დაბლოკა. დაუშვი Pop-ups pos.cours.ge-სთვის.');
+        return;
+      }
+      const computed = window.getComputedStyle(target);
+      const size = Math.max(10, Math.min(18, parseFloat(computed.fontSize) || 13));
+      win.document.open();
+      win.document.write(singleReceiptDocument(target.innerText, size));
+      win.document.close();
+    }, true);
+  }
+
   function start() {
     addReceiptSettingsNav();
     initDirectPrint();
+    initConfiguredSinglePrint();
     window.setTimeout(addReceiptSettingsNav, 300);
   }
 
