@@ -38,9 +38,9 @@
     return rows;
   }
 
-  function loadingWindow(win) {
+  function loadingWindow(win, title, message) {
     win.document.open();
-    win.document.write('<!doctype html><html lang="ka"><head><meta charset="utf-8"><title>ბეჭდვა</title><style>body{margin:0;display:grid;place-items:center;min-height:100vh;background:#f6efe4;color:#2b1b10;font-family:Arial,sans-serif;text-align:center}div{padding:24px}strong{display:block;font-size:20px;margin-bottom:8px}span{color:#7a6657}</style></head><body><div><strong>ქვითრები მზადდება…</strong><span>ბეჭდვის ფანჯარა რამდენიმე წამში გაიხსნება.</span></div></body></html>');
+    win.document.write('<!doctype html><html lang="ka"><head><meta charset="utf-8"><title>ბეჭდვა</title><style>body{margin:0;display:grid;place-items:center;min-height:100vh;background:#f6efe4;color:#2b1b10;font-family:Arial,sans-serif;text-align:center}div{padding:24px}strong{display:block;font-size:20px;margin-bottom:8px}span{color:#7a6657}</style></head><body><div><strong>' + escapeHtml(title || 'ქვითრები მზადდება…') + '</strong><span>' + escapeHtml(message || 'ბეჭდვის ფანჯარა რამდენიმე წამში გაიხსნება.') + '</span></div></body></html>');
     win.document.close();
   }
 
@@ -64,8 +64,8 @@
       '</body></html>';
   }
 
-  function singleReceiptDocument(text, fontSize) {
-    return '<!doctype html><html lang="ka"><head><meta charset="utf-8"><title>ქვითარი</title><style>' +
+  function singleReceiptDocument(text, fontSize, title) {
+    return '<!doctype html><html lang="ka"><head><meta charset="utf-8"><title>' + escapeHtml(title || 'ქვითარი') + '</title><style>' +
       '@page{size:80mm auto;margin:3mm}html,body{margin:0;padding:0;background:#fff;color:#000}' +
       'body{width:74mm;font-family:Arial,"Noto Sans Georgian",sans-serif}' +
       'pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family:Arial,"Noto Sans Georgian",sans-serif;font-size:' + fontSize + 'px;line-height:1.35}' +
@@ -77,6 +77,11 @@
     window.setTimeout(function () { window.location.reload(); }, 450);
   }
 
+  function goToTables(url) {
+    try { garbaliaAllowNavigation = true; } catch (error) {}
+    window.setTimeout(function () { window.location.href = url || '/tables'; }, 500);
+  }
+
   function sendAndPrint(form) {
     const button = form.querySelector('button[type="submit"],button:not([type])');
     const originalText = button ? button.textContent : '';
@@ -86,7 +91,7 @@
       return;
     }
 
-    loadingWindow(printWindow);
+    loadingWindow(printWindow, 'ქვითრები მზადდება…', 'ბარისა და სამზარეულოს ქვითრები რამდენიმე წამში გაიხსნება.');
     form.dataset.directPrinting = '1';
     if (button) {
       button.disabled = true;
@@ -117,6 +122,69 @@
       }
       alert(error && error.message ? error.message : 'შეკვეთის გაგზავნა ვერ მოხერხდა.');
     });
+  }
+
+  function closeAndPrint(form) {
+    if (form.dataset.directClosePrinting === '1') return;
+    const modal = document.querySelector('.garbalia-close-modal');
+    const button = modal ? modal.querySelector('[data-confirm-close]') : null;
+    const originalText = button ? button.textContent : '';
+    const printWindow = window.open('', '_blank', 'width=460,height=760');
+    if (!printWindow) {
+      form.dataset.garbaliaConfirmedClose = '0';
+      alert('ბრაუზერმა ბეჭდვის ფანჯარა დაბლოკა. დაუშვი Pop-ups pos.cours.ge-სთვის.');
+      return;
+    }
+
+    loadingWindow(printWindow, 'საბოლოო ქვითარი მზადდება…', 'მაგიდა იხურება და ქვითარი პირდაპირ გადავა ბეჭდვაზე.');
+    form.dataset.directClosePrinting = '1';
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'იხურება…';
+    }
+
+    fetch('/close_order_print.php', {
+      method: 'POST',
+      body: new FormData(form),
+      credentials: 'same-origin',
+      headers: {'Accept':'application/json'}
+    }).then(function (response) {
+      return response.json().catch(function () { return {ok:false,message:'სერვერის პასუხი ვერ დამუშავდა.'}; }).then(function (data) {
+        if (!response.ok || !data.ok) throw new Error(data.message || 'მაგიდის დახურვა ვერ მოხერხდა.');
+        return data;
+      });
+    }).then(function (data) {
+      const finalText = data.final && data.final.text ? data.final.text : '';
+      const finalSize = Math.max(10, Math.min(18, Number(data.final && data.final.font_size) || 13));
+      printWindow.document.open();
+      printWindow.document.write(singleReceiptDocument(finalText, finalSize, 'საბოლოო ქვითარი #' + (data.receipt_number || '')));
+      printWindow.document.close();
+      goToTables(data.redirect || '/tables');
+    }).catch(function (error) {
+      try { printWindow.close(); } catch (closeError) {}
+      form.dataset.directClosePrinting = '0';
+      form.dataset.garbaliaConfirmedClose = '0';
+      if (button) {
+        button.disabled = false;
+        button.textContent = originalText;
+      }
+      alert(error && error.message ? error.message : 'მაგიდის დახურვა ვერ მოხერხდა.');
+    });
+  }
+
+  function installClosePrintSubmitBridge() {
+    const proto = window.HTMLFormElement && window.HTMLFormElement.prototype;
+    if (!proto || proto.__garbaliaClosePrintBridge) return;
+    const nativeSubmit = proto.submit;
+    Object.defineProperty(proto, '__garbaliaClosePrintBridge', {value: true, configurable: false});
+    proto.submit = function () {
+      const action = this.querySelector && this.querySelector('input[name="action"]');
+      if (action && action.value === 'close_order' && this.dataset.garbaliaConfirmedClose === '1' && this.dataset.directClosePrinting !== '1') {
+        closeAndPrint(this);
+        return;
+      }
+      return nativeSubmit.call(this);
+    };
   }
 
   function initDirectPrint() {
@@ -162,13 +230,14 @@
       const computed = window.getComputedStyle(target);
       const size = Math.max(10, Math.min(18, parseFloat(computed.fontSize) || 13));
       win.document.open();
-      win.document.write(singleReceiptDocument(target.innerText, size));
+      win.document.write(singleReceiptDocument(target.innerText, size, 'ქვითარი'));
       win.document.close();
     }, true);
   }
 
   function start() {
     addReceiptSettingsNav();
+    installClosePrintSubmitBridge();
     initDirectPrint();
     initConfiguredSinglePrint();
     window.setTimeout(addReceiptSettingsNav, 300);
