@@ -2,4 +2,5 @@
   document.write('<script src="/assets/close-confirm.js?core=1&v=22"><\/script>');
   document.write('<script src="/assets/direct-print.js?v=2"><\/script>');
   document.write('<script src="/assets/cash-movement-polish.js?v=1"><\/script>');
+  document.write('<script src="/assets/pwa.js?v=1"><\/script>');
 })();
