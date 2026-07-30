@@ -49,6 +49,7 @@ RewriteRule ^ - [L]
 # Clean POS routes.
 RewriteRule ^statistics/?$ statistics.php [QSA,L]
 RewriteRule ^history/?$ history-route.php [QSA,L]
+RewriteRule ^reset-history/?$ reset_history.php [QSA,L]
 RewriteRule ^products/?$ products.php [QSA,L]
 RewriteRule ^receipts/?$ receipts.php [QSA,L]
 RewriteRule ^print_final/?$ print_final.php [QSA,L]
