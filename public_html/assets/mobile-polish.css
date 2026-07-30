@@ -199,3 +199,363 @@ html, body { max-width: 100%; overflow-x: hidden; }
     text-align: left !important;
   }
 }
+
+/* Premium, centered and responsive history workspace */
+body.app-shell:has(.history-filters) main.wrap,
+body.app-shell:has(.cashier-history) main.wrap,
+body.app-shell:has(.history-detail.only-detail) main.wrap {
+  width:min(1500px,100%)!important;
+  padding:clamp(20px,3.8vh,46px) clamp(14px,4vw,68px) clamp(28px,5vh,62px)!important;
+}
+
+body.app-shell:has(.history-filters) main.wrap>.page-head,
+body.app-shell:has(.history-detail.only-detail) main.wrap>.page-head {
+  width:min(1240px,100%)!important;
+  margin:0 auto clamp(18px,2.4vw,28px)!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+body.app-shell:has(.history-filters) main.wrap>.page-head>div,
+body.app-shell:has(.history-detail.only-detail) main.wrap>.page-head>div {
+  width:100%!important;
+}
+body.app-shell:has(.history-filters) main.wrap>.page-head h1,
+body.app-shell:has(.cashier-history) .cashier-history-head h1 {
+  margin:0!important;
+  font-size:clamp(1.75rem,3vw,2.7rem)!important;
+  line-height:1.05!important;
+  letter-spacing:-.04em!important;
+  text-align:center!important;
+}
+body.app-shell:has(.history-filters) main.wrap>.page-head .muted,
+body.app-shell:has(.cashier-history) .cashier-history-note {
+  max-width:760px!important;
+  margin:9px auto 0!important;
+  color:#806b5a!important;
+  font-size:clamp(.79rem,1vw,.94rem)!important;
+  line-height:1.5!important;
+  text-align:center!important;
+}
+
+body.app-shell:has(.history-filters) .history-filters,
+body.app-shell:has(.cashier-history) .cashier-history-filters {
+  position:relative!important;
+  overflow:hidden!important;
+  width:min(1240px,100%)!important;
+  margin:0 auto clamp(15px,2vw,22px)!important;
+  padding:clamp(16px,2vw,24px)!important;
+  border:1px solid rgba(135,91,50,.17)!important;
+  border-radius:clamp(21px,2vw,29px)!important;
+  background:
+    radial-gradient(circle at 90% -45%,rgba(218,186,143,.30),transparent 45%),
+    linear-gradient(145deg,rgba(255,253,249,.98),rgba(246,235,220,.94))!important;
+  box-shadow:0 22px 52px rgba(43,27,16,.09),inset 0 1px 0 rgba(255,255,255,.88)!important;
+}
+body.app-shell:has(.history-filters) .history-filters:before,
+body.app-shell:has(.cashier-history) .cashier-history-filters:before {
+  content:"";
+  position:absolute;
+  left:0;
+  top:22%;
+  bottom:22%;
+  width:4px;
+  border-radius:0 8px 8px 0;
+  background:linear-gradient(#c29a67,#7d5a38);
+}
+body.app-shell:has(.history-filters) .history-grid,
+body.app-shell:has(.cashier-history) .cashier-history-grid {
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:12px!important;
+  align-items:end!important;
+}
+body.app-shell:has(.history-filters) .history-grid label,
+body.app-shell:has(.cashier-history) .cashier-history-grid label {
+  margin:0!important;
+  color:#513a29!important;
+  font-size:.79rem!important;
+  font-weight:900!important;
+}
+body.app-shell:has(.history-filters) .history-grid input,
+body.app-shell:has(.history-filters) .history-grid select,
+body.app-shell:has(.cashier-history) .cashier-history-grid input,
+body.app-shell:has(.cashier-history) .cashier-history-grid select {
+  min-height:44px!important;
+  margin-top:6px!important;
+  border-radius:13px!important;
+  border:1px solid #d7b68f!important;
+  background:rgba(255,255,255,.92)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9)!important;
+}
+body.app-shell:has(.history-filters) .history-clean-actions,
+body.app-shell:has(.history-filters) .history-actions,
+body.app-shell:has(.cashier-history) .cashier-history-actions {
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:8px!important;
+  flex-wrap:wrap!important;
+  margin-top:14px!important;
+}
+body.app-shell:has(.history-filters) .history-clean-actions .btn,
+body.app-shell:has(.history-filters) .history-actions .btn,
+body.app-shell:has(.cashier-history) .cashier-history-actions .btn {
+  min-height:38px!important;
+  padding:8px 12px!important;
+  border-radius:12px!important;
+  font-size:.78rem!important;
+  box-shadow:0 7px 16px rgba(43,27,16,.09)!important;
+  white-space:nowrap!important;
+}
+body.app-shell:has(.history-filters) .history-clean-actions .btn.primary,
+body.app-shell:has(.history-filters) .history-actions .btn.primary {
+  background:linear-gradient(180deg,#2f68b7,#2357a5)!important;
+}
+body.app-shell:has(.history-filters) .history-clean-actions .btn.success,
+body.app-shell:has(.history-filters) .history-actions .btn.success,
+body.app-shell:has(.cashier-history) .cashier-history-actions .btn.success {
+  background:linear-gradient(180deg,#2f8a4b,#24733c)!important;
+}
+
+body.app-shell:has(.history-filters) main.wrap>.stats {
+  width:min(1240px,100%)!important;
+  margin:0 auto clamp(15px,2vw,22px)!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+body.app-shell:has(.history-filters) main.wrap>.stats>div {
+  min-height:94px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  padding:13px 12px!important;
+  border:1px solid rgba(255,255,255,.055)!important;
+  border-radius:18px!important;
+  background:linear-gradient(150deg,#392317,#25160e)!important;
+  box-shadow:0 14px 30px rgba(43,27,16,.12),inset 0 1px 0 rgba(255,255,255,.055)!important;
+}
+body.app-shell:has(.history-filters) main.wrap>.stats span {
+  font-size:.72rem!important;
+  line-height:1.25!important;
+  opacity:.72!important;
+  white-space:normal!important;
+}
+body.app-shell:has(.history-filters) main.wrap>.stats strong {
+  margin-top:7px!important;
+  font-size:clamp(1.1rem,1.8vw,1.48rem)!important;
+  line-height:1.05!important;
+  white-space:nowrap!important;
+}
+
+body.app-shell:has(.history-filters) main.wrap>section.card:not(.history-filters),
+body.app-shell:has(.cashier-history) .cashier-history>section.card:not(.cashier-history-filters),
+body.app-shell:has(.history-detail.only-detail) .history-detail.only-detail {
+  width:min(1240px,100%)!important;
+  margin:0 auto clamp(18px,2.5vw,30px)!important;
+  padding:clamp(15px,1.8vw,22px)!important;
+  border:1px solid rgba(135,91,50,.15)!important;
+  border-radius:clamp(21px,2vw,28px)!important;
+  background:linear-gradient(155deg,rgba(255,252,247,.98),rgba(249,239,226,.96))!important;
+  box-shadow:0 22px 52px rgba(43,27,16,.085),inset 0 1px 0 rgba(255,255,255,.9)!important;
+}
+body.app-shell:has(.history-filters) main.wrap>section.card:not(.history-filters)>h2,
+body.app-shell:has(.cashier-history) .cashier-history>section.card:not(.cashier-history-filters)>h2 {
+  margin:0 0 14px!important;
+  text-align:center!important;
+  font-size:clamp(1.05rem,1.5vw,1.3rem)!important;
+  letter-spacing:-.02em!important;
+}
+body.app-shell:has(.history-filters) .table-wrap,
+body.app-shell:has(.cashier-history) .cashier-history-table,
+body.app-shell:has(.history-detail.only-detail) .table-wrap {
+  width:100%!important;
+  max-width:100%!important;
+  overflow:auto!important;
+  border:1px solid rgba(135,91,50,.15)!important;
+  border-radius:16px!important;
+  background:#fff!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95)!important;
+  scrollbar-width:thin;
+  scrollbar-color:#b69168 #f4e7d5;
+}
+body.app-shell:has(.history-filters) .table-wrap::-webkit-scrollbar,
+body.app-shell:has(.cashier-history) .cashier-history-table::-webkit-scrollbar {
+  height:8px;
+}
+body.app-shell:has(.history-filters) .table-wrap::-webkit-scrollbar-track,
+body.app-shell:has(.cashier-history) .cashier-history-table::-webkit-scrollbar-track {
+  background:#f4e7d5;
+}
+body.app-shell:has(.history-filters) .table-wrap::-webkit-scrollbar-thumb,
+body.app-shell:has(.cashier-history) .cashier-history-table::-webkit-scrollbar-thumb {
+  background:#b69168;
+  border-radius:999px;
+}
+body.app-shell:has(.history-filters) table,
+body.app-shell:has(.cashier-history) .cashier-history-table table {
+  width:100%!important;
+  min-width:850px!important;
+  border-collapse:separate!important;
+  border-spacing:0!important;
+  background:#fff!important;
+}
+body.app-shell:has(.history-filters) th,
+body.app-shell:has(.cashier-history) .cashier-history-table th {
+  padding:11px 12px!important;
+  background:linear-gradient(180deg,#ead8c0,#dfc6a6)!important;
+  color:#493220!important;
+  font-size:.74rem!important;
+  font-weight:950!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+body.app-shell:has(.history-filters) td,
+body.app-shell:has(.cashier-history) .cashier-history-table td {
+  padding:10px 12px!important;
+  border-bottom:1px solid #ead8c3!important;
+  color:#443126!important;
+  font-size:.79rem!important;
+  line-height:1.3!important;
+  text-align:center!important;
+  vertical-align:middle!important;
+}
+body.app-shell:has(.history-filters) tbody tr,
+body.app-shell:has(.cashier-history) .cashier-history-table tbody tr {
+  transition:background .15s ease,transform .15s ease!important;
+}
+body.app-shell:has(.history-filters) tbody tr:hover,
+body.app-shell:has(.cashier-history) .cashier-history-table tbody tr:hover {
+  background:#fff8ef!important;
+}
+body.app-shell:has(.history-filters) tbody tr:last-child td,
+body.app-shell:has(.cashier-history) .cashier-history-table tbody tr:last-child td {
+  border-bottom:0!important;
+}
+body.app-shell:has(.history-filters) td .btn,
+body.app-shell:has(.cashier-history) .cashier-history-table td .btn {
+  min-height:34px!important;
+  padding:7px 10px!important;
+  border-radius:10px!important;
+  background:linear-gradient(180deg,#3a271b,#28180f)!important;
+  box-shadow:0 7px 16px rgba(43,27,16,.14)!important;
+  white-space:nowrap!important;
+}
+body.app-shell:has(.history-filters) .status-paid,
+body.app-shell:has(.cashier-history) .cashier-status.paid {
+  justify-content:center!important;
+  min-width:84px!important;
+  background:#e7f9e2!important;
+  color:#24733c!important;
+  box-shadow:inset 0 0 0 1px rgba(36,115,60,.08)!important;
+}
+body.app-shell:has(.history-filters) .status-zero,
+body.app-shell:has(.cashier-history) .cashier-status.zero {
+  justify-content:center!important;
+  min-width:84px!important;
+  background:#ffe7e3!important;
+  color:#9d2c24!important;
+  box-shadow:inset 0 0 0 1px rgba(157,44,36,.08)!important;
+}
+
+body.app-shell:has(.cashier-history) .cashier-history {
+  width:min(1240px,100%)!important;
+  margin:0 auto!important;
+  gap:clamp(15px,2vw,22px)!important;
+}
+body.app-shell:has(.cashier-history) .cashier-history-head {
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  gap:12px!important;
+}
+body.app-shell:has(.cashier-history) .cashier-history-limit {
+  min-height:38px!important;
+  padding:8px 13px!important;
+  border-radius:999px!important;
+  border:1px solid #e5bd67!important;
+  background:linear-gradient(180deg,#fff8df,#ffedbd)!important;
+  box-shadow:0 8px 18px rgba(126,82,0,.09)!important;
+}
+
+body.app-shell:has(.history-detail) .history-detail .page-head {
+  align-items:center!important;
+  margin-bottom:16px!important;
+}
+body.app-shell:has(.history-detail) .history-detail .page-head h2 {
+  margin:0!important;
+  font-size:clamp(1.15rem,1.8vw,1.5rem)!important;
+}
+body.app-shell:has(.history-detail) .history-detail-grid,
+body.app-shell:has(.history-detail) .cashier-history-detail-grid {
+  display:grid!important;
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  gap:9px!important;
+}
+body.app-shell:has(.history-detail) .history-detail-grid>div,
+body.app-shell:has(.history-detail) .cashier-history-detail-grid>div {
+  min-height:82px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  padding:10px!important;
+  border:1px solid rgba(135,91,50,.14)!important;
+  border-radius:15px!important;
+  background:linear-gradient(155deg,#fff,#fff8ef)!important;
+  box-shadow:0 8px 18px rgba(43,27,16,.055)!important;
+}
+body.app-shell:has(.history-detail) .history-detail h3 {
+  margin:20px 0 11px!important;
+  text-align:center!important;
+}
+
+@media(max-width:1100px){
+  body.app-shell:has(.history-filters) .history-grid,
+  body.app-shell:has(.cashier-history) .cashier-history-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  body.app-shell:has(.history-filters) main.wrap>.stats {grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  body.app-shell:has(.history-detail) .history-detail-grid,
+  body.app-shell:has(.history-detail) .cashier-history-detail-grid {grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+
+@media(max-width:760px){
+  body.app-shell:has(.history-filters) main.wrap,
+  body.app-shell:has(.cashier-history) main.wrap,
+  body.app-shell:has(.history-detail.only-detail) main.wrap {padding:18px 10px 28px!important}
+  body.app-shell:has(.history-filters) .history-filters,
+  body.app-shell:has(.cashier-history) .cashier-history-filters {padding:15px 12px!important;border-radius:20px!important}
+  body.app-shell:has(.history-filters) main.wrap>.stats {grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  body.app-shell:has(.history-filters) .history-clean-actions,
+  body.app-shell:has(.history-filters) .history-actions,
+  body.app-shell:has(.cashier-history) .cashier-history-actions {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important}
+  body.app-shell:has(.history-filters) .history-clean-actions .btn,
+  body.app-shell:has(.history-filters) .history-actions .btn,
+  body.app-shell:has(.cashier-history) .cashier-history-actions .btn {width:100%!important}
+  body.app-shell:has(.history-filters) main.wrap>section.card:not(.history-filters),
+  body.app-shell:has(.cashier-history) .cashier-history>section.card:not(.cashier-history-filters),
+  body.app-shell:has(.history-detail.only-detail) .history-detail.only-detail {padding:13px!important;border-radius:20px!important}
+  body.app-shell:has(.history-filters) table,
+  body.app-shell:has(.cashier-history) .cashier-history-table table {min-width:760px!important}
+  body.app-shell:has(.history-detail) .history-detail .page-head {align-items:stretch!important;text-align:center!important}
+  body.app-shell:has(.history-detail) .history-detail .page-head .btn,
+  body.app-shell:has(.history-detail) .cashier-history-detail-actions {width:100%!important}
+  body.app-shell:has(.history-detail) .cashier-history-detail-actions .btn {flex:1 1 auto!important}
+}
+
+@media(max-width:520px){
+  body.app-shell:has(.history-filters) .history-grid,
+  body.app-shell:has(.cashier-history) .cashier-history-grid {grid-template-columns:1fr!important}
+  body.app-shell:has(.history-filters) main.wrap>.stats {grid-template-columns:1fr!important}
+  body.app-shell:has(.history-filters) main.wrap>.stats>div {min-height:82px!important}
+  body.app-shell:has(.history-filters) .history-clean-actions,
+  body.app-shell:has(.history-filters) .history-actions,
+  body.app-shell:has(.cashier-history) .cashier-history-actions {grid-template-columns:1fr!important}
+  body.app-shell:has(.history-detail) .history-detail-grid,
+  body.app-shell:has(.history-detail) .cashier-history-detail-grid {grid-template-columns:1fr 1fr!important}
+  body.app-shell:has(.history-detail) .history-detail-grid>div,
+  body.app-shell:has(.history-detail) .cashier-history-detail-grid>div {min-height:76px!important}
+}
