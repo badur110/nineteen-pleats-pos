@@ -1,0 +1,396 @@
+/* GARBALIA POS — responsive premium interface polish */
+
+/* ---------- Shared rhythm ---------- */
+html body.app-shell main.wrap{
+  width:min(1500px,100%)!important;
+}
+html body.app-shell .page-head{
+  position:relative;
+}
+html body.app-shell .page-head h1{
+  text-wrap:balance;
+}
+
+/* ---------- Tables: centered 5 x 2 desktop layout ---------- */
+html body.app-shell main.wrap:has(> .tables-grid){
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  min-height:calc(100dvh - 150px)!important;
+  padding-inline:clamp(14px,4vw,68px)!important;
+}
+html body.app-shell main.wrap:has(> .tables-grid)>.page-head{
+  width:min(1420px,100%)!important;
+  margin:0 auto!important;
+  padding:2px 4px 12px!important;
+  align-items:center!important;
+}
+html body.app-shell main.wrap:has(> .tables-grid)>.page-head h1{
+  font-size:clamp(1.8rem,2.8vw,2.65rem)!important;
+  letter-spacing:-.035em!important;
+}
+html body.app-shell main.wrap:has(> .tables-grid)>.tables-grid{
+  width:min(1420px,100%)!important;
+  margin:auto!important;
+  align-self:center!important;
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:clamp(12px,1.25vw,20px)!important;
+  padding-block:clamp(10px,2.5vh,28px)!important;
+}
+html body.app-shell main.wrap:has(> .tables-grid) .table-card{
+  isolation:isolate!important;
+  min-height:clamp(122px,16vh,176px)!important;
+  padding:clamp(15px,1.7vw,23px)!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  border-radius:clamp(20px,1.7vw,28px)!important;
+  border-width:1.5px!important;
+  box-shadow:0 14px 32px rgba(43,27,16,.085),inset 0 1px 0 rgba(255,255,255,.72)!important;
+  transform:translateZ(0)!important;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important;
+}
+html body.app-shell main.wrap:has(> .tables-grid) .table-card:after{
+  content:"";
+  position:absolute;
+  inset:8px;
+  z-index:-1;
+  border-radius:inherit;
+  border:1px solid rgba(255,255,255,.58);
+  pointer-events:none;
+}
+html body.app-shell main.wrap:has(> .tables-grid) .table-card:hover{
+  transform:translateY(-4px)!important;
+  box-shadow:0 22px 42px rgba(43,27,16,.14),inset 0 1px 0 rgba(255,255,255,.78)!important;
+}
+html body.app-shell main.wrap:has(> .tables-grid) .table-card span{
+  width:100%!important;
+  font-size:clamp(1.08rem,1.45vw,1.42rem)!important;
+  line-height:1.12!important;
+  text-align:center!important;
+  white-space:normal!important;
+  letter-spacing:-.025em!important;
+}
+html body.app-shell main.wrap:has(> .tables-grid) .table-card strong{
+  margin:10px auto 0!important;
+  max-width:100%!important;
+  justify-content:center!important;
+  text-align:center!important;
+  font-size:clamp(.78rem,.9vw,.95rem)!important;
+  padding:6px 11px!important;
+  border:1px solid rgba(43,27,16,.06)!important;
+  box-shadow:0 5px 14px rgba(43,27,16,.06)!important;
+  white-space:normal!important;
+}
+html body.app-shell main.wrap:has(> .tables-grid) .table-card.free{
+  background:radial-gradient(circle at 50% 0%,rgba(255,255,255,.94),transparent 48%),linear-gradient(145deg,#f4fff0,#e7fadb)!important;
+}
+html body.app-shell main.wrap:has(> .tables-grid) .table-card.occupied{
+  background:radial-gradient(circle at 50% 0%,rgba(255,255,255,.92),transparent 48%),linear-gradient(145deg,#fff7f3,#ffe5dc)!important;
+}
+html body.app-shell main.wrap:has(> .tables-grid) .table-card.pending{
+  background:radial-gradient(circle at 50% 0%,rgba(255,255,255,.92),transparent 48%),linear-gradient(145deg,#fffaf0,#ffe7b0)!important;
+}
+
+/* ---------- Products: calm premium hero, no black + ---------- */
+html body.app-shell.page-products .product-top-panel{
+  position:relative!important;
+  overflow:hidden!important;
+  margin:0 0 clamp(14px,2vw,22px)!important;
+  padding:clamp(18px,2vw,26px) clamp(20px,2.6vw,34px)!important;
+  border-radius:clamp(22px,2vw,30px)!important;
+  border:1px solid rgba(117,78,43,.16)!important;
+  background:
+    radial-gradient(circle at 82% -40%,rgba(217,185,142,.27),transparent 46%),
+    linear-gradient(135deg,rgba(255,252,247,.98),rgba(244,232,216,.93))!important;
+  box-shadow:0 20px 48px rgba(43,27,16,.095),inset 0 1px 0 rgba(255,255,255,.85)!important;
+}
+html body.app-shell.page-products .product-top-panel:after{
+  content:"";
+  position:absolute;
+  right:-35px;
+  top:-44px;
+  width:220px;
+  height:160px;
+  background:url('/Logo.png?v=12') center/contain no-repeat;
+  opacity:.035;
+  filter:brightness(0);
+  pointer-events:none;
+}
+html body.app-shell.page-products .product-top-row{
+  position:relative!important;
+  z-index:1!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:clamp(16px,3vw,42px)!important;
+}
+html body.app-shell.page-products .product-top-icon{
+  display:none!important;
+}
+html body.app-shell.page-products .product-top-copy{
+  display:block!important;
+  min-width:0!important;
+}
+html body.app-shell.page-products .product-top-copy>div{
+  display:grid!important;
+  gap:5px!important;
+}
+html body.app-shell.page-products .product-top-copy h2{
+  display:block!important;
+  margin:0!important;
+  font-size:clamp(1.28rem,2vw,1.9rem)!important;
+  line-height:1.08!important;
+  font-weight:950!important;
+  letter-spacing:-.035em!important;
+  color:#2b1b10!important;
+}
+html body.app-shell.page-products .product-top-copy h2:before{
+  content:"რესტორანი 19 ნაოჭი";
+  display:block;
+}
+html body.app-shell.page-products .product-top-copy h2{
+  font-size:0!important;
+}
+html body.app-shell.page-products .product-top-copy h2:before{
+  font-size:clamp(1.28rem,2vw,1.9rem)!important;
+}
+html body.app-shell.page-products .product-top-copy p{
+  display:block!important;
+  margin:0!important;
+  max-width:720px!important;
+  color:#7a6657!important;
+  font-size:clamp(.78rem,1vw,.94rem)!important;
+  line-height:1.45!important;
+  font-weight:780!important;
+}
+html body.app-shell.page-products .product-top-copy p{
+  font-size:0!important;
+}
+html body.app-shell.page-products .product-top-copy p:after{
+  content:"პროდუქტების მართვა — ფასები, თვითღირებულება და მოგება ერთ სივრცეში";
+  font-size:clamp(.78rem,1vw,.94rem)!important;
+}
+html body.app-shell.page-products .product-add-toggle{
+  min-height:48px!important;
+  padding:11px 19px!important;
+  border-radius:15px!important;
+  background:linear-gradient(180deg,#2d8848,#23733d)!important;
+  border:1px solid rgba(13,79,36,.22)!important;
+  box-shadow:0 12px 24px rgba(36,115,60,.20),inset 0 1px 0 rgba(255,255,255,.18)!important;
+  font-size:.88rem!important;
+  white-space:nowrap!important;
+}
+html body.app-shell.page-products .product-list-card{
+  padding:clamp(14px,1.8vw,22px)!important;
+  border-radius:clamp(22px,2vw,30px)!important;
+  border:1px solid rgba(117,78,43,.15)!important;
+  background:rgba(255,250,242,.86)!important;
+  box-shadow:0 20px 48px rgba(43,27,16,.085)!important;
+}
+html body.app-shell.page-products .product-list-card>h2{
+  margin:0 0 14px!important;
+  text-align:center!important;
+  font-size:clamp(1.02rem,1.4vw,1.28rem)!important;
+  letter-spacing:-.02em!important;
+}
+html body.app-shell.page-products .product-list-card tbody>tr{
+  background:linear-gradient(155deg,#fff,#fffaf5)!important;
+  border:1px solid rgba(181,142,97,.28)!important;
+  box-shadow:0 10px 24px rgba(43,27,16,.065),inset 0 1px 0 #fff!important;
+  transition:transform .16s ease,box-shadow .16s ease!important;
+}
+html body.app-shell.page-products .product-list-card tbody>tr:hover{
+  transform:translateY(-2px)!important;
+  box-shadow:0 15px 30px rgba(43,27,16,.11),inset 0 1px 0 #fff!important;
+}
+
+/* ---------- Product editor modal ---------- */
+html body.app-shell .garbalia-product-modal{
+  padding:clamp(8px,2vw,24px)!important;
+  background:rgba(31,20,13,.56)!important;
+  backdrop-filter:blur(11px) saturate(.9)!important;
+}
+html body.app-shell .garbalia-product-dialog{
+  width:min(720px,calc(100vw - 24px))!important;
+  max-height:calc(100dvh - 24px)!important;
+  padding:clamp(20px,3vw,32px)!important;
+  border-radius:clamp(22px,2.6vw,32px)!important;
+  border:1px solid rgba(217,187,148,.74)!important;
+  background:
+    radial-gradient(circle at 92% -12%,rgba(218,186,143,.28),transparent 38%),
+    linear-gradient(180deg,#fffdf9,#f7ead9)!important;
+  box-shadow:0 38px 96px rgba(24,14,8,.42),inset 0 1px 0 rgba(255,255,255,.95)!important;
+}
+html body.app-shell .garbalia-product-modal-logo{
+  display:none!important;
+}
+html body.app-shell .garbalia-product-modal-head{
+  display:block!important;
+  margin-bottom:20px!important;
+  padding:0 46px 16px 0!important;
+  border-bottom:1px solid rgba(43,27,16,.10)!important;
+}
+html body.app-shell .garbalia-product-modal-head h3{
+  font-size:clamp(1.25rem,2vw,1.65rem)!important;
+  line-height:1.12!important;
+}
+html body.app-shell .garbalia-product-modal-head p{
+  margin-top:6px!important;
+  font-size:.86rem!important;
+  line-height:1.45!important;
+}
+html body.app-shell .garbalia-product-close{
+  width:40px!important;
+  height:40px!important;
+  right:16px!important;
+  top:16px!important;
+  background:rgba(43,27,16,.075)!important;
+  box-shadow:inset 0 0 0 1px rgba(43,27,16,.06)!important;
+}
+html body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form{
+  grid-template-columns:1fr 1fr!important;
+  gap:12px!important;
+}
+html body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form label{
+  padding:12px!important;
+  border-radius:15px!important;
+  background:rgba(255,255,255,.72)!important;
+  border:1px solid rgba(155,111,68,.18)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.75)!important;
+}
+html body.app-shell.page-products .garbalia-product-dialog input,
+html body.app-shell.page-products .garbalia-product-dialog select{
+  margin-top:2px!important;
+  min-height:46px!important;
+  border-radius:12px!important;
+  border-color:#d1b18a!important;
+  background:#fff!important;
+}
+html body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form>.btn{
+  min-height:52px!important;
+  border-radius:15px!important;
+  background:linear-gradient(180deg,#2d8848,#23733d)!important;
+  box-shadow:0 12px 24px rgba(36,115,60,.20)!important;
+}
+
+/* ---------- Day page: premium cash movement and close card ---------- */
+html body.app-shell main.wrap:has(.garbalia-cash-actions-panel){
+  width:min(1480px,100%)!important;
+}
+html body.app-shell .garbalia-cash-actions-panel{
+  position:relative!important;
+  overflow:hidden!important;
+  margin:clamp(14px,2vw,22px) 0!important;
+  padding:clamp(17px,2vw,24px) clamp(20px,2.5vw,32px)!important;
+  border-radius:clamp(21px,2vw,29px)!important;
+  border:1px solid rgba(117,78,43,.16)!important;
+  background:
+    radial-gradient(circle at 80% -55%,rgba(220,190,150,.29),transparent 48%),
+    linear-gradient(135deg,rgba(255,252,247,.98),rgba(244,232,216,.93))!important;
+  box-shadow:0 20px 48px rgba(43,27,16,.095),inset 0 1px 0 rgba(255,255,255,.85)!important;
+}
+html body.app-shell .garbalia-cash-actions-panel:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:20%;
+  bottom:20%;
+  width:4px;
+  border-radius:0 8px 8px 0;
+  background:linear-gradient(#4c9a61,#24733c);
+}
+html body.app-shell .garbalia-cash-panel-icon{
+  display:none!important;
+}
+html body.app-shell .garbalia-cash-panel-copy{
+  display:block!important;
+  min-width:0!important;
+}
+html body.app-shell .garbalia-cash-panel-copy>div{
+  display:grid!important;
+  gap:5px!important;
+}
+html body.app-shell .garbalia-cash-panel-copy h2{
+  margin:0!important;
+  font-size:clamp(1.16rem,1.7vw,1.55rem)!important;
+  line-height:1.1!important;
+  letter-spacing:-.025em!important;
+}
+html body.app-shell .garbalia-cash-panel-copy>div:after{
+  content:"თანხის დამატება, ამოღება და ყოველდღიური ხარჯების მართვა";
+  display:block;
+  color:#7a6657;
+  font-size:clamp(.76rem,.95vw,.9rem);
+  line-height:1.4;
+  font-weight:760;
+}
+html body.app-shell .garbalia-cash-panel-actions{
+  gap:9px!important;
+}
+html body.app-shell .garbalia-cash-panel-actions .btn{
+  min-height:44px!important;
+  padding:10px 15px!important;
+  border-radius:14px!important;
+  box-shadow:0 9px 20px rgba(43,27,16,.10)!important;
+}
+html body.app-shell .garbalia-day-close-card{
+  width:min(720px,100%)!important;
+  max-width:720px!important;
+  margin:clamp(20px,4vh,38px) auto clamp(20px,4vh,40px)!important;
+  padding:clamp(20px,2.8vw,30px)!important;
+  border-radius:clamp(22px,2vw,28px)!important;
+  border:1px solid rgba(117,78,43,.16)!important;
+  background:linear-gradient(160deg,rgba(255,252,247,.98),rgba(249,238,224,.96))!important;
+  box-shadow:0 24px 58px rgba(43,27,16,.11),inset 0 1px 0 rgba(255,255,255,.9)!important;
+}
+html body.app-shell .garbalia-day-close-card>h2{
+  text-align:center!important;
+  margin:0 0 18px!important;
+  font-size:clamp(1.22rem,1.8vw,1.55rem)!important;
+  letter-spacing:-.025em!important;
+}
+html body.app-shell .garbalia-day-close-card form{
+  gap:13px!important;
+}
+html body.app-shell .garbalia-day-close-card form>.btn{
+  min-height:50px!important;
+  margin-top:3px!important;
+  border-radius:15px!important;
+  background:linear-gradient(180deg,#c63c32,#b43129)!important;
+  box-shadow:0 12px 24px rgba(180,49,41,.20)!important;
+}
+
+/* ---------- Responsive behavior ---------- */
+@media(max-width:1240px){
+  html body.app-shell main.wrap:has(> .tables-grid)>.tables-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:980px){
+  html body.app-shell main.wrap:has(> .tables-grid){display:flex!important;flex-direction:column!important;min-height:auto!important;padding-inline:14px!important}
+  html body.app-shell main.wrap:has(> .tables-grid)>.tables-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;margin:0 auto!important;padding-block:8px 24px!important}
+  html body.app-shell main.wrap:has(> .tables-grid) .table-card{min-height:118px!important}
+  html body.app-shell.page-products .product-top-row{grid-template-columns:1fr!important;text-align:center!important}
+  html body.app-shell.page-products .product-top-copy p{margin-inline:auto!important}
+  html body.app-shell.page-products .product-add-toggle{width:min(360px,100%)!important;margin-inline:auto!important}
+  html body.app-shell .garbalia-cash-actions-panel{align-items:stretch!important;flex-direction:column!important;text-align:center!important}
+  html body.app-shell .garbalia-cash-panel-actions{display:grid!important;grid-template-columns:1fr 1fr!important;width:100%!important}
+  html body.app-shell .garbalia-cash-panel-actions .btn{width:100%!important}
+}
+@media(max-width:720px){
+  html body.app-shell main.wrap:has(> .tables-grid)>.tables-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  html body.app-shell main.wrap:has(> .tables-grid) .table-card{min-height:108px!important;padding:13px!important;border-radius:19px!important}
+  html body.app-shell.page-products .product-top-panel{padding:18px 16px!important}
+  html body.app-shell.page-products .product-top-copy h2:before{font-size:1.35rem!important}
+  html body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form{grid-template-columns:1fr!important}
+  html body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form label,
+  html body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form .check,
+  html body.app-shell.page-products .garbalia-product-dialog .product-add-card form.cost-product-form>.btn{grid-column:1!important}
+  html body.app-shell .garbalia-cash-panel-actions{grid-template-columns:1fr!important}
+  html body.app-shell .garbalia-day-close-card{padding:18px 15px!important}
+}
+@media(max-width:420px){
+  html body.app-shell main.wrap:has(> .tables-grid)>.tables-grid{grid-template-columns:1fr!important}
+  html body.app-shell main.wrap:has(> .tables-grid) .table-card{min-height:96px!important}
+  html body.app-shell .garbalia-product-dialog{width:calc(100vw - 12px)!important;max-height:calc(100dvh - 12px)!important;padding:18px 12px 13px!important}
+}
