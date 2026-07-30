@@ -42,10 +42,31 @@ if (($_SESSION['user']['role'] ?? '') === 'admin') {
     });
   }
 
+  function addHistoryResetButton() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('order_id') || document.querySelector('[data-history-reset-link]')) return;
+
+    const link = document.createElement('a');
+    link.href = '/reset-history';
+    link.className = 'btn danger';
+    link.textContent = 'ისტორიის განულება';
+    link.setAttribute('data-history-reset-link', '1');
+    link.title = 'ყველა ოპერაციული ისტორიის უსაფრთხოდ განულება';
+
+    const actions = document.querySelector('.history-clean-actions, .history-actions');
+    if (actions) {
+      actions.appendChild(link);
+      return;
+    }
+
+    const head = document.querySelector('.wrap > .page-head');
+    if (head) head.appendChild(link);
+  }
+
   function runFixes() {
-    window.setTimeout(fixHistoryFilterSubmit, 0);
-    window.setTimeout(fixHistoryFilterSubmit, 150);
-    window.setTimeout(fixHistoryFilterSubmit, 500);
+    window.setTimeout(function () { fixHistoryFilterSubmit(); addHistoryResetButton(); }, 0);
+    window.setTimeout(function () { fixHistoryFilterSubmit(); addHistoryResetButton(); }, 150);
+    window.setTimeout(function () { fixHistoryFilterSubmit(); addHistoryResetButton(); }, 500);
   }
 
   if (document.readyState === 'loading') {
