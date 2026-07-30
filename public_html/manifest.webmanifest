@@ -1,0 +1,41 @@
+{
+  "id": "/",
+  "name": "GARBALIA POS — Nineteen Pleats",
+  "short_name": "GARBALIA POS",
+  "description": "Restaurant management and point-of-sale system",
+  "lang": "ka",
+  "start_url": "/day?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "theme_color": "#2b1b10",
+  "background_color": "#f6efe4",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/assets/garbalia-pwa-icon.svg?v=1",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/garbalia-pwa-maskable.svg?v=1",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "მაგიდები",
+      "short_name": "მაგიდები",
+      "url": "/tables?source=pwa"
+    },
+    {
+      "name": "სამუშაო დღე",
+      "short_name": "დღე",
+      "url": "/day?source=pwa"
+    }
+  ]
+}
