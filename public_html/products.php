@@ -70,27 +70,31 @@ render_header('პროდუქტები');
 .product-finance-cell .unit-profit{color:#24733c;font-weight:950}
 .product-finance-cell .unit-profit.negative{color:#b9332a}
 
-/* Desktop: two product cards on each row */
-@media(min-width:1100px){
+/* Product cards: 3 columns on wide desktop, 2 on medium, 1 on small screens */
+@media(min-width:900px){
   body.app-shell.page-products .product-list-card .table-wrap{overflow:visible!important;border:0!important;background:transparent!important}
   body.app-shell.page-products .product-list-card table{display:block!important;width:100%!important;min-width:0!important;background:transparent!important}
-  body.app-shell.page-products .product-list-card tbody{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;width:100%!important}
-  body.app-shell.page-products .product-list-card tbody>tr{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto auto!important;gap:6px 12px!important;align-items:center!important;width:100%!important;min-width:0!important;padding:12px 13px!important;border-radius:15px!important;overflow:visible!important}
+  body.app-shell.page-products .product-list-card tbody{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;width:100%!important}
+  body.app-shell.page-products .product-list-card tbody>tr{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto auto!important;gap:5px 10px!important;align-items:center!important;width:100%!important;min-width:0!important;padding:11px 12px!important;border-radius:14px!important;overflow:visible!important}
   body.app-shell.page-products .product-list-card tbody>tr>td{min-width:0!important;padding:0!important;border:0!important;overflow:visible!important}
-  body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(1){grid-column:1/2!important;grid-row:1!important;font-size:.90rem!important;font-weight:950!important;white-space:normal!important;overflow-wrap:anywhere!important}
-  body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(2){grid-column:1/2!important;grid-row:2!important;font-size:.76rem!important;color:#7a6657!important;white-space:normal!important}
+  body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(1){grid-column:1/2!important;grid-row:1!important;font-size:.86rem!important;font-weight:950!important;white-space:normal!important;overflow-wrap:anywhere!important}
+  body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(2){grid-column:1/2!important;grid-row:2!important;font-size:.72rem!important;color:#7a6657!important;white-space:normal!important}
   body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(3){grid-column:2/3!important;grid-row:1/3!important;align-self:center!important;justify-self:end!important;text-align:right!important}
-  body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(4){grid-column:2/3!important;grid-row:3!important;justify-self:end!important;width:auto!important;min-width:74px!important;padding:5px 8px!important}
-  body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(5){grid-column:1/2!important;grid-row:3!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:7px!important;flex-wrap:wrap!important}
+  body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(4){grid-column:2/3!important;grid-row:3!important;justify-self:end!important;width:auto!important;min-width:66px!important;padding:4px 7px!important;font-size:.70rem!important}
+  body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(5){grid-column:1/2!important;grid-row:3!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:6px!important;flex-wrap:wrap!important}
   body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(5) form{margin:0!important;display:inline-flex!important}
   body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(5) .btn,
-  body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(5) a{min-height:32px!important;padding:6px 9px!important;font-size:.75rem!important;border-radius:9px!important;white-space:nowrap!important}
-  body.app-shell.page-products .product-finance-cell strong{font-size:.82rem!important}
-  body.app-shell.page-products .product-finance-cell small{font-size:.69rem!important;line-height:1.18!important}
+  body.app-shell.page-products .product-list-card tbody>tr>td:nth-child(5) a{min-height:30px!important;padding:5px 8px!important;font-size:.71rem!important;border-radius:8px!important;white-space:nowrap!important}
+  body.app-shell.page-products .product-finance-cell strong{font-size:.77rem!important}
+  body.app-shell.page-products .product-finance-cell small{font-size:.64rem!important;line-height:1.16!important}
+}
+
+@media(min-width:1250px){
+  body.app-shell.page-products .product-list-card tbody{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 }
 
 @media(max-width:1120px){.page-products .product-add-card form.cost-product-form{grid-template-columns:1fr 1fr 1fr!important}.page-products .product-add-card form.cost-product-form .check,.page-products .product-add-card form.cost-product-form .btn{grid-column:auto!important}}
-@media(max-width:1099px){body.app-shell.page-products .product-list-card tbody{grid-template-columns:1fr!important}}
+@media(max-width:899px){body.app-shell.page-products .product-list-card tbody{grid-template-columns:1fr!important}}
 @media(max-width:820px){.page-products .product-add-card form.cost-product-form{grid-template-columns:1fr 1fr!important}.page-products .product-add-card form.cost-product-form .btn{grid-column:1/-1!important}}
 @media(max-width:640px){.page-products .product-add-card form.cost-product-form{grid-template-columns:1fr!important}.product-finance-cell{display:flex!important;flex-direction:column!important;align-items:flex-end!important}.product-finance-cell:before{align-self:flex-start}}
 </style>
