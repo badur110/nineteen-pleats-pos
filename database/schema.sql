@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS products (
   category_id INT NULL,
   name VARCHAR(150) NOT NULL,
   price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  cost DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   sort_order INT NOT NULL DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -108,6 +109,7 @@ CREATE TABLE IF NOT EXISTS order_items (
   product_name VARCHAR(150) NOT NULL,
   quantity DECIMAL(10,2) NOT NULL DEFAULT 1.00,
   price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  product_cost DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   comment VARCHAR(255) NULL,
   sent_at TIMESTAMP NULL DEFAULT NULL,
   is_cancelled TINYINT(1) NOT NULL DEFAULT 0,
@@ -137,6 +139,6 @@ INSERT INTO categories (name, sort_order) VALUES
 ('ხინკალი', 1), ('სასმელი', 2), ('სხვა', 99)
 ON DUPLICATE KEY UPDATE sort_order=VALUES(sort_order), is_active=1;
 
-INSERT INTO products (category_id, name, price, sort_order, is_active)
-SELECT c.id, 'ქალაქური ხინკალი', 1.70, 1, 1 FROM categories c WHERE c.name='ხინკალი'
+INSERT INTO products (category_id, name, price, cost, sort_order, is_active)
+SELECT c.id, 'ქალაქური ხინკალი', 1.70, 0.00, 1, 1 FROM categories c WHERE c.name='ხინკალი'
 ON DUPLICATE KEY UPDATE price=VALUES(price), category_id=VALUES(category_id), is_active=1;
