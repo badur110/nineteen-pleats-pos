@@ -139,3 +139,5 @@ readfile(__DIR__ . '/style.css');
     margin-bottom:12px!important;
   }
 }
+
+<?php readfile(__DIR__ . '/premium-ui.css'); ?>
