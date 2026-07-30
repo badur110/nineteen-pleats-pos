@@ -53,3 +53,109 @@ html body.app-shell.page-products main.wrap>.page-head h1:before,
 html body.app-shell.page-products main.wrap>.page-head h1:after{content:"";display:block;width:clamp(22px,3vw,48px);height:1px;background:linear-gradient(90deg,transparent,#c8a77f)}
 html body.app-shell.page-products main.wrap>.page-head h1:after{background:linear-gradient(90deg,#c8a77f,transparent)}
 html body.app-shell main.wrap:has(.garbalia-cash-actions-panel)>.page-head{padding-bottom:12px!important;border-bottom:1px solid rgba(43,27,16,.08)!important}
+
+/* Workday opening: compact, centered and responsive */
+html body.app-shell main.wrap:has(form input[name="action"][value="open_day"]){
+  width:100%!important;
+  max-width:none!important;
+  min-height:calc(100dvh - 154px)!important;
+  flex:1 1 auto!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:clamp(18px,4vw,56px)!important;
+}
+html body.app-shell main.wrap:has(form input[name="action"][value="open_day"])>.card.narrow{
+  position:relative!important;
+  overflow:hidden!important;
+  width:min(620px,100%)!important;
+  max-width:620px!important;
+  margin:auto!important;
+  padding:clamp(22px,3vw,32px)!important;
+  border-radius:clamp(22px,2.4vw,30px)!important;
+  border:1px solid rgba(149,105,64,.20)!important;
+  background:
+    radial-gradient(circle at 88% -20%,rgba(218,186,143,.25),transparent 42%),
+    linear-gradient(155deg,rgba(255,253,249,.99),rgba(248,237,223,.97))!important;
+  box-shadow:0 28px 68px rgba(43,27,16,.13),inset 0 1px 0 rgba(255,255,255,.92)!important;
+  text-align:center!important;
+}
+html body.app-shell main.wrap:has(form input[name="action"][value="open_day"])>.card.narrow:after{
+  content:"";
+  position:absolute;
+  right:-38px;
+  top:-48px;
+  width:210px;
+  height:160px;
+  background:url('/Logo.png?v=12') center/contain no-repeat;
+  opacity:.035;
+  filter:brightness(0);
+  pointer-events:none;
+}
+html body.app-shell main.wrap:has(form input[name="action"][value="open_day"])>.card.narrow>*{
+  position:relative!important;
+  z-index:1!important;
+}
+html body.app-shell main.wrap:has(form input[name="action"][value="open_day"])>.card.narrow h1{
+  margin:0 auto 9px!important;
+  max-width:520px!important;
+  text-align:center!important;
+  font-size:clamp(1.55rem,2.5vw,2.05rem)!important;
+  line-height:1.1!important;
+  letter-spacing:-.035em!important;
+}
+html body.app-shell main.wrap:has(form input[name="action"][value="open_day"])>.card.narrow>.muted{
+  max-width:500px!important;
+  margin:0 auto clamp(17px,2.4vw,23px)!important;
+  text-align:center!important;
+  font-size:clamp(.82rem,1vw,.93rem)!important;
+  line-height:1.5!important;
+}
+html body.app-shell main.wrap:has(form input[name="action"][value="open_day"]) form.stack{
+  width:min(500px,100%)!important;
+  margin:0 auto!important;
+  gap:13px!important;
+}
+html body.app-shell main.wrap:has(form input[name="action"][value="open_day"]) form.stack label{
+  gap:7px!important;
+  text-align:center!important;
+  font-size:.86rem!important;
+}
+html body.app-shell main.wrap:has(form input[name="action"][value="open_day"]) form.stack input{
+  min-height:46px!important;
+  padding:10px 13px!important;
+  border-radius:13px!important;
+  text-align:center!important;
+  background:rgba(255,255,255,.94)!important;
+  box-shadow:inset 0 1px 3px rgba(43,27,16,.04)!important;
+}
+html body.app-shell main.wrap:has(form input[name="action"][value="open_day"]) form.stack>.btn{
+  width:min(300px,100%)!important;
+  min-height:48px!important;
+  margin:3px auto 0!important;
+  border-radius:15px!important;
+  background:linear-gradient(180deg,#2d8848,#23733d)!important;
+  box-shadow:0 12px 24px rgba(36,115,60,.20),inset 0 1px 0 rgba(255,255,255,.16)!important;
+}
+@media(max-width:640px){
+  html body.app-shell main.wrap:has(form input[name="action"][value="open_day"]){
+    min-height:auto!important;
+    padding:20px 12px 28px!important;
+  }
+  html body.app-shell main.wrap:has(form input[name="action"][value="open_day"])>.card.narrow{
+    width:100%!important;
+    padding:21px 15px!important;
+    border-radius:22px!important;
+  }
+  html body.app-shell main.wrap:has(form input[name="action"][value="open_day"]) form.stack>.btn{
+    width:100%!important;
+  }
+}
+@media(min-width:641px) and (max-height:700px){
+  html body.app-shell main.wrap:has(form input[name="action"][value="open_day"]){
+    min-height:auto!important;
+    padding-block:16px!important;
+  }
+  html body.app-shell main.wrap:has(form input[name="action"][value="open_day"])>.card.narrow{
+    padding:20px 26px!important;
+  }
+}
