@@ -28,6 +28,7 @@ $menuJson = json_encode(
   <link rel="icon" type="image/png" href="/Logo.png?v=12">
   <link rel="apple-touch-icon" href="/Logo.png?v=12">
   <link rel="stylesheet" href="/assets/menu.css?v=1">
+  <style>.menu-section-orb{background:var(--tone)!important}</style>
 </head>
 <body class="qr-menu">
   <div class="menu-noise" aria-hidden="true"></div>
