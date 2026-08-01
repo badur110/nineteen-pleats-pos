@@ -50,6 +50,11 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
+# Public QR menu routes.
+RewriteRule ^menu/?$ menu.php [QSA,L]
+RewriteRule ^menu-data/?$ menu-data.php [QSA,L]
+RewriteRule ^menu-qr/?$ menu-qr.php [QSA,L]
+
 # Clean POS routes.
 RewriteRule ^statistics/?$ statistics.php [QSA,L]
 RewriteRule ^history/?$ history-route.php [QSA,L]
