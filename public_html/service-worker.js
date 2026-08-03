@@ -1,4 +1,4 @@
-const GARBALIA_SW_VERSION = 'garbalia-pos-v2';
+const GARBALIA_SW_VERSION = 'garbalia-pos-v3';
 const STATIC_CACHE = GARBALIA_SW_VERSION + '-static';
 
 self.addEventListener('install', function () {
@@ -24,6 +24,12 @@ function offlinePage() {
   );
 }
 
+function isRuntimeLoader(url) {
+  return url.pathname === '/assets/app.js' ||
+    url.pathname === '/assets/close-confirm.js' ||
+    url.pathname === '/service-worker.js';
+}
+
 function isStaticAsset(url) {
   return url.pathname.indexOf('/assets/') === 0 ||
     url.pathname === '/Logo.png' ||
@@ -46,7 +52,18 @@ self.addEventListener('fetch', function (event) {
     return;
   }
 
-  // Only visual/static files use cache-first with a background refresh.
+  // Loader scripts are network-first so newly deployed POS features appear
+  // immediately instead of waiting for a second app launch.
+  if (isRuntimeLoader(url)) {
+    event.respondWith(
+      fetch(event.request, {cache: 'no-store'}).catch(function () {
+        return caches.match(event.request);
+      })
+    );
+    return;
+  }
+
+  // Visual/static files use cache-first with a background refresh.
   if (isStaticAsset(url)) {
     event.respondWith(
       caches.open(STATIC_CACHE).then(function (cache) {
