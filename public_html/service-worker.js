@@ -1,4 +1,4 @@
-const GARBALIA_SW_VERSION = 'garbalia-pos-v3';
+const GARBALIA_SW_VERSION = 'garbalia-pos-v4';
 const STATIC_CACHE = GARBALIA_SW_VERSION + '-static';
 
 self.addEventListener('install', function () {
@@ -27,6 +27,11 @@ function offlinePage() {
 function isRuntimeLoader(url) {
   return url.pathname === '/assets/app.js' ||
     url.pathname === '/assets/close-confirm.js' ||
+    url.pathname === '/assets/close-confirm-loader.js' ||
+    url.pathname === '/assets/tables-12.js' ||
+    url.pathname === '/assets/table-page-flow.js' ||
+    url.pathname === '/assets/table-cancel.js' ||
+    url.pathname === '/assets/direct-print.js' ||
     url.pathname === '/service-worker.js';
 }
 
@@ -43,8 +48,6 @@ self.addEventListener('fetch', function (event) {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  // Pages and POS data are always fetched live. Old orders, totals and table
-  // states are never served from cache.
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request, {cache: 'no-store'}).catch(offlinePage)
@@ -52,18 +55,21 @@ self.addEventListener('fetch', function (event) {
     return;
   }
 
-  // Loader scripts are network-first so newly deployed POS features appear
-  // immediately instead of waiting for a second app launch.
   if (isRuntimeLoader(url)) {
     event.respondWith(
-      fetch(event.request, {cache: 'no-store'}).catch(function () {
-        return caches.match(event.request);
+      fetch(event.request, {cache: 'no-store'}).then(function (response) {
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(STATIC_CACHE).then(function (cache) { cache.put(event.request, copy); });
+        }
+        return response;
+      }).catch(function () {
+        return caches.open(STATIC_CACHE).then(function (cache) { return cache.match(event.request); });
       })
     );
     return;
   }
 
-  // Visual/static files use cache-first with a background refresh.
   if (isStaticAsset(url)) {
     event.respondWith(
       caches.open(STATIC_CACHE).then(function (cache) {
