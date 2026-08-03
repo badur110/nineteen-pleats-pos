@@ -20,10 +20,18 @@ $pdo = db();
 $wanted = [
     ['name' => 'მაგიდა 11', 'sort_order' => 11],
     ['name' => 'მაგიდა 12', 'sort_order' => 12],
+    ['name' => 'გატანა 1', 'sort_order' => 1001],
+    ['name' => 'გატანა 2', 'sort_order' => 1002],
 ];
+$wantedNames = array_column($wanted, 'name');
+$placeholders = implode(',', array_fill(0, count($wantedNames), '?'));
 
 try {
-    $before = $pdo->query("SELECT COUNT(*) FROM restaurant_tables WHERE is_active=1 AND name IN ('მაგიდა 11','მაგიდა 12')")->fetchColumn();
+    $countStmt = $pdo->prepare(
+        'SELECT COUNT(*) FROM restaurant_tables WHERE is_active=1 AND name IN (' . $placeholders . ')'
+    );
+    $countStmt->execute($wantedNames);
+    $before = (int)$countStmt->fetchColumn();
 
     $pdo->beginTransaction();
     $stmt = $pdo->prepare(
@@ -35,13 +43,15 @@ try {
     }
     $pdo->commit();
 
-    $after = $pdo->query("SELECT COUNT(*) FROM restaurant_tables WHERE is_active=1 AND name IN ('მაგიდა 11','მაგიდა 12')")->fetchColumn();
+    $countStmt->execute($wantedNames);
+    $after = (int)$countStmt->fetchColumn();
 
     echo json_encode([
         'ok' => true,
-        'changed' => (int)$before < 2 && (int)$after === 2,
-        'active_tables_added' => max(0, (int)$after - (int)$before),
-        'total_target' => 12,
+        'changed' => $after > $before,
+        'active_tables_added' => max(0, $after - $before),
+        'regular_tables' => 12,
+        'takeaway_slots' => 2,
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } catch (Throwable $e) {
     if ($pdo->inTransaction()) {
