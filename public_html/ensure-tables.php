@@ -22,6 +22,9 @@ $wanted = [
     ['name' => 'მაგიდა 12', 'sort_order' => 12],
     ['name' => 'გატანა 1', 'sort_order' => 1001],
     ['name' => 'გატანა 2', 'sort_order' => 1002],
+    ['name' => 'გატანა 3', 'sort_order' => 1003],
+    ['name' => 'გატანა 4', 'sort_order' => 1004],
+    ['name' => 'გატანა 5', 'sort_order' => 1005],
 ];
 $wantedNames = array_column($wanted, 'name');
 $placeholders = implode(',', array_fill(0, count($wantedNames), '?'));
@@ -51,7 +54,7 @@ try {
         'changed' => $after > $before,
         'active_tables_added' => max(0, $after - $before),
         'regular_tables' => 12,
-        'takeaway_slots' => 2,
+        'takeaway_slots' => 5,
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } catch (Throwable $e) {
     if ($pdo->inTransaction()) {
