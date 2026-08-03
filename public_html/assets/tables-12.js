@@ -8,66 +8,97 @@
     style.id = 'garbalia-tables-layout-style';
     style.textContent = `
       .garbalia-takeaway-section{
-        width:min(1380px,100%);
-        margin:0 auto 16px;
-        padding:14px;
-        border:1px solid rgba(43,27,16,.10);
-        border-radius:22px;
-        background:linear-gradient(145deg,rgba(255,253,248,.96),rgba(242,226,205,.92));
-        box-shadow:0 14px 32px rgba(43,27,16,.08),inset 0 1px 0 rgba(255,255,255,.86);
+        width:min(560px,calc(100% - 24px));
+        height:auto!important;
+        min-height:0!important;
+        flex:0 0 auto!important;
+        align-self:center!important;
+        margin:0 auto 14px;
+        padding:8px 9px 9px;
+        border:1px solid rgba(150,88,24,.24);
+        border-radius:17px;
+        background:
+          radial-gradient(circle at 88% -55%,rgba(255,255,255,.82),transparent 50%),
+          linear-gradient(145deg,#fff5e2,#efd4a7);
+        box-shadow:0 9px 22px rgba(91,52,18,.09),inset 0 1px 0 rgba(255,255,255,.94);
       }
       .garbalia-takeaway-head{
         display:flex;
         align-items:center;
         justify-content:space-between;
-        gap:12px;
-        margin-bottom:10px;
+        gap:10px;
+        margin:0 2px 7px;
       }
       .garbalia-takeaway-head strong{
         display:block;
-        font-size:.94rem;
+        color:#4b2d16;
+        font-size:.82rem;
         font-weight:950;
-        color:#2b1b10;
+        letter-spacing:-.01em;
       }
-      .garbalia-takeaway-head span{
-        color:#7a6657;
-        font-size:.74rem;
-        font-weight:800;
+      .garbalia-takeaway-head>span{
+        display:inline-flex;
+        align-items:center;
+        min-height:23px;
+        padding:3px 8px;
+        border-radius:999px;
+        background:rgba(127,72,19,.11);
+        color:#86521e;
+        font-size:.64rem;
+        font-weight:900;
+        white-space:nowrap;
       }
       .garbalia-takeaway-grid{
         display:grid;
-        grid-template-columns:repeat(2,minmax(190px,250px));
-        justify-content:center;
-        gap:12px;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:8px;
+        width:100%;
       }
-      body.app-shell .garbalia-takeaway-grid .table-card{
-        min-height:92px!important;
-        padding:13px 16px!important;
-        border-radius:19px!important;
-        border-color:#b9782d!important;
+      body.app-shell .garbalia-takeaway-grid .table-card,
+      body.app-shell .garbalia-takeaway-grid .table-card.free{
+        min-height:66px!important;
+        height:auto!important;
+        padding:8px 11px!important;
+        border-width:1px!important;
+        border-radius:14px!important;
+        border-color:#c98635!important;
         background:
-          radial-gradient(circle at 90% -20%,rgba(255,255,255,.72),transparent 44%),
-          linear-gradient(145deg,#fff7df,#f2d69d)!important;
-        box-shadow:0 12px 28px rgba(120,72,26,.13),inset 0 1px 0 rgba(255,255,255,.92)!important;
+          radial-gradient(circle at 91% -28%,rgba(255,255,255,.88),transparent 46%),
+          linear-gradient(145deg,#fff1cf,#e9bd6d)!important;
+        box-shadow:0 7px 16px rgba(122,70,18,.12),inset 0 1px 0 rgba(255,255,255,.96)!important;
+      }
+      body.app-shell .garbalia-takeaway-grid .table-card:hover{
+        transform:translateY(-2px)!important;
+        box-shadow:0 11px 22px rgba(122,70,18,.16),inset 0 1px 0 rgba(255,255,255,.96)!important;
       }
       body.app-shell .garbalia-takeaway-grid .table-card.occupied{
         border-color:#b5473d!important;
-        background:linear-gradient(145deg,#fff6ef,#ffd9cd)!important;
+        background:linear-gradient(145deg,#fff0e5,#f3b29e)!important;
       }
       body.app-shell .garbalia-takeaway-grid .table-card.pending{
         border-color:#d28c20!important;
-        background:linear-gradient(145deg,#fff9e8,#ffe0a3)!important;
+        background:linear-gradient(145deg,#fff5d6,#efc268)!important;
+      }
+      body.app-shell .garbalia-takeaway-grid .table-card span{
+        font-size:.96rem!important;
+        line-height:1.05!important;
+      }
+      body.app-shell .garbalia-takeaway-grid .table-card strong{
+        margin-top:5px!important;
+        padding:4px 8px!important;
+        font-size:.69rem!important;
       }
       body.app-shell .garbalia-takeaway-grid .table-card span:before{
         content:"↗";
         display:inline-grid;
         place-items:center;
-        width:26px;
-        height:26px;
-        margin-right:8px;
-        border-radius:9px;
-        background:rgba(43,27,16,.10);
-        font-size:.82rem;
+        width:22px;
+        height:22px;
+        margin-right:6px;
+        border-radius:7px;
+        background:rgba(86,47,13,.12);
+        color:#6c3d14;
+        font-size:.72rem;
         vertical-align:middle;
       }
       @media (min-width:1250px) {
@@ -80,6 +111,10 @@
           padding-left:13px!important;
           padding-right:13px!important;
         }
+        html body.app-shell:has(.tables-grid) main.wrap .garbalia-takeaway-grid .table-card{
+          min-height:66px!important;
+          padding:8px 11px!important;
+        }
       }
       @media (min-width:981px) and (max-width:1249px) {
         html body.app-shell:has(.tables-grid) main.wrap .tables-grid {
@@ -87,12 +122,11 @@
         }
       }
       @media (max-width:640px) {
-        .garbalia-takeaway-section{padding:11px;border-radius:18px}
-        .garbalia-takeaway-head{align-items:flex-start;flex-direction:column;gap:2px}
-        .garbalia-takeaway-grid{grid-template-columns:1fr 1fr;gap:8px}
-        body.app-shell .garbalia-takeaway-grid .table-card{min-height:88px!important;padding:11px 9px!important}
+        .garbalia-takeaway-section{width:calc(100% - 16px);padding:8px;border-radius:15px;margin-bottom:10px}
+        .garbalia-takeaway-grid{grid-template-columns:1fr 1fr;gap:7px}
+        body.app-shell .garbalia-takeaway-grid .table-card{min-height:62px!important;padding:8px!important}
       }
-      @media (max-width:390px) {
+      @media (max-width:360px) {
         .garbalia-takeaway-grid{grid-template-columns:1fr}
       }
     `;
@@ -114,7 +148,7 @@
     if (!section) {
       section = document.createElement('section');
       section.className = 'garbalia-takeaway-section';
-      section.innerHTML = '<div class="garbalia-takeaway-head"><div><strong>გატანის შეკვეთები</strong><span>წასაღები შეკვეთებისთვის ცალკე ორი ადგილი</span></div><span>2 გატანა</span></div><div class="garbalia-takeaway-grid"></div>';
+      section.innerHTML = '<div class="garbalia-takeaway-head"><strong>გატანის შეკვეთები</strong><span>2 გატანა</span></div><div class="garbalia-takeaway-grid"></div>';
       grid.parentNode.insertBefore(section, grid);
     }
 
@@ -144,7 +178,7 @@
       const result = await response.json();
       if (!result || result.ok !== true || result.changed !== true) return;
 
-      const reloadKey = 'garbalia-tables-and-takeaway-v2';
+      const reloadKey = 'garbalia-tables-and-takeaway-v3';
       if (sessionStorage.getItem(reloadKey) === '1') return;
       sessionStorage.setItem(reloadKey, '1');
       window.location.reload();
