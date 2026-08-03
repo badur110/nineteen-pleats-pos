@@ -131,8 +131,9 @@ INSERT INTO users (name, username, password_hash, role, is_active) VALUES
 ON DUPLICATE KEY UPDATE name=VALUES(name), role=VALUES(role), is_active=VALUES(is_active);
 
 INSERT INTO restaurant_tables (name, sort_order) VALUES
-('მაგიდა 1', 1), ('მაგიდა 2', 2), ('მაგიდა 3', 3), ('მაგიდა 4', 4), ('მაგიდა 5', 5),
-('მაგიდა 6', 6), ('მაგიდა 7', 7), ('მაგიდა 8', 8), ('მაგიდა 9', 9), ('მაგიდა 10', 10)
+('მაგიდა 1', 1), ('მაგიდა 2', 2), ('მაგიდა 3', 3), ('მაგიდა 4', 4), ('მაგიდა 5', 5), ('მაგიდა 6', 6),
+('მაგიდა 7', 7), ('მაგიდა 8', 8), ('მაგიდა 9', 9), ('მაგიდა 10', 10), ('მაგიდა 11', 11), ('მაგიდა 12', 12),
+('გატანა 1', 1001), ('გატანა 2', 1002), ('გატანა 3', 1003), ('გატანა 4', 1004), ('გატანა 5', 1005)
 ON DUPLICATE KEY UPDATE sort_order=VALUES(sort_order), is_active=1;
 
 INSERT INTO categories (name, sort_order) VALUES
