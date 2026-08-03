@@ -26,7 +26,7 @@
         flex:0 0 auto!important;
       }
       .garbalia-takeaway-section{
-        width:min(560px,calc(100% - 24px));
+        width:min(1040px,calc(100% - 24px));
         height:auto!important;
         min-height:0!important;
         flex:0 0 auto!important;
@@ -68,7 +68,7 @@
       }
       .garbalia-takeaway-grid{
         display:grid;
-        grid-template-columns:repeat(2,minmax(0,1fr));
+        grid-template-columns:repeat(5,minmax(0,1fr));
         gap:8px;
         width:100%;
       }
@@ -76,7 +76,7 @@
       body.app-shell .garbalia-takeaway-grid .table-card.free{
         min-height:66px!important;
         height:auto!important;
-        padding:8px 11px!important;
+        padding:8px 9px!important;
         border-width:1px!important;
         border-radius:14px!important;
         border-color:#c98635!important;
@@ -98,25 +98,26 @@
         background:linear-gradient(145deg,#fff5d6,#efc268)!important;
       }
       body.app-shell .garbalia-takeaway-grid .table-card span{
-        font-size:.96rem!important;
+        font-size:.92rem!important;
         line-height:1.05!important;
+        white-space:nowrap!important;
       }
       body.app-shell .garbalia-takeaway-grid .table-card strong{
         margin-top:5px!important;
-        padding:4px 8px!important;
-        font-size:.69rem!important;
+        padding:4px 7px!important;
+        font-size:.67rem!important;
       }
       body.app-shell .garbalia-takeaway-grid .table-card span:before{
         content:"↗";
         display:inline-grid;
         place-items:center;
-        width:22px;
-        height:22px;
-        margin-right:6px;
+        width:21px;
+        height:21px;
+        margin-right:5px;
         border-radius:7px;
         background:rgba(86,47,13,.12);
         color:#6c3d14;
-        font-size:.72rem;
+        font-size:.70rem;
         vertical-align:middle;
       }
       html body.app-shell main.wrap:has(.tables-grid)>.tables-grid{
@@ -137,13 +138,17 @@
         }
         html body.app-shell:has(.tables-grid) main.wrap .garbalia-takeaway-grid .table-card{
           min-height:66px!important;
-          padding:8px 11px!important;
+          padding:8px 9px!important;
         }
       }
       @media (min-width:981px) and (max-width:1249px) {
         html body.app-shell:has(.tables-grid) main.wrap .tables-grid {
           grid-template-columns:repeat(4,minmax(0,1fr))!important;
         }
+        .garbalia-takeaway-section{width:min(940px,calc(100% - 24px))}
+      }
+      @media (max-width:980px) {
+        .garbalia-takeaway-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       }
       @media (max-width:640px) {
         html body.app-shell main.wrap:has(.tables-grid){gap:8px!important;padding-top:12px!important}
@@ -164,7 +169,7 @@
 
     const takeawayCards = Array.from(grid.querySelectorAll('.table-card')).filter(function (card) {
       const name = card.querySelector('span');
-      return name && /^გატანა\s*[12]$/i.test(name.textContent.trim());
+      return name && /^გატანა\s*[1-5]$/i.test(name.textContent.trim());
     });
 
     if (!takeawayCards.length) return;
@@ -173,7 +178,7 @@
     if (!section) {
       section = document.createElement('section');
       section.className = 'garbalia-takeaway-section';
-      section.innerHTML = '<div class="garbalia-takeaway-head"><strong>გატანის შეკვეთები</strong><span>2 გატანა</span></div><div class="garbalia-takeaway-grid"></div>';
+      section.innerHTML = '<div class="garbalia-takeaway-head"><strong>გატანის შეკვეთები</strong><span>5 გატანა</span></div><div class="garbalia-takeaway-grid"></div>';
       grid.parentNode.insertBefore(section, grid);
     }
 
@@ -203,12 +208,12 @@
       const result = await response.json();
       if (!result || result.ok !== true || result.changed !== true) return;
 
-      const reloadKey = 'garbalia-tables-and-takeaway-v4';
+      const reloadKey = 'garbalia-tables-and-takeaway-v5';
       if (sessionStorage.getItem(reloadKey) === '1') return;
       sessionStorage.setItem(reloadKey, '1');
       window.location.reload();
     } catch (error) {
-      // Existing tables remain fully usable if synchronization is temporarily unavailable.
+      // Existing orders remain fully usable if synchronization is temporarily unavailable.
     }
   }
 
