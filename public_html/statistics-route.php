@@ -87,11 +87,14 @@ function sales_between(string $from, string $to): array {
 PHP;
 $replace($oldSalesBetween, $newSalesBetween, 'sales_between');
 
-$replace(
-    "$startDateTime = $from . ' 00:00:00';\n$endDateTime = $to . ' 23:59:59';",
-    "[$startDateTime, $endDateTime] = garbalia_business_range($from, $to);",
-    'main datetime range'
-);
+$oldMainRange = <<<'PHP'
+$startDateTime = $from . ' 00:00:00';
+$endDateTime = $to . ' 23:59:59';
+PHP;
+$newMainRange = <<<'PHP'
+[$startDateTime, $endDateTime] = garbalia_business_range($from, $to);
+PHP;
+$replace($oldMainRange, $newMainRange, 'main datetime range');
 
 $oldQuickSales = <<<'PHP'
 $todaySales = sales_between(date('Y-m-d'), date('Y-m-d'));
@@ -118,8 +121,6 @@ eval('?>' . $source);
 $html = ob_get_clean();
 
 $reloadAfterMs = max(1000, (garbalia_next_business_cutoff_timestamp() - time() + 2) * 1000);
-$cutoffHour = garbalia_business_cutoff_hour();
-$cutoffLabel = sprintf('%02d:00–%02d:59', $cutoffHour, ($cutoffHour + 23) % 24);
 $runtimeScript = '<script>(function(){'
     . 'window.setTimeout(function(){window.location.reload();},' . (int)$reloadAfterMs . ');'
     . 'var sub=document.querySelector(".statistics-sub");'
