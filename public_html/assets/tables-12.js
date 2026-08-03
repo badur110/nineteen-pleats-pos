@@ -7,13 +7,31 @@
     const style = document.createElement('style');
     style.id = 'garbalia-tables-layout-style';
     style.textContent = `
+      html body.app-shell main.wrap:has(.tables-grid){
+        width:min(1480px,100%)!important;
+        min-height:0!important;
+        height:auto!important;
+        display:flex!important;
+        flex-direction:column!important;
+        justify-content:flex-start!important;
+        align-items:stretch!important;
+        gap:10px!important;
+        padding-top:18px!important;
+        padding-bottom:28px!important;
+        overflow:visible!important;
+      }
+      html body.app-shell main.wrap:has(.tables-grid)>.page-head{
+        width:min(1380px,100%)!important;
+        margin:0 auto 2px!important;
+        flex:0 0 auto!important;
+      }
       .garbalia-takeaway-section{
         width:min(560px,calc(100% - 24px));
         height:auto!important;
         min-height:0!important;
         flex:0 0 auto!important;
         align-self:center!important;
-        margin:0 auto 14px;
+        margin:0 auto 2px!important;
         padding:8px 9px 9px;
         border:1px solid rgba(150,88,24,.24);
         border-radius:17px;
@@ -101,6 +119,12 @@
         font-size:.72rem;
         vertical-align:middle;
       }
+      html body.app-shell main.wrap:has(.tables-grid)>.tables-grid{
+        width:min(1380px,100%)!important;
+        margin:0 auto!important;
+        flex:0 0 auto!important;
+        align-self:center!important;
+      }
       @media (min-width:1250px) {
         html body.app-shell:has(.tables-grid) main.wrap .tables-grid {
           grid-template-columns:repeat(6,minmax(0,1fr))!important;
@@ -122,7 +146,8 @@
         }
       }
       @media (max-width:640px) {
-        .garbalia-takeaway-section{width:calc(100% - 16px);padding:8px;border-radius:15px;margin-bottom:10px}
+        html body.app-shell main.wrap:has(.tables-grid){gap:8px!important;padding-top:12px!important}
+        .garbalia-takeaway-section{width:calc(100% - 16px);padding:8px;border-radius:15px;margin:0 auto!important}
         .garbalia-takeaway-grid{grid-template-columns:1fr 1fr;gap:7px}
         body.app-shell .garbalia-takeaway-grid .table-card{min-height:62px!important;padding:8px!important}
       }
@@ -178,7 +203,7 @@
       const result = await response.json();
       if (!result || result.ok !== true || result.changed !== true) return;
 
-      const reloadKey = 'garbalia-tables-and-takeaway-v3';
+      const reloadKey = 'garbalia-tables-and-takeaway-v4';
       if (sessionStorage.getItem(reloadKey) === '1') return;
       sessionStorage.setItem(reloadKey, '1');
       window.location.reload();
